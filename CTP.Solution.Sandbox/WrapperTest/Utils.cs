@@ -89,6 +89,12 @@ namespace WrapperTest
         {
             try
             {
+                //至少需要两个点
+                if (xdata.Count < 2 || ydata.Count < 2)
+                {
+                    return false;
+                }
+
                 if (ma)
                 {
                     xdata = GetMovingAverage(xdata);
@@ -143,6 +149,12 @@ namespace WrapperTest
         {
             try
             {
+                //至少需要两个点
+                if (xdata.Count < 2 || ydata.Count < 2)
+                {
+                    return false;
+                }
+
                 if (ma)
                 {
                     xdata = GetMovingAverage(xdata);

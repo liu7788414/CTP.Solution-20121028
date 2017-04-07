@@ -183,21 +183,16 @@ namespace WrapperTest
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    //卖出平仓:持有多仓时，最新价低于低于成本价某个幅度
-                    if (data.LastPrice < stopLossPrices.CostLong*(1 - Utils.CloseTolerance))
+                    var directions = MinuteAllDirection(data.InstrumentID);
+
+                    if (directions.Item1)//大趋势向上，平空仓
                     {
-                        var reason = string.Format("{0}最新价{1}低于成本价{2}的{3}即{4}，平掉多仓", data.InstrumentID, data.LastPrice,
-                            stopLossPrices.CostLong, 1 - Utils.CloseTolerance,
-                            stopLossPrices.CostLong*(1 - Utils.CloseTolerance));
-                        _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                        _trader.CloseShortPositionByInstrument(data.InstrumentID, "大趋势向上，平掉空仓");
                     }
-                    //买入平仓:持有空仓时，最新价高于成本价某个幅度
-                    if (data.LastPrice > stopLossPrices.CostShort*(1 + Utils.CloseTolerance))
+
+                    if (directions.Item2)//大趋势向下，平多仓
                     {
-                        var reason = string.Format("{0}最新价{1}高于成本价{2}的{3}即{4}，平掉空仓", data.InstrumentID, data.LastPrice,
-                            stopLossPrices.CostShort, 1 + Utils.CloseTolerance,
-                            stopLossPrices.CostShort*(1 + Utils.CloseTolerance));
-                        _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                        _trader.CloseLongPositionByInstrument(data.InstrumentID, "大趋势向下，平掉多仓");
                     }
 
                     double openTrendStartPoint = 0;
@@ -229,6 +224,11 @@ namespace WrapperTest
                                 stopLossPrices.CostLong, stopLossPrices.ForLong);
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
                         }
+
+                        if (highestDistance > data.LastPrice*0.03)
+                        {
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
+                        }
                     }
 
                     //从空仓的最高盈利跌了一半，平掉空仓，保护盈利，忽略掉小波动
@@ -257,6 +257,11 @@ namespace WrapperTest
                                 Utils.CurrentDistanceToHighestDistanceRatioLimit,
                                 currentDistance + trendDistance, stopLossPrices.CostShort, stopLossPrices.ForShort);
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                        }
+
+                        if (highestDistance > data.LastPrice * 0.03)
+                        {
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
                         }
                     }
                 }
@@ -295,6 +300,33 @@ namespace WrapperTest
             {
                 Utils.WriteException(ex);
             }
+        }
+
+        private Tuple<bool, bool> MinuteAllDirection(string instrumentId)
+        {
+            if (Utils.InstrumentToMinuteByMinuteChart.ContainsKey(instrumentId))
+            {
+                var minuteByMinute = Utils.InstrumentToMinuteByMinuteChart[instrumentId];
+
+                //当前大趋势,大趋势向上只开多仓，大趋势向下，只开空仓
+                var minuteAllXData = new List<double>();
+                var minuteAllYData = new List<double>();
+                for (var i = 0; i < minuteByMinute.Count; i++)
+                {
+                    if (minuteByMinute[i] != null)
+                    {
+                        minuteAllXData.Add(i);
+                        minuteAllYData.Add(minuteByMinute[i].Item2.LastPrice);
+                    }
+                }
+
+                var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4, false);
+                var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4, false);
+
+                return new Tuple<bool, bool>(isPointingUpMinuteAll, isPointingDownMinuteAll);
+            }
+
+            return new Tuple<bool, bool>(false, false);
         }
 
         private void OpenStrategy(ThostFtdcDepthMarketDataField data, bool ma)
