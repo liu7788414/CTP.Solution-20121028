@@ -1,0 +1,11 @@
+﻿生成启动时间为 2016-10-25 15:21:26。
+     1>项目“C:\Users\liu7788414\Desktop\h5api_v1.0.27\CTP.Solution-20121028\CTP.Solution\CTP\CTPMA.VS2010.Net4.0.vcxproj”在节点 3 上(Build 个目标)。
+     1>Link:
+         CTPMA.VS2010.Net4.0.vcxproj -> C:\Users\liu7788414\Desktop\h5api_v1.0.27\CTP.Solution-20121028\CTP.Solution\Debug\VS2010\dotNet4.0\MA版\CTP.dll
+       XdcMake:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\xdcmake.exe /old "CTPMA.VS2010.Net4.0" /nologo /Fo"C:\Users\liu7788414\Desktop\h5api_v1.0.27\CTP.Solution-20121028\CTP.Solution\Debug\VS2010\dotNet4.0\MA版\CTP.xml" /Fs"Debug\VS2010\dotNet4.0\MA版\AssemblyInfo.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\CTP.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\CTPMDAdapter.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\CTPTraderAdapter.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\MdSpi.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\Stdafx.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\TraderSpi.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\Util.xdc" /Fs"Debug\VS2010\dotNet4.0\MA版\.NETFramework,Version=v4.0.AssemblyAttributes.xdc"
+     1>已完成生成项目“C:\Users\liu7788414\Desktop\h5api_v1.0.27\CTP.Solution-20121028\CTP.Solution\CTP\CTPMA.VS2010.Net4.0.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:16.43

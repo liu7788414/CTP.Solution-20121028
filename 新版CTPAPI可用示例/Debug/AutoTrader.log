@@ -1,0 +1,13 @@
+﻿生成启动时间为 2016-12-1 17:29:47。
+     1>项目“D:\Code\trunk\CTP.Solution-20121028\新版CTPAPI可用示例\AutoTrader.vcxproj”在节点 2 上(Build 个目标)。
+     1>Link:
+         AutoTrader.vcxproj -> D:\Code\trunk\CTP.Solution-20121028\新版CTPAPI可用示例\bin\AutoTrader.exe
+       PostBuildEvent:
+         copy .\ThostTraderApi\thosttraderapi.dll .\bin\
+         :VCEnd
+         已复制         1 个文件。
+     1>已完成生成项目“D:\Code\trunk\CTP.Solution-20121028\新版CTPAPI可用示例\AutoTrader.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:00.21

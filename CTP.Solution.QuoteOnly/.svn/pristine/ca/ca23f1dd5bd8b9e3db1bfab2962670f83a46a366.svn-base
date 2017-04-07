@@ -1,0 +1,431 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using CTP;
+using SendMail;
+using Timer = System.Timers.Timer;
+
+namespace WrapperTest
+{
+    public class QuoteAdapter : CTPMDAdapter
+    {
+        public static int RequestId = 1;
+
+        private int _frontId;
+        private int _sessionId;
+
+        private List<string> _subscribedQuotes = new List<string>();
+        public List<string> SubscribedQuotes
+        {
+            get { return _subscribedQuotes; }
+            set { _subscribedQuotes = value; }
+        }
+
+        private string _brokerId;
+
+        public string BrokerId
+        {
+            get { return _brokerId; }
+            set { _brokerId = value; }
+        }
+
+        private string _investorId;
+
+        public string InvestorId
+        {
+            get { return _investorId; }
+            set { _investorId = value; }
+        }
+
+        private string _password;
+
+        public string Password
+        {
+            get { return _password; }
+            set { _password = value; }
+        }
+
+        private string[] _front;
+
+        public string[] Front
+        {
+            get { return _front; }
+            set { _front = value; }
+        }
+
+        private bool _isReady;
+
+        public bool IsReady
+        {
+            get { return _isReady; }
+            set { _isReady = value; }
+        }
+
+        private TraderAdapter _trader;
+
+        public TraderAdapter Trader
+        {
+            get { return _trader; }
+            set { _trader = value; }
+        }
+
+        private Timer _timerOrder = new Timer(1000); //报单回报有时候会有1-2秒的延迟
+        //private Timer _timerSaveStopLossPrices = new Timer(1000); //每隔一段时间保存当前的止损参考价，供下次启动时读取
+
+        public QuoteAdapter(TraderAdapter trader)
+        {
+            _timerOrder.Elapsed += timer_Elapsed;
+            //_timerSaveStopLossPrices.Elapsed += _timerSaveStopLossPrices_Elapsed;
+
+            _trader = trader;
+            OnFrontConnected += QuoteAdapter_OnFrontConnected;
+            OnRspUserLogin += QuoteAdapter_OnRspUserLogin;
+            OnFrontDisconnected += QuoteAdapter_OnFrontDisconnected;
+            OnRspError += QuoteAdapter_OnRspError;
+            OnRspSubMarketData += QuoteAdapter_OnRspSubMarketData;
+            OnRspUnSubMarketData += QuoteAdapter_OnRspUnSubMarketData;
+            OnRspUserLogout += QuoteAdapter_OnRspUserLogout;
+            OnRtnDepthMarketData += QuoteAdapter_OnRtnDepthMarketData;
+        }
+
+        //private void _timerSaveStopLossPrices_Elapsed(object sender, ElapsedEventArgs e)
+        //{
+        //    Utils.SaveStopLossPricesAndInstrumentTotalPrices();
+        //}
+
+        public void StartTimer()
+        {
+            Utils.WriteLine("打开检查开平仓的定时器...", true);
+            CheckOpenOrClose();
+            //Utils.SaveStopLossPricesAndInstrumentTotalPrices();
+            _timerOrder.Start();
+            //_timerSaveStopLossPrices.Start();
+        }
+
+        private void CheckOpenOrClose()
+        {
+            lock (this)
+            {
+                Utils.WriteLine("检查是否需要开平仓...");
+
+                foreach (var kv in Utils.InstrumentToLatestQuote)
+                {
+                    Task.Factory.StartNew(() => { BuyOrSell(kv.Value); });
+                }
+            }
+        }
+
+        /// <summary>
+        /// 每隔一段时间检查是不是要报单
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            CheckOpenOrClose();
+        }
+
+        public void Connect()
+        {
+            foreach (var server in _front)
+            {
+                RegisterFront(server);
+            }
+
+            Init();
+            Join();
+        }
+
+        private object _locker = new object();
+
+        private void BuyOrSell(ThostFtdcDepthMarketDataField data)
+        {
+            var averagePrice = Utils.GetAveragePrice(data);
+            //Utils.WriteLine(string.Format("{0}的当前平均价{1}", data.InstrumentID, averagePrice), true);
+
+            #region 平仓策略       
+
+            if (Utils.InstrumentToStopLossPrices.ContainsKey(data.InstrumentID))
+            {
+                var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
+
+                //卖出平仓:持有多仓时，最新价低于低于成本价某个幅度
+                if (data.LastPrice < stopLossPrices.CostLong*(1 - Utils.CloseTolerance))
+                {
+                    var reason = string.Format("{0}最新价{1}低于成本价{2}的{3}即{4}，平掉多仓", data.InstrumentID, data.LastPrice,
+                        stopLossPrices.CostLong, 1 - Utils.CloseTolerance,
+                        stopLossPrices.CostLong*(1 - Utils.CloseTolerance));
+                    _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                }
+                //买入平仓:持有空仓时，最新价高于成本价某个幅度
+                if (data.LastPrice > stopLossPrices.CostShort*(1 + Utils.CloseTolerance))
+                {
+                    var reason = string.Format("{0}最新价{1}高于成本价{2}的{3}即{4}，平掉空仓", data.InstrumentID, data.LastPrice,
+                        stopLossPrices.CostShort, 1 + Utils.CloseTolerance,
+                        stopLossPrices.CostShort*(1 + Utils.CloseTolerance));
+                    _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                }
+
+                //从多仓的最高盈利跌了一定幅度，平掉多仓，保护盈利，忽略掉小波动
+                if (stopLossPrices.CostLong > 0 && stopLossPrices.ForLong > stopLossPrices.CostLong &&
+                    stopLossPrices.ForLong > data.LastPrice)
+                {
+                    var highestDistance = Math.Abs(stopLossPrices.ForLong - stopLossPrices.CostLong);
+                    var currentDistance = Math.Abs(data.LastPrice - stopLossPrices.CostLong);
+
+                    if (highestDistance > data.LastPrice*Utils.HighestDistanceConsiderLimit &&
+                        highestDistance > currentDistance &&
+                        currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit*highestDistance)
+                    {
+                        var reason = string.Format("{0}从多仓的最高盈利{1}跌到了{2}以下，即{3}，平掉多仓，多仓成本价{4}，多仓最高盈利价{5}",
+                            data.InstrumentID, highestDistance, Utils.CurrentDistanceToHighestDistanceRatioLimit,
+                            currentDistance, stopLossPrices.CostLong, stopLossPrices.ForLong);
+                        _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                    }
+                }
+
+                //从空仓的最高盈利跌了一半，平掉空仓，保护盈利，忽略掉小波动
+                if (stopLossPrices.CostShort > 0 && stopLossPrices.ForShort < stopLossPrices.CostShort &&
+                    stopLossPrices.ForShort < data.LastPrice)
+                {
+                    var highestDistance = Math.Abs(stopLossPrices.ForShort - stopLossPrices.CostShort);
+                    var currentDistance = Math.Abs(data.LastPrice - stopLossPrices.CostShort);
+
+                    if (highestDistance > data.LastPrice*Utils.HighestDistanceConsiderLimit &&
+                        highestDistance > currentDistance &&
+                        currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit*highestDistance)
+                    {
+                        var reason = string.Format("{0}从空仓的最高盈利{1}跌到了{2}以下，即{3}，平掉空仓，空仓成本价{4}，空仓最高盈利价{5}",
+                            data.InstrumentID, highestDistance, Utils.CurrentDistanceToHighestDistanceRatioLimit,
+                            currentDistance, stopLossPrices.CostShort, stopLossPrices.ForShort);
+                        _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                    }
+                }
+            }
+
+            //接近涨停价，平掉空仓
+            var upperLimitRange = (data.UpperLimitPrice + data.LowerLimitPrice)/2;
+            var lowerLimitRange = upperLimitRange;
+
+            if (data.LastPrice > data.PreSettlementPrice + upperLimitRange*Utils.LimitCloseRange)
+            {
+                var reason = string.Format("{0}最新价{1}上涨到了涨停价{2}的{3}以上，平掉空仓", data.InstrumentID, data.LastPrice,
+                    data.UpperLimitPrice, Utils.LimitCloseRange);
+                _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+            }
+
+            //接近跌停价，平掉多仓
+            if (data.LastPrice < data.PreSettlementPrice - lowerLimitRange*Utils.LimitCloseRange)
+            {
+                var reason = string.Format("{0}最新价{1}下跌到了跌停价{2}的{3}以下，平掉多仓", data.InstrumentID, data.LastPrice,
+                    data.LowerLimitPrice, Utils.LimitCloseRange);
+                _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+            }
+
+            #endregion
+
+            #region 开仓策略
+
+            if (Utils.InstrumentToPreLatestQuoteShort.ContainsKey(data.InstrumentID) &&
+                Utils.InstrumentToPreLatestQuoteLong.ContainsKey(data.InstrumentID) &&
+                Utils.InstrumentToTotalPrice.ContainsKey(data.InstrumentID) &&
+                Utils.InstrumentToMinuteByMinuteChart.ContainsKey(data.InstrumentID))
+            {
+                if (Utils.InstrumentToTotalPrice[data.InstrumentID] <= Utils.InstrumentTotalPrice)
+                {
+                    var preDataShort = Utils.InstrumentToPreLatestQuoteShort[data.InstrumentID];
+                    var minuteByMinute = Utils.InstrumentToMinuteByMinuteChart[data.InstrumentID];
+
+                    if (minuteByMinute.Count >= Utils.MinuteByMinuteSize) //&& preDataShort.Count == Utils.ShortQueueSize && )
+                    {
+                        var preQuotesShort = preDataShort.Select(s => s.LastPrice);
+                        var enumerable = preQuotesShort as IList<double> ?? preQuotesShort.ToList();
+                        var isPointingUpShort = true;//MathUtils.IsPointingUp(Utils.ShortXData, enumerable.ToList());
+                        var isPointingDownShort = true;//MathUtils.IsPointingDown(Utils.ShortXData, enumerable.ToList());
+
+                        var count = minuteByMinute.Count;
+                        var minuteByMinuteQuotes = new List<double>();
+                        for (var i = count - Utils.MinuteByMinuteSize; i < count; i++)
+                        {
+                            minuteByMinuteQuotes.Add(minuteByMinute[i].Item2);
+                        }
+
+                        var isPointingUpMinute = MathUtils.IsPointingUp(Utils.MinuteXData, minuteByMinuteQuotes);
+                        var isPointingDownMinute = MathUtils.IsPointingDown(Utils.MinuteXData, minuteByMinuteQuotes);
+                        //Utils.LogQuotes[Utils.GetInstrumentCategory(data.InstrumentID)].Debug(string.Format("合约{0}趋势向上{1}，向下{2}", data.InstrumentID, isPointingUp, isPointingDown));
+
+                        var isUpTrend = data.LastPrice > data.PreClosePrice;//判断今天是涨势还是跌势
+                        var isDownTrend = data.LastPrice < data.PreClosePrice;//判断今天是涨势还是跌势
+
+                        //买入开仓：最新价比当前平均价高，但是又不高太多，且最新价趋势是向上
+                        if (data.LastPrice > averagePrice && data.LastPrice < averagePrice*(1 + 2*Utils.OpenTolerance) &&
+                            isPointingUpShort && isPointingUpMinute && isUpTrend)
+                        {
+                            var reason = string.Format("{0}最新价{1}高于当前平均价{2},且最近报价短趋势向上{3},长趋势向上{4},当前趋势是上涨{5},开出多仓",
+                                data.InstrumentID, data.LastPrice, averagePrice, isPointingUpShort, isPointingUpMinute,
+                                isUpTrend);
+                            _trader.OpenLongPositionByInstrument(data.InstrumentID, reason);
+                        }
+
+                        //卖出开仓：最新价比当前平均价低，但是又不低太多，且最新价趋势是向下
+                        if (data.LastPrice < averagePrice && data.LastPrice > averagePrice*(1 - 2*Utils.OpenTolerance) &&
+                            isPointingDownShort && isPointingDownMinute && isDownTrend)
+                        {
+                            var reason = string.Format("{0}最新价{1}低于当前平均价{2},且最近报价短趋势向下{3},长趋势向下{4},当前趋势是下跌{5},开出空仓",
+                                data.InstrumentID, data.LastPrice, averagePrice, isPointingDownShort,
+                                isPointingDownMinute, isDownTrend);
+                            _trader.OpenShortPositionByInstrument(data.InstrumentID, reason);
+                        }
+                    }
+                    else
+                    {
+                        //Utils.WriteLine(
+                        //    string.Format("累积行情中，短趋势长度{0},长趋势长度{1}...", preDataShort.Count, preDataLong.Count), true);
+                    }
+                }
+                else
+                {
+                    //Utils.WriteLine(String.Format("{0}的合约总价{1}超过限制{2},不能开仓", data.InstrumentID,
+                    //    Utils.InstrumentToTotalPrice[data.InstrumentID], Utils.InstrumentTotalPrice));
+                }
+            }
+
+            #endregion
+        }
+
+
+        private void QuoteAdapter_OnRtnDepthMarketData(ThostFtdcDepthMarketDataField pDepthMarketData)
+        {
+            if (Utils.InstrumentToStopLossPrices.ContainsKey(pDepthMarketData.InstrumentID))
+            {
+                var stopLossPrices = Utils.InstrumentToStopLossPrices[pDepthMarketData.InstrumentID];
+
+                if (stopLossPrices.ForLong < pDepthMarketData.LastPrice)  //随着最新价的走高，不断推高多仓的止损参考价
+                {
+                    stopLossPrices.ForLong = pDepthMarketData.LastPrice;
+                }
+
+                if (stopLossPrices.ForShort > pDepthMarketData.LastPrice) //随着最新价的走低，不断降低空仓的止损参考价
+                {
+                    stopLossPrices.ForShort = pDepthMarketData.LastPrice;
+                }
+            }
+            else
+            {
+                var stopLossPrices = Utils.CreateStopLossPrices(pDepthMarketData);
+                Utils.InstrumentToStopLossPrices[pDepthMarketData.InstrumentID] = stopLossPrices;
+            }
+
+            Utils.WriteQuote(pDepthMarketData);
+        }
+
+        private void QuoteAdapter_OnRspUserLogout(ThostFtdcUserLogoutField pUserLogout, ThostFtdcRspInfoField pRspInfo,
+            int nRequestId, bool bIsLast)
+        {
+            Utils.ReportError(pRspInfo, "登出账号回报错误");
+
+            if (pUserLogout != null)
+            {
+                Utils.WriteLine("登出回报", true);
+                Utils.OutputField(pUserLogout);
+            }
+        }
+
+        private void QuoteAdapter_OnRspUnSubMarketData(ThostFtdcSpecificInstrumentField pSpecificInstrument,
+            ThostFtdcRspInfoField pRspInfo, int nRequestId, bool bIsLast)
+        {
+            Utils.ReportError(pRspInfo, "退订行情回报错误");
+
+            if (pSpecificInstrument != null)
+            {
+                Utils.OutputField(pSpecificInstrument);
+            }
+        }
+
+        private void QuoteAdapter_OnRspSubMarketData(ThostFtdcSpecificInstrumentField pSpecificInstrument,
+            ThostFtdcRspInfoField pRspInfo, int nRequestId, bool bIsLast)
+        {
+            Utils.ReportError(pRspInfo, "订阅行情回报错误");
+
+            if (pSpecificInstrument != null)
+            {
+                Utils.OutputField(pSpecificInstrument);
+            }
+        }
+
+        private void QuoteAdapter_OnRspError(ThostFtdcRspInfoField pRspInfo, int nRequestId, bool bIsLast)
+        {
+            Utils.ReportError(pRspInfo, "错误报告");
+
+            if (pRspInfo != null)
+            {
+                Utils.OutputField(pRspInfo);
+            }
+        }
+
+        private void QuoteAdapter_OnFrontDisconnected(int nReason)
+        {
+            Utils.WriteLine(nReason.ToString());
+            Email.SendMail("错误：行情断线,尝试重连...", DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                Utils.IsMailingEnabled);
+        }
+
+        public void QuoteAdapter_OnRspUserLogin(ThostFtdcRspUserLoginField pRspUserLogin,
+            ThostFtdcRspInfoField pRspInfo, int nRequestId, bool bIsLast)
+        {
+            Utils.ReportError(pRspInfo, "行情登录回报错误");
+
+            if (bIsLast && Utils.IsCorrectRspInfo(pRspInfo))
+            {
+                _isReady = true;
+                var temp =
+                    string.Format(
+                        "行情登录回报:经纪公司代码:{0},郑商所时间:{1},大商所时间:{2},中金所时间:{3},前置编号:{4},登录成功时间:{5},最大报单引用:{6},会话编号:{7},上期所时间:{8},交易系统名称:{9},交易日:{10},用户代码:{11}",
+                        pRspUserLogin.BrokerID, pRspUserLogin.CZCETime, pRspUserLogin.DCETime, pRspUserLogin.FFEXTime,
+                        pRspUserLogin.FrontID, pRspUserLogin.LoginTime, pRspUserLogin.MaxOrderRef,
+                        pRspUserLogin.SessionID, pRspUserLogin.SHFETime, pRspUserLogin.SystemName,
+                        pRspUserLogin.TradingDay, pRspUserLogin.UserID);
+
+                Utils.WriteLine(temp, true);
+
+                _frontId = pRspUserLogin.FrontID;
+                _sessionId = pRspUserLogin.SessionID;
+
+                //行情重连的时候，重新订阅需要的行情
+                if (SubscribedQuotes.Count > 0)
+                {
+                    SubscribeMarketData(SubscribedQuotes.ToArray());
+                }
+            }
+            else
+            {
+                Utils.WriteLine("行情登录失败", true);
+            }
+        }
+
+        private void QuoteAdapter_OnFrontConnected()
+        {
+            var loginField = new ThostFtdcReqUserLoginField
+            {
+                BrokerID = _brokerId,
+                UserID = _investorId,
+                Password = _password
+            };
+
+            if (_isReady)
+            {
+                _isReady = false;
+                Utils.WriteLine("行情重连中...", true);
+            }
+
+            ReqUserLogin(loginField, RequestId++);
+        }
+    }
+}
