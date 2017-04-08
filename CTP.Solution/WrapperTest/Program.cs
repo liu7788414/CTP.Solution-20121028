@@ -447,6 +447,7 @@ namespace WrapperTest
 
                 //收盘前10分钟就禁止再开仓
                 if ((dateTime.Hour == 14 && dateTime.Minute == 30) ||
+                    (dateTime.Hour == 23 && dateTime.Minute == 0))
                 {
                     Utils.WriteLine(string.Format("到达禁止开仓时间{0}", dateTime));
                     Utils.IsOpenLocked = true;
