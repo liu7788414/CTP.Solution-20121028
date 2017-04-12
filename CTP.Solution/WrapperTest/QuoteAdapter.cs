@@ -225,7 +225,7 @@ namespace WrapperTest
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
                         }
 
-                        if (highestDistance > data.LastPrice*0.03)
+                        if (highestDistance > data.LastPrice*Utils.StopProfitRatio)
                         {
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
                         }
@@ -259,7 +259,7 @@ namespace WrapperTest
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                         }
 
-                        if (highestDistance > data.LastPrice * 0.03)
+                        if (highestDistance > data.LastPrice*Utils.StopProfitRatio)
                         {
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
                         }

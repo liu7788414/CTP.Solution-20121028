@@ -284,6 +284,11 @@ namespace WrapperTest
         /// </summary>
         public static double SwingLimit = 0.005;
 
+        /// <summary>
+        /// 止盈比例
+        /// </summary>
+        public static double StopProfitRatio = 0.02;
+
         public static List<string> AllowedCategories = new List<string>();
         public static ChannelType CurrentChannel = ChannelType.模拟交易所;
         public static int ExchangeTimeOffset = 0;
@@ -738,6 +743,9 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 SwingLimit = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                StopProfitRatio = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }
