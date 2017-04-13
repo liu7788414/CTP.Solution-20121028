@@ -215,14 +215,13 @@ namespace WrapperTest
 
                         if (highestDistance > data.LastPrice*Utils.HighestDistanceConsiderLimit &&
                             highestDistance > currentDistance &&
-                            (currentDistance + trendDistance) <=
-                            Utils.CurrentDistanceToHighestDistanceRatioLimit*(highestDistance + trendDistance))
+                            currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit*highestDistance)
                         {
                             var reason = string.Format("{0}从多仓的最高趋势点{1}跌到了{2}以下，即{3}，平掉多仓，多仓成本价{4}，多仓最高盈利价{5}",
                                 data.InstrumentID, highestDistance + trendDistance,
                                 Utils.CurrentDistanceToHighestDistanceRatioLimit, currentDistance + trendDistance,
                                 stopLossPrices.CostLong, stopLossPrices.ForLong);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, "移动止损平多仓");
                         }
 
                         if (highestDistance > data.LastPrice*Utils.StopProfitRatio)
@@ -249,14 +248,13 @@ namespace WrapperTest
 
                         if (highestDistance > data.LastPrice*Utils.HighestDistanceConsiderLimit &&
                             highestDistance > currentDistance &&
-                            (currentDistance + trendDistance) <=
-                            Utils.CurrentDistanceToHighestDistanceRatioLimit*(highestDistance + trendDistance))
+                            currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit*highestDistance)
                         {
                             var reason = string.Format("{0}从空仓的最低趋势点{1}涨到了{2}以上，即{3}，平掉空仓，空仓成本价{4}，空仓最高盈利价{5}",
                                 data.InstrumentID, highestDistance + trendDistance,
                                 Utils.CurrentDistanceToHighestDistanceRatioLimit,
                                 currentDistance + trendDistance, stopLossPrices.CostShort, stopLossPrices.ForShort);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, "移动止损平空仓");
                         }
 
                         if (highestDistance > data.LastPrice*Utils.StopProfitRatio)
