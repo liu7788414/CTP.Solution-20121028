@@ -446,15 +446,15 @@ namespace WrapperTest
                 Utils.WriteLine(string.Format("检查是否全部平仓{0}", dateTime));
 
                 //收盘前10分钟就禁止再开仓
-                if ((dateTime.Hour == 14 && dateTime.Minute == 30) ||
-                    (dateTime.DayOfWeek == DayOfWeek.Friday && dateTime.Hour == 23 && dateTime.Minute == 0))
+                if ((dateTime.Hour == 14 && dateTime.Minute == 55) ||
+                    (dateTime.Hour == 23 && dateTime.Minute == 25))
                 {
                     Utils.WriteLine(string.Format("到达禁止开仓时间{0}", dateTime));
                     Utils.IsOpenLocked = true;
                 }
 
                 if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 30) ||
-                    (dateTime.DayOfWeek == DayOfWeek.Friday && dateTime.Hour == 23 && dateTime.Minute == 29 && dateTime.Second >= 30))
+                    (dateTime.Hour == 23 && dateTime.Minute == 29 && dateTime.Second >= 30))
                 {
                     Utils.WriteLine(string.Format("临近收盘，平掉所有持仓{0}", dateTime), true);
                     Utils.Trader.CloseAllPositions();
@@ -475,7 +475,7 @@ namespace WrapperTest
                 Utils.WriteLine(string.Format("检查是否退出{0}", dateTime));
 
                 if ((dateTime.Hour == 15 && dateTime.Minute == 5) ||
-                    (dateTime.DayOfWeek == DayOfWeek.Friday && dateTime.Hour == 23 && dateTime.Minute == 35))
+                    (dateTime.Hour == 23 && dateTime.Minute == 35))
                 {
                     Utils.WriteLine(string.Format("收盘，程序关闭{0}", dateTime));
                     Email.SendMail("收盘，程序关闭", DateTime.Now.ToString(CultureInfo.InvariantCulture),
@@ -486,7 +486,7 @@ namespace WrapperTest
                 if (dateTime.Hour == 8 &&
                     (dateTime.Minute == 45 || dateTime.Minute == 46 || dateTime.Minute == 47 || dateTime.Minute == 48 ||
                      dateTime.Minute == 49) && !Utils.IsTraderReady)
-                //上午开盘时通道没有准备好，每隔一分钟尝试重新连接
+                    //上午开盘时通道没有准备好，每隔一分钟尝试重新连接
                 {
                     Utils.WriteLine(string.Format("通道没有准备好，重新连接，{0}", dateTime));
                     Email.SendMail("通道没有准备好，重新连接", DateTime.Now.ToString(CultureInfo.InvariantCulture),
