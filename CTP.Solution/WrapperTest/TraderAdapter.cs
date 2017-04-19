@@ -1344,11 +1344,19 @@ namespace WrapperTest
                         }
                         catch (Exception)
                         {
-                            var dtNow = DateTime.Now;
-                            Utils.WriteLine("交易所时间格式不正确，重新连接...", true);
-                            Email.SendMail("交易所时间格式不正确，重新连接...", DateTime.Now.ToString(CultureInfo.InvariantCulture));
-                            shfeTime = dtNow;
-                            Utils.Exit();
+                            try
+                            {
+                                shfeTime = Convert.ToDateTime(pRspUserLogin.DCETime);
+                            }
+                            catch (Exception)
+                            {
+                                var dtNow = DateTime.Now;
+                                Utils.WriteLine("交易所时间格式不正确，重新连接...", true);
+                                Email.SendMail("交易所时间格式不正确，重新连接...", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                                shfeTime = dtNow;
+                                Utils.Exit();
+                            }
+
                         }
                     }
 

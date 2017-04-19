@@ -170,6 +170,25 @@ namespace WrapperTest
                 var buyOrSell = longOrShort == EnumPosiDirectionType.Long
                     ? EnumDirectionType.Buy
                     : EnumDirectionType.Sell;
+                //var keyOpenTime = Utils.GetOpenPositionKey(instrumentId, buyOrSell);
+
+                //if (Utils.InstrumentToLastCloseTime.ContainsKey(keyOpenTime))
+                //{
+                //    var lastCloseTime = Utils.InstrumentToLastCloseTime[keyOpenTime];
+                //    var dtNow = DateTime.Now;
+                //    var timeSpan = new TimeSpan(Utils.MinuteByMinuteSizeLong*TimeSpan.TicksPerMinute);
+                //    if (dtNow - lastCloseTime < timeSpan)
+                //    {
+                //        Utils.WriteLine(
+                //            string.Format("{0}距离上次开仓冷却时间不足{1}分钟,上次时间{2},本次时间{3},禁止开{4}仓", instrumentId,
+                //                timeSpan.TotalMinutes,
+                //                lastCloseTime, dtNow, longOrShort), true);
+
+                //        Utils.SetMissedOpenStartPoint(instrumentId, longOrShort, openTrendStartPoint);
+                        
+                //        return;
+                //    }
+                //}
 
                 var keyToday = Utils.GetPositionKey(instrumentId, longOrShort,
                     EnumPositionDateType.Today);
@@ -1325,11 +1344,19 @@ namespace WrapperTest
                         }
                         catch (Exception)
                         {
-                            var dtNow = DateTime.Now;
-                            Utils.WriteLine("交易所时间格式不正确，重新连接...", true);
-                            Email.SendMail("交易所时间格式不正确，重新连接...", DateTime.Now.ToString(CultureInfo.InvariantCulture));
-                            shfeTime = dtNow;
-                            Utils.Exit();
+                            try
+                            {
+                                shfeTime = Convert.ToDateTime(pRspUserLogin.DCETime);
+                            }
+                            catch (Exception)
+                            {
+                                var dtNow = DateTime.Now;
+                                Utils.WriteLine("交易所时间格式不正确，重新连接...", true);
+                                Email.SendMail("交易所时间格式不正确，重新连接...", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                                shfeTime = dtNow;
+                                Utils.Exit();
+                            }
+
                         }
                     }
 
