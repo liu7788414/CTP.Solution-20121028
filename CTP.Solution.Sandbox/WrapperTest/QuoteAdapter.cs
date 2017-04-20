@@ -174,7 +174,7 @@ namespace WrapperTest
                     if (data.LastPrice < stopLossPrices.CostLong - data.LastPrice*Utils.SwingLimit)
                     {
                         var reason = string.Format("{0}从多仓的成本价{1}跌到了绝对止损值{2}以下，即{3}，平掉多仓", data.InstrumentID,
-                            stopLossPrices.CostLong, data.LastPrice*Utils.SwingLimit/2, data.LastPrice);
+                            stopLossPrices.CostLong, data.LastPrice*Utils.SwingLimit, data.LastPrice);
                         _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
                     }
 
@@ -182,7 +182,7 @@ namespace WrapperTest
                     if (data.LastPrice > stopLossPrices.CostShort + data.LastPrice*Utils.SwingLimit)
                     {
                         var reason = string.Format("{0}从空仓的成本价{1}涨到了绝对止损值{2}以上，即{3}，平掉空仓", data.InstrumentID,
-                            stopLossPrices.CostShort, data.LastPrice*Utils.SwingLimit/2, data.LastPrice);
+                            stopLossPrices.CostShort, data.LastPrice*Utils.SwingLimit, data.LastPrice);
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                     }
 

@@ -183,16 +183,32 @@ namespace WrapperTest
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    var directions = MinuteAllDirection(data.InstrumentID);
+                    //var directions = MinuteAllDirection(data.InstrumentID);
 
-                    if (directions.Item1)//大趋势向上，平空仓
+                    //if (directions.Item1)//大趋势向上，平空仓
+                    //{
+                    //    _trader.CloseShortPositionByInstrument(data.InstrumentID, "大趋势向上，平掉空仓");
+                    //}
+
+                    //if (directions.Item2)//大趋势向下，平多仓
+                    //{
+                    //    _trader.CloseLongPositionByInstrument(data.InstrumentID, "大趋势向下，平掉多仓");
+                    //}
+
+                    //多仓止损
+                    if (data.LastPrice < stopLossPrices.CostLong - data.LastPrice * Utils.SwingLimit)
                     {
-                        _trader.CloseShortPositionByInstrument(data.InstrumentID, "大趋势向上，平掉空仓");
+                        var reason = string.Format("{0}从多仓的成本价{1}跌到了绝对止损值{2}以下，即{3}，平掉多仓", data.InstrumentID,
+                            stopLossPrices.CostLong, data.LastPrice * Utils.SwingLimit, data.LastPrice);
+                        _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
                     }
 
-                    if (directions.Item2)//大趋势向下，平多仓
+                    //空仓止损
+                    if (data.LastPrice > stopLossPrices.CostShort + data.LastPrice * Utils.SwingLimit)
                     {
-                        _trader.CloseLongPositionByInstrument(data.InstrumentID, "大趋势向下，平掉多仓");
+                        var reason = string.Format("{0}从空仓的成本价{1}涨到了绝对止损值{2}以上，即{3}，平掉空仓", data.InstrumentID,
+                            stopLossPrices.CostShort, data.LastPrice * Utils.SwingLimit, data.LastPrice);
+                        _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                     }
 
                     double openTrendStartPoint = 0;
