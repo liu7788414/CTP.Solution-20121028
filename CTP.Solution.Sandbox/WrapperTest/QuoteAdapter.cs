@@ -389,7 +389,18 @@ namespace WrapperTest
                         {
                             var reason = string.Format("{0}最近趋势向上{1},且高于多仓启动点{2},开出多仓,开仓启动点{3}", data.InstrumentID,
                                 isPointingUpMinuteLong2, data.LastPrice*Utils.SwingLimit, min);
-                            _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true);
+
+                            if (Utils.InstrumentToLastPosiDirectionType.ContainsKey(data.InstrumentID) &&
+                                Utils.InstrumentToLastPosiDirectionType[data.InstrumentID] ==
+                                EnumPosiDirectionType.Short)
+                            {
+                                Utils.WriteLine("反向强制开多仓", true);
+                                _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true, true);
+                            }
+                            else
+                            {
+                                _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true, false);
+                            }
                         }
 
                         return;
@@ -421,7 +432,17 @@ namespace WrapperTest
                         {
                             var reason = string.Format("{0}最近长趋势向下{1},且低于空仓启动点{2},开出空仓,开仓启动点{3}", data.InstrumentID,
                                 isPointingDownMinuteLong2, data.LastPrice * Utils.SwingLimit, max);
-                            _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true);
+
+                            if (Utils.InstrumentToLastPosiDirectionType.ContainsKey(data.InstrumentID) &&
+                                Utils.InstrumentToLastPosiDirectionType[data.InstrumentID] == EnumPosiDirectionType.Long)
+                            {
+                                Utils.WriteLine("反向强制开空仓", true);
+                                _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true, true);
+                            }
+                            else
+                            {
+                                _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true, false);
+                            }
                         }
 
                         return;

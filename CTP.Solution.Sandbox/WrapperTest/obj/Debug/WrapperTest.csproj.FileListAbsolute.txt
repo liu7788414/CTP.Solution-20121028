@@ -28,6 +28,5 @@ D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\l
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\MathNet.Numerics.dll
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\CTP.xml
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\MathNet.Numerics.xml
-D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.csprojResolveAssemblyReference.cache
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.exe
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.pdb

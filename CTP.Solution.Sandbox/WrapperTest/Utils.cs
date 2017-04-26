@@ -1274,6 +1274,12 @@ namespace WrapperTest
         /// </summary>
         public static ConcurrentDictionary<string, MaxAndMinPrice> InstrumentToMaxAndMinPrice =
             new ConcurrentDictionary<string, MaxAndMinPrice>();
+
+        /// <summary>
+        /// 记录合约上一笔是多仓还是空仓
+        /// </summary>
+        public static ConcurrentDictionary<string, EnumPosiDirectionType> InstrumentToLastPosiDirectionType =
+            new ConcurrentDictionary<string, EnumPosiDirectionType>();
     }
 
 
