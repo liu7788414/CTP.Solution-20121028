@@ -195,19 +195,21 @@ namespace WrapperTest
                     //    _trader.CloseLongPositionByInstrument(data.InstrumentID, "大趋势向下，平掉多仓");
                     //}
 
+                    var stopLossValue = data.LastPrice * Utils.SwingLimit * 2;
+
                     //多仓止损
-                    if (data.LastPrice < stopLossPrices.CostLong - data.LastPrice * Utils.SwingLimit)
+                    if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
                     {
                         var reason = string.Format("{0}从多仓的成本价{1}跌到了绝对止损值{2}以下，即{3}，平掉多仓", data.InstrumentID,
-                            stopLossPrices.CostLong, data.LastPrice * Utils.SwingLimit, data.LastPrice);
+                            stopLossPrices.CostLong, stopLossValue, data.LastPrice);
                         _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
                     }
 
                     //空仓止损
-                    if (data.LastPrice > stopLossPrices.CostShort + data.LastPrice * Utils.SwingLimit)
+                    if (data.LastPrice > stopLossPrices.CostShort + stopLossValue)
                     {
                         var reason = string.Format("{0}从空仓的成本价{1}涨到了绝对止损值{2}以上，即{3}，平掉空仓", data.InstrumentID,
-                            stopLossPrices.CostShort, data.LastPrice * Utils.SwingLimit, data.LastPrice);
+                            stopLossPrices.CostShort, stopLossValue, data.LastPrice);
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                     }
 
