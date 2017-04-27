@@ -1206,7 +1206,7 @@ namespace WrapperTest
 
                 if (pInstrument != null) //排除套利合约
                 {
-                    if (!pInstrument.InstrumentID.Contains("&") && !pInstrument.InstrumentID.Contains("efp") &&
+                    if (!pInstrument.InstrumentID.Contains("&") && !pInstrument.InstrumentID.Contains("efp") && !pInstrument.InstrumentID.Contains("eof") &&
                         Utils.AllowedCategories.Contains(Utils.GetInstrumentCategory(pInstrument.InstrumentID)))
                     {
                         Utils.InstrumentToInstrumentInfo[pInstrument.InstrumentID] = pInstrument;
