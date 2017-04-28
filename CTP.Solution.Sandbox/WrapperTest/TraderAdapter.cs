@@ -15,7 +15,7 @@ using System.Timers;
 
 namespace WrapperTest
 {
-    public class TraderAdapter : CTPTraderAdapter
+    public class TraderAdapter : CTPTraderAdapter, ITraderAdapter
     {
         public static int RequestId = 1;
         public static int CurrentOrderRef;
@@ -1293,7 +1293,7 @@ namespace WrapperTest
                     Front = Front
                 };
 
-                Utils.QuoteMain.Trader = newTrader;
+                ((QuoteAdapter)Utils.QuoteMain).Trader = newTrader;
 
                 newTrader.Connect();
             });
@@ -1443,7 +1443,7 @@ namespace WrapperTest
             return -1;
         }
 
-        public int CloseAllPositions()
+        public void CloseAllPositions()
         {
             try
             {
@@ -1480,7 +1480,6 @@ namespace WrapperTest
             {
                 Utils.WriteException(ex);
             }
-            return 0;
         }
 
         public int ReqOrderInsert(string instrumentId, EnumDirectionType direction, double price, int nVolume,
