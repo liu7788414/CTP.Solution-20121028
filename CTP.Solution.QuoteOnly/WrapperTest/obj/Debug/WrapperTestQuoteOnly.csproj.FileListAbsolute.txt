@@ -11,3 +11,15 @@ D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\CTP.xml
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\MathNet.Numerics.xml
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\obj\Debug\WrapperTest.pdb
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\WrapperTest.exe.config
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\WrapperTest.exe
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\WrapperTest.pdb
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\Common.dll
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\CTP.dll
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\MathNet.Numerics.dll
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\Common.pdb
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\CTP.xml
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\bin\Debug\MathNet.Numerics.xml
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\obj\Debug\WrapperTestQuoteOnly.csprojResolveAssemblyReference.cache
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\obj\Debug\WrapperTest.exe
+C:\CTP.Solution-20121028\CTP.Solution.QuoteOnly\WrapperTest\obj\Debug\WrapperTest.pdb

@@ -8,3 +8,12 @@ D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\CTP.xml
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\MathNet.Numerics.xml
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.dll
 D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.pdb
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\Common.dll
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\Common.pdb
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\CTP.dll
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\MathNet.Numerics.dll
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\CTP.xml
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\MathNet.Numerics.xml
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.dll
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.pdb
+C:\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
