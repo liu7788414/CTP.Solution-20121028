@@ -48,9 +48,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WrapperTest\WrapperTest.csproj">
-      <Project>{5bcf5447-92f6-43ad-8b7c-dc955d658da9}</Project>
-      <Name>WrapperTest</Name>
+    <ProjectReference Include="..\..\CTP.Solution.Common\Common\Common.csproj">
+      <Project>{3a429c77-d4a5-40fa-936e-cfe653c9cf89}</Project>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

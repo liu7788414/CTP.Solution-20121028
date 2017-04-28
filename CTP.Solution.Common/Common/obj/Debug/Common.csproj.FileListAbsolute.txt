@@ -1,0 +1,10 @@
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\Common.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\Common.pdb
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\CTP.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\log4net.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\MathNet.Numerics.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\CTP.xml
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\MathNet.Numerics.xml
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.pdb

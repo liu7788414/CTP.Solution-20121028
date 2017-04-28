@@ -1,0 +1,13 @@
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTestSandBox.csprojResolveAssemblyReference.cache
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.exe
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\WrapperTest.exe.config
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\WrapperTest.exe
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\WrapperTest.pdb
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\Common.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\CTP.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\log4net.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\MathNet.Numerics.dll
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\Common.pdb
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\CTP.xml
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\MathNet.Numerics.xml
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.pdb

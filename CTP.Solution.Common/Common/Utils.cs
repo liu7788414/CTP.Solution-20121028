@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using CTP;
 using log4net;
@@ -85,20 +84,14 @@ namespace WrapperTest
         /// <param name="slope"></param>
         /// <param name="ma"></param>
         /// <returns></returns>
-        public static bool IsPointingUp(List<double> xdata, List<double> ydata, double slope, bool ma)
+        public static Tuple<bool, double, double> IsPointingUp(List<double> xdata, List<double> ydata, double slope)
         {
             try
             {
                 //至少需要两个点
                 if (xdata.Count < 2 || ydata.Count < 2)
                 {
-                    return false;
-                }
-
-                if (ma)
-                {
-                    xdata = GetMovingAverage(xdata);
-                    ydata = GetMovingAverage(ydata);
+                    return new Tuple<bool, double, double>(false, 0, 0);
                 }
 
                 //万一遇到数量不等的时候，进行补救
@@ -127,14 +120,15 @@ namespace WrapperTest
                 }
 
                 var line = Fit.Line(xdata.ToArray(), ydata.ToArray());
-                return line.Item2 > Math.Tan(slope/180.0*Math.PI);
+                return new Tuple<bool, double, double>(line.Item2 > Math.Tan(slope/180.0*Math.PI), line.Item2,
+                    Math.Atan(line.Item2)*180/Math.PI);
             }
             catch (Exception ex)
             {
                 Utils.WriteException(ex);
             }
 
-            return false;
+            return new Tuple<bool, double, double>(false, 0, 0);
         }
 
         /// <summary>
@@ -145,20 +139,14 @@ namespace WrapperTest
         /// <param name="slope"></param>
         /// <param name="ma"></param>
         /// <returns></returns>
-        public static bool IsPointingDown(List<double> xdata, List<double> ydata, double slope, bool ma)
+        public static Tuple<bool, double, double> IsPointingDown(List<double> xdata, List<double> ydata, double slope)
         {
             try
             {
                 //至少需要两个点
                 if (xdata.Count < 2 || ydata.Count < 2)
                 {
-                    return false;
-                }
-
-                if (ma)
-                {
-                    xdata = GetMovingAverage(xdata);
-                    ydata = GetMovingAverage(ydata);
+                    return new Tuple<bool, double, double>(false, 0, 0);
                 }
 
                 //万一遇到数量不等的时候，进行补救
@@ -187,23 +175,29 @@ namespace WrapperTest
                 }
 
                 var line = Fit.Line(xdata.ToArray(), ydata.ToArray());
-                return line.Item2 < Math.Tan(-slope/180.0*Math.PI);
+                return new Tuple<bool, double, double>(line.Item2 < Math.Tan(-slope/180.0*Math.PI), line.Item2,
+                    Math.Atan(line.Item2)*180/Math.PI);
             }
             catch (Exception ex)
             {
                 Utils.WriteException(ex);
             }
 
-            return false;
+            return new Tuple<bool, double, double>(false, 0, 0);
         }
+    }
+
+    public interface ITraderAdapter
+    {
+        void CloseAllPositions();
     }
 
     public static class Utils
     {
         public static object Locker = new object();
         public static bool IsTraderReady = false;
-        public static TraderAdapter Trader;
-        public static QuoteAdapter QuoteMain;
+        public static object Trader;
+        public static object QuoteMain;
         public static ILog LogDebug;
         public static ILog LogInfo;
         public static ConcurrentDictionary<string, ILog> LogQuotes;
@@ -1134,13 +1128,13 @@ namespace WrapperTest
 
         }
 
-        public static void Exit(TraderAdapter trader = null)
+        public static void Exit(object trader = null)
         {
             try
             {
                 if (trader != null)
                 {
-                    trader.CloseAllPositions();
+                    ((ITraderAdapter)trader).CloseAllPositions();
                     SaveStopLossPrices();
                 }
 
@@ -1274,6 +1268,19 @@ namespace WrapperTest
         /// </summary>
         public static ConcurrentDictionary<string, MaxAndMinPrice> InstrumentToMaxAndMinPrice =
             new ConcurrentDictionary<string, MaxAndMinPrice>();
+
+        /// <summary>
+        /// 记录合约上一笔是多仓还是空仓
+        /// </summary>
+        public static ConcurrentDictionary<string, EnumPosiDirectionType> InstrumentToLastPosiDirectionType =
+            new ConcurrentDictionary<string, EnumPosiDirectionType>();
+
+
+        /// <summary>
+        /// 记录合约开仓时刻的角度
+        /// </summary>
+        public static ConcurrentDictionary<string, double> InstrumentToOpenAngle =
+            new ConcurrentDictionary<string, double>();
     }
 
 

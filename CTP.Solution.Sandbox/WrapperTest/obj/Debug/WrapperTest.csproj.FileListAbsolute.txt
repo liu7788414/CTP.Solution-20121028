@@ -40,3 +40,4 @@ C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\Debug\MathNet.Nume
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.csprojResolveAssemblyReference.cache
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.exe
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.pdb
+D:\Code\trunk\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.csprojResolveAssemblyReference.cache

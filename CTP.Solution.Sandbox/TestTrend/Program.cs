@@ -72,10 +72,11 @@ namespace TestTrend
                     currentWindow.Add(quotes[i + j].Item2);
                 }
 
-                var isPointingUp = MathUtils.IsPointingUp(xdata, currentWindow, slope, ma);
-                var isPointingDown = MathUtils.IsPointingDown(xdata, currentWindow, slope, ma);
+                var isPointingUp = MathUtils.IsPointingUp(xdata, currentWindow, slope);
+                var isPointingDown = MathUtils.IsPointingDown(xdata, currentWindow, slope);
 
-                sw.WriteLine("向上{0}，向下{1}，行情区间{2}-{3}，时间区间{4}-{5}", isPointingUp, isPointingDown, i,
+                sw.WriteLine("向上{0}，正切{1}，向下{2}，正切{3}，行情区间{4}-{5}，时间区间{6}-{7}", isPointingUp.Item1, isPointingUp.Item2,
+                    isPointingDown.Item1, isPointingDown.Item2, i,
                     i + windowLength - 1, quotes[i].Item1, quotes[i + windowLength - 1].Item1);
             }
 

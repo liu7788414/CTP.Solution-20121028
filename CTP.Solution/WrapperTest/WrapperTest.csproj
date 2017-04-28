@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5BCF5447-92F6-43AD-8B7C-DC955D658DA9}</ProjectGuid>
+    <ProjectGuid>{29D13EBE-EB72-41D6-84E7-E54DA94421AA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WrapperTest</RootNamespace>
@@ -48,13 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Email.cs" />
-    <Compile Include="InstrumentComparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuoteAdapter.cs" />
     <Compile Include="TraderAdapter.cs" />
-    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -63,6 +60,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CTP.Solution.Common\Common\Common.csproj">
+      <Project>{3a429c77-d4a5-40fa-936e-cfe653c9cf89}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CTP\CTP.VS2010.Net4.0.vcxproj">
       <Project>{321418dc-afab-4d02-9bc8-9a1d73d7be1c}</Project>
       <Name>CTP.VS2010.Net4.0</Name>

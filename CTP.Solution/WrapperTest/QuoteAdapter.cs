@@ -336,10 +336,10 @@ namespace WrapperTest
                     }
                 }
 
-                var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4, false);
-                var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4, false);
+                var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4);
+                var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4);
 
-                return new Tuple<bool, bool>(isPointingUpMinuteAll, isPointingDownMinuteAll);
+                return new Tuple<bool, bool>(isPointingUpMinuteAll.Item1, isPointingDownMinuteAll.Item1);
             }
 
             return new Tuple<bool, bool>(false, false);
@@ -365,8 +365,8 @@ namespace WrapperTest
                         }
                     }
 
-                    var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4, ma);
-                    var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4, ma);
+                    var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4);
+                    var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4);
 
                     var sizeHalf = Utils.MinuteByMinuteSizeLong/2;
                     var count = minuteByMinute.Count;
@@ -390,9 +390,9 @@ namespace WrapperTest
                     }
 
                     var isPointingUpMinuteLong2 = MathUtils.IsPointingUp(Utils.MinuteLongXData,
-                        minuteByMinuteQuotesLong, MathUtils.Slope2, ma);
+                        minuteByMinuteQuotesLong, MathUtils.Slope2);
                     var isPointingDownMinuteLong2 = MathUtils.IsPointingDown(Utils.MinuteLongXData,
-                        minuteByMinuteQuotesLong, MathUtils.Slope2, ma);
+                        minuteByMinuteQuotesLong, MathUtils.Slope2);
 
                     var minuteHalfXData = new List<double>();
 
@@ -402,12 +402,12 @@ namespace WrapperTest
                     }
 
                     var isPointingUpMinuteHalf = MathUtils.IsPointingUp(minuteHalfXData, minuteByMinuteQuotesHalf,
-                        MathUtils.Slope2, ma);
+                        MathUtils.Slope2);
                     var isPointingDownMinuteHalf = MathUtils.IsPointingDown(minuteHalfXData, minuteByMinuteQuotesHalf,
-                        MathUtils.Slope2, ma);
+                        MathUtils.Slope2);
 
                     //根据分时图走势下单
-                    if (isPointingUpMinuteAll && isPointingUpMinuteLong2 && isPointingUpMinuteHalf)
+                    if (isPointingUpMinuteAll.Item1 && isPointingUpMinuteLong2.Item1 && isPointingUpMinuteHalf.Item1)
                     {
                         var min = minuteByMinuteQuotesLong.Min(p => p);
                         var keyMissedLongOpenTrendStartPoint = Utils.GetOpenPositionKey(data.InstrumentID,
@@ -423,21 +423,21 @@ namespace WrapperTest
                         }
                         var reason = string.Format("{0}最近长趋势向上{1},开出多仓,移动均价开仓{2},开仓启动点{3}", data.InstrumentID,
                             isPointingUpMinuteLong2, ma, min);
-                        _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true);
+                        _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true, false);
                         return;
                     }
 
-                    if (!isPointingUpMinuteAll && isPointingUpMinuteLong2 && isPointingUpMinuteHalf)
+                    if (!isPointingUpMinuteAll.Item1 && isPointingUpMinuteLong2.Item1 && isPointingUpMinuteHalf.Item1)
                     {
                         Utils.WriteLine("虽然长趋势向上，中趋势向上，但是大趋势不是，不开多仓", true);
                     }
 
-                    if (!isPointingUpMinuteHalf && isPointingUpMinuteLong2)
+                    if (!isPointingUpMinuteHalf.Item1 && isPointingUpMinuteLong2.Item1)
                     {
                         Utils.WriteLine("虽然长趋势向上，但是中趋势不是，不开多仓", true);
                     }
 
-                    if (isPointingDownMinuteAll && isPointingDownMinuteLong2 && isPointingDownMinuteHalf)
+                    if (isPointingDownMinuteAll.Item1 && isPointingDownMinuteLong2.Item1 && isPointingDownMinuteHalf.Item1)
                     {
                         var max = minuteByMinuteQuotesLong.Max(p => p);
                         var keyMissedShortOpenTrendStartPoint = Utils.GetOpenPositionKey(data.InstrumentID,
@@ -453,16 +453,16 @@ namespace WrapperTest
                         }
                         var reason = string.Format("{0}最近长趋势向下{1},开出空仓,移动均价开仓{2},开仓启动点{3}", data.InstrumentID,
                             isPointingDownMinuteLong2, ma, max);
-                        _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true);
+                        _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true, false);
                         return;
                     }
 
-                    if (!isPointingDownMinuteAll && isPointingDownMinuteLong2 && isPointingDownMinuteHalf)
+                    if (!isPointingDownMinuteAll.Item1 && isPointingDownMinuteLong2.Item1 && isPointingDownMinuteHalf.Item1)
                     {
                         Utils.WriteLine("虽然长趋势向下，中趋势向下，但是大趋势不是，不开空仓", true);
                     }
 
-                    if (!isPointingDownMinuteHalf && isPointingDownMinuteLong2)
+                    if (!isPointingDownMinuteHalf.Item1 && isPointingDownMinuteLong2.Item1)
                     {
                         Utils.WriteLine("虽然长趋势向下，但是中趋势不是，不开空仓", true);
                     }

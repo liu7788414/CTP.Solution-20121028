@@ -15,7 +15,7 @@ using System.Timers;
 
 namespace WrapperTest
 {
-    public class TraderAdapter : CTPTraderAdapter
+    public class TraderAdapter : CTPTraderAdapter, ITraderAdapter
     {
         public static int RequestId = 1;
         public static int CurrentOrderRef;
@@ -157,7 +157,7 @@ namespace WrapperTest
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
         /// <param name="longOrShort"></param>
-        public void OpenPositionByInstrument(string instrumentId, string reason, EnumPosiDirectionType longOrShort, double openTrendStartPoint, bool bConsiderOppositePosition)
+        public void OpenPositionByInstrument(string instrumentId, string reason, EnumPosiDirectionType longOrShort, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen)
         {
             try
             {
@@ -241,7 +241,7 @@ namespace WrapperTest
                             var quotes = Utils.InstrumentToQuotes[instrumentId];
                             var quote = quotes[quotes.Count - 1];
 
-                            if (mamp.Swing/quote.PreSettlementPrice >= Utils.SwingLimit)
+                            if (bForceOpen || (mamp.Swing/quote.PreSettlementPrice >= Utils.SwingLimit))
                             {
                                 OrderInsertLimitPrice(instrumentId, buyOrSell, Utils.OpenVolumePerTime,
                                     EnumOffsetFlagType.Open,
@@ -281,9 +281,9 @@ namespace WrapperTest
         /// </summary>
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
-        public void OpenShortPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition)
+        public void OpenShortPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen)
         {
-            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, openTrendStartPoint, bConsiderOppositePosition);
+            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, openTrendStartPoint, bConsiderOppositePosition, bForceOpen);
         }
 
         /// <summary>
@@ -291,9 +291,9 @@ namespace WrapperTest
         /// </summary>
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
-        public void OpenLongPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition)
+        public void OpenLongPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen)
         {
-            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition);
+            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen);
         }
 
         /// <summary>
@@ -438,6 +438,7 @@ namespace WrapperTest
                         //买开找多仓
                     {
                         longOrShort = EnumPosiDirectionType.Long;
+                        Utils.InstrumentToLastPosiDirectionType[pTrade.InstrumentID] = EnumPosiDirectionType.Long;                        
                     }
                     else
                     {
@@ -445,6 +446,7 @@ namespace WrapperTest
                             //卖开找空仓
                         {
                             longOrShort = EnumPosiDirectionType.Short;
+                            Utils.InstrumentToLastPosiDirectionType[pTrade.InstrumentID] = EnumPosiDirectionType.Short;   
                         }
                         else //其它的都是找反向仓：卖平找多仓，买平找空仓
                         {
@@ -1206,7 +1208,7 @@ namespace WrapperTest
 
                 if (pInstrument != null) //排除套利合约
                 {
-                    if (!pInstrument.InstrumentID.Contains("&") && !pInstrument.InstrumentID.Contains("efp") &&
+                    if (!pInstrument.InstrumentID.Contains("&") && !pInstrument.InstrumentID.Contains("efp") && !pInstrument.InstrumentID.Contains("eof") &&
                         Utils.AllowedCategories.Contains(Utils.GetInstrumentCategory(pInstrument.InstrumentID)))
                     {
                         Utils.InstrumentToInstrumentInfo[pInstrument.InstrumentID] = pInstrument;
@@ -1291,7 +1293,7 @@ namespace WrapperTest
                     Front = Front
                 };
 
-                Utils.QuoteMain.Trader = newTrader;
+                ((QuoteAdapter)Utils.QuoteMain).Trader = newTrader;
 
                 newTrader.Connect();
             });
@@ -1441,7 +1443,7 @@ namespace WrapperTest
             return -1;
         }
 
-        public int CloseAllPositions()
+        public void CloseAllPositions()
         {
             try
             {
@@ -1478,7 +1480,6 @@ namespace WrapperTest
             {
                 Utils.WriteException(ex);
             }
-            return 0;
         }
 
         public int ReqOrderInsert(string instrumentId, EnumDirectionType direction, double price, int nVolume,
