@@ -16,4 +16,3 @@ C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\CTP.xml
 C:\CTP.Solution-20121028\CTP.Solution.Common\Common\bin\Debug\MathNet.Numerics.xml
 C:\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.dll
 C:\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.pdb
-C:\CTP.Solution-20121028\CTP.Solution.Common\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache

@@ -58,10 +58,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CTP.Solution.Common\Common\Common.csproj">
-      <Project>{3a429c77-d4a5-40fa-936e-cfe653c9cf89}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CTP\CTP.VS2010.Net4.0.vcxproj">
       <Project>{321418dc-afab-4d02-9bc8-9a1d73d7be1c}</Project>
       <Name>CTP.VS2010.Net4.0</Name>
