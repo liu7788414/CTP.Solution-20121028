@@ -108,36 +108,11 @@ namespace WrapperTest
             {
                 lock (Utils.Locker)
                 {
-                    Utils.WriteLine("检查是否需要开平仓...");
-
                     foreach (var kv in Utils.InstrumentToQuotes)
                     {
-                        var movingAverageCount = 10;
-
-                        if (kv.Value.Count >= movingAverageCount)
+                        var depthMarketDataField = kv.Value[kv.Value.Count - 1];
+                        if (depthMarketDataField != null)
                         {
-                            var listTemp = new List<ThostFtdcDepthMarketDataField>();
-                            for (var i = kv.Value.Count - 1; i >= kv.Value.Count - movingAverageCount; i--)
-                            {
-                                //行情里面会有空值
-                                if (kv.Value[i] != null && kv.Value[i].LastPrice >= kv.Value[i].LowerLimitPrice &&
-                                    kv.Value[i].LastPrice <= kv.Value[i].UpperLimitPrice)
-                                {
-                                    listTemp.Add(kv.Value[i]);
-                                }
-                            }
-
-                            var depthMarketDataField = new ThostFtdcDepthMarketDataField
-                            {
-                                InstrumentID = kv.Key,
-                                LastPrice = listTemp.Average(p => p.LastPrice),
-                                AveragePrice = listTemp.Average(p => Utils.GetAveragePrice(p)),
-                                UpperLimitPrice = listTemp.Average(p => p.UpperLimitPrice),
-                                LowerLimitPrice = listTemp.Average(p => p.LowerLimitPrice),
-                                PreSettlementPrice = listTemp.Average(p => p.PreSettlementPrice),
-                                PreClosePrice = listTemp.Average(p => p.PreClosePrice)
-                            };
-
                             BuyOrSell(depthMarketDataField);
                         }
                     }
@@ -183,19 +158,7 @@ namespace WrapperTest
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    //var directions = MinuteAllDirection(data.InstrumentID);
-
-                    //if (directions.Item1)//大趋势向上，平空仓
-                    //{
-                    //    _trader.CloseShortPositionByInstrument(data.InstrumentID, "大趋势向上，平掉空仓");
-                    //}
-
-                    //if (directions.Item2)//大趋势向下，平多仓
-                    //{
-                    //    _trader.CloseLongPositionByInstrument(data.InstrumentID, "大趋势向下，平掉多仓");
-                    //}
-
-                    var stopLossValue = data.LastPrice * Utils.SwingLimit * 2;
+                    var stopLossValue = data.LastPrice * Utils.SwingLimit * 1.5;
 
                     //多仓止损
                     if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
@@ -211,6 +174,32 @@ namespace WrapperTest
                         var reason = string.Format("{0}从空仓的成本价{1}涨到了绝对止损值{2}以上，即{3}，平掉空仓", data.InstrumentID,
                             stopLossPrices.CostShort, stopLossValue, data.LastPrice);
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                    }
+
+                    var minuteByMinute = Utils.InstrumentToMinuteByMinuteChart[data.InstrumentID];
+
+                    Tuple<bool, double, double> isPointingUpMinuteLong2 = new Tuple<bool, double, double>(false, 0, 0);
+                    Tuple<bool, double, double> isPointingDownMinuteLong2 = new Tuple<bool, double, double>(false, 0, 0);
+
+                    if (minuteByMinute.Count >= Utils.MinuteByMinuteSizeLong)
+                    {
+                        var count = minuteByMinute.Count;
+
+                        var minuteByMinuteQuotesLong = new List<double>();
+                        for (var i = count - Utils.MinuteByMinuteSizeLong; i < count; i++)
+                        {
+                            if (minuteByMinute[i] != null)
+                            {
+                                minuteByMinuteQuotesLong.Add(minuteByMinute[i].Item2.LastPrice);
+                            }
+                        }
+
+                        isPointingUpMinuteLong2 = MathUtils.IsPointingUp(Utils.MinuteLongXData,
+                            minuteByMinuteQuotesLong, MathUtils.Slope2);
+                        isPointingDownMinuteLong2 = MathUtils.IsPointingDown(Utils.MinuteLongXData,
+                            minuteByMinuteQuotesLong, MathUtils.Slope2);
+
+                        Utils.WriteLine(string.Format("检查当前角度{0}", isPointingUpMinuteLong2.Item3));
                     }
 
                     double openTrendStartPoint = 0;
@@ -231,18 +220,25 @@ namespace WrapperTest
                         var currentDistance = Math.Abs(data.LastPrice - stopLossPrices.CostLong);
                         var trendDistance = Math.Abs(stopLossPrices.CostLong - openTrendStartPoint);
 
-                        if (highestDistance > data.LastPrice * Utils.HighestDistanceConsiderLimit &&
-                            highestDistance > currentDistance &&
-                            currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit * highestDistance)
+                        var keyLongAngle = Utils.GetOpenPositionKey(data.InstrumentID, EnumDirectionType.Buy);
+                        double currentAngle = 0;
+                        if (Utils.InstrumentToOpenAngle.ContainsKey(keyLongAngle))
                         {
-                            var reason = string.Format("{0}从多仓的最高趋势点{1}跌到了{2}以下，即{3}，平掉多仓，多仓成本价{4}，多仓最高盈利价{5}",
-                                data.InstrumentID, highestDistance + trendDistance,
-                                Utils.CurrentDistanceToHighestDistanceRatioLimit, currentDistance + trendDistance,
-                                stopLossPrices.CostLong, stopLossPrices.ForLong);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, "移动止损平多仓");
+                            currentAngle = Utils.InstrumentToOpenAngle[keyLongAngle];
                         }
 
-                        if (highestDistance > data.LastPrice * Utils.StopProfitRatio)
+                        if (currentDistance >= 1 && isPointingUpMinuteLong2.Item3 < currentAngle)
+                        {
+                            var reason = string.Format("{0}的多仓开仓角度开始减小，平掉多仓", data.InstrumentID);
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                        }
+
+                        if (isPointingUpMinuteLong2.Item3 > currentAngle)
+                        {
+                            Utils.InstrumentToOpenAngle[keyLongAngle] = currentAngle;
+                        }
+
+                        if (highestDistance >= 5)
                         {
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
                         }
@@ -264,18 +260,25 @@ namespace WrapperTest
                         var currentDistance = Math.Abs(data.LastPrice - stopLossPrices.CostShort);
                         var trendDistance = Math.Abs(openTrendStartPoint - stopLossPrices.CostShort);
 
-                        if (highestDistance > data.LastPrice * Utils.HighestDistanceConsiderLimit &&
-                            highestDistance > currentDistance &&
-                            currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit * highestDistance)
+                        var keyShortAngle = Utils.GetOpenPositionKey(data.InstrumentID, EnumDirectionType.Sell);
+                        double currentAngle = 0;
+                        if (Utils.InstrumentToOpenAngle.ContainsKey(keyShortAngle))
                         {
-                            var reason = string.Format("{0}从空仓的最低趋势点{1}涨到了{2}以上，即{3}，平掉空仓，空仓成本价{4}，空仓最高盈利价{5}",
-                                data.InstrumentID, highestDistance + trendDistance,
-                                Utils.CurrentDistanceToHighestDistanceRatioLimit,
-                                currentDistance + trendDistance, stopLossPrices.CostShort, stopLossPrices.ForShort);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, "移动止损平空仓");
+                            currentAngle = Utils.InstrumentToOpenAngle[keyShortAngle];
                         }
 
-                        if (highestDistance > data.LastPrice * Utils.StopProfitRatio)
+                        if (currentDistance >= 1 && isPointingDownMinuteLong2.Item3 > currentAngle)
+                        {
+                            var reason = string.Format("{0}的空仓开仓角度开始减小，平掉空仓", data.InstrumentID);
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                        }
+
+                        if (isPointingDownMinuteLong2.Item3 < currentAngle)
+                        {
+                            Utils.InstrumentToOpenAngle[keyShortAngle] = currentAngle;
+                        }
+
+                        if (highestDistance >= 5)
                         {
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
                         }
@@ -307,7 +310,10 @@ namespace WrapperTest
 
                 if (Utils.InstrumentToMinuteByMinuteChart.ContainsKey(data.InstrumentID))
                 {
-                    OpenStrategy(data, false);
+                    lock (Utils.Locker2)
+                    {
+                        OpenStrategy(data, false);
+                    }     
                 }
 
                 #endregion
@@ -318,33 +324,38 @@ namespace WrapperTest
             }
         }
 
-        private Tuple<bool, bool> MinuteAllDirection(string instrumentId)
-        {
-            if (Utils.InstrumentToMinuteByMinuteChart.ContainsKey(instrumentId))
-            {
-                var minuteByMinute = Utils.InstrumentToMinuteByMinuteChart[instrumentId];
+        //private Tuple<bool, bool> MinuteAllDirection(string instrumentId)
+        //{
+        //    if (Utils.InstrumentToMinuteByMinuteChart.ContainsKey(instrumentId))
+        //    {
+        //        var minuteByMinute = Utils.InstrumentToMinuteByMinuteChart[instrumentId];
 
-                //当前大趋势,大趋势向上只开多仓，大趋势向下，只开空仓
-                var minuteAllXData = new List<double>();
-                var minuteAllYData = new List<double>();
-                for (var i = 0; i < minuteByMinute.Count; i++)
-                {
-                    if (minuteByMinute[i] != null)
-                    {
-                        minuteAllXData.Add(i);
-                        minuteAllYData.Add(minuteByMinute[i].Item2.LastPrice);
-                    }
-                }
+        //        //当前大趋势,大趋势向上只开多仓，大趋势向下，只开空仓
+        //        var minuteAllXData = new List<double>();
+        //        var minuteAllYData = new List<double>();
+        //        for (var i = 0; i < minuteByMinute.Count; i++)
+        //        {
+        //            if (minuteByMinute[i] != null)
+        //            {
+        //                minuteAllXData.Add(i);
+        //                minuteAllYData.Add(minuteByMinute[i].Item2.LastPrice);
+        //            }
+        //        }
 
-                var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4);
-                var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4);
+        //        var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4);
+        //        var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4);
 
-                return new Tuple<bool, bool>(isPointingUpMinuteAll.Item1, isPointingDownMinuteAll.Item1);
-            }
+        //        return new Tuple<bool, bool>(isPointingUpMinuteAll.Item1, isPointingDownMinuteAll.Item1);
+        //    }
 
-            return new Tuple<bool, bool>(false, false);
-        }
+        //    return new Tuple<bool, bool>(false, false);
+        //}
 
+        /// <summary>
+        /// 新策略，比最低(最高)趋势点高于(低于)一定比例，开多（空）仓
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="ma"></param>
         private void OpenStrategy(ThostFtdcDepthMarketDataField data, bool ma)
         {
             try
@@ -353,21 +364,6 @@ namespace WrapperTest
 
                 if (minuteByMinute.Count >= Utils.MinuteByMinuteSizeLong)
                 {
-                    //当前大趋势,大趋势向上只开多仓，大趋势向下，只开空仓
-                    var minuteAllXData = new List<double>();
-                    var minuteAllYData = new List<double>();
-                    for (var i = 0; i < minuteByMinute.Count; i++)
-                    {
-                        if (minuteByMinute[i] != null)
-                        {
-                            minuteAllXData.Add(i);
-                            minuteAllYData.Add(minuteByMinute[i].Item2.LastPrice);
-                        }
-                    }
-
-                    var isPointingUpMinuteAll = MathUtils.IsPointingUp(minuteAllXData, minuteAllYData, 0.4);
-                    var isPointingDownMinuteAll = MathUtils.IsPointingDown(minuteAllXData, minuteAllYData, 0.4);
-
                     var sizeHalf = Utils.MinuteByMinuteSizeLong / 2;
                     var count = minuteByMinute.Count;
 
@@ -394,6 +390,7 @@ namespace WrapperTest
                     var isPointingDownMinuteLong2 = MathUtils.IsPointingDown(Utils.MinuteLongXData,
                         minuteByMinuteQuotesLong, MathUtils.Slope2);
 
+                    Utils.WriteLine(string.Format("当前长角度{0}", isPointingUpMinuteLong2.Item3));
                     var minuteHalfXData = new List<double>();
 
                     for (var i = 0; i < sizeHalf; i++)
@@ -405,9 +402,10 @@ namespace WrapperTest
                         MathUtils.Slope2);
                     var isPointingDownMinuteHalf = MathUtils.IsPointingDown(minuteHalfXData, minuteByMinuteQuotesHalf,
                         MathUtils.Slope2);
+                    Utils.WriteLine(string.Format("当前短角度{0}", isPointingUpMinuteHalf.Item3));
 
-                    //根据分时图走势下单
-                    if (isPointingUpMinuteAll.Item1 && isPointingUpMinuteLong2.Item1 && isPointingUpMinuteHalf.Item1)
+                    //开多仓
+                    if (isPointingUpMinuteLong2.Item1 && isPointingUpMinuteHalf.Item1)
                     {
                         var min = minuteByMinuteQuotesLong.Min(p => p);
                         var keyMissedLongOpenTrendStartPoint = Utils.GetOpenPositionKey(data.InstrumentID,
@@ -421,23 +419,38 @@ namespace WrapperTest
                         {
                             Utils.SetMissedOpenStartPoint(data.InstrumentID, EnumPosiDirectionType.Long, min);
                         }
-                        var reason = string.Format("{0}最近长趋势向上{1},开出多仓,移动均价开仓{2},开仓启动点{3}", data.InstrumentID,
-                            isPointingUpMinuteLong2, ma, min);
-                        _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true, false, isPointingUpMinuteLong2.Item3);
+
+                        if (data.LastPrice > min + data.LastPrice * Utils.SwingLimit)
+                        {
+                            var reason = string.Format("{0}最近趋势向上{1},且高于多仓启动点{2},开出多仓,开仓启动点{3},开仓正切{4},开仓角度{5}",
+                                data.InstrumentID,
+                                isPointingUpMinuteLong2, data.LastPrice * Utils.SwingLimit, min,
+                                isPointingUpMinuteLong2.Item2, isPointingUpMinuteLong2.Item3);
+
+                            if (Utils.InstrumentToLastPosiDirectionType.ContainsKey(data.InstrumentID) &&
+                                Utils.InstrumentToLastPosiDirectionType[data.InstrumentID] ==
+                                EnumPosiDirectionType.Short)
+                            {
+                                Utils.WriteLine("反向强制开多仓", true);
+                                _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true, true, isPointingUpMinuteLong2.Item3);
+                            }
+                            else
+                            {
+                                _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, min, true, false, isPointingUpMinuteLong2.Item3);
+                            }
+                        }
+
                         return;
                     }
 
-                    if (!isPointingUpMinuteAll.Item1 && isPointingUpMinuteLong2.Item1 && isPointingUpMinuteHalf.Item1)
-                    {
-                        Utils.WriteLine("虽然长趋势向上，中趋势向上，但是大趋势不是，不开多仓", true);
-                    }
 
                     if (!isPointingUpMinuteHalf.Item1 && isPointingUpMinuteLong2.Item1)
                     {
                         Utils.WriteLine("虽然长趋势向上，但是中趋势不是，不开多仓", true);
                     }
 
-                    if (isPointingDownMinuteAll.Item1 && isPointingDownMinuteLong2.Item1 && isPointingDownMinuteHalf.Item1)
+                    //开空仓
+                    if (isPointingDownMinuteLong2.Item1 && isPointingDownMinuteHalf.Item1)
                     {
                         var max = minuteByMinuteQuotesLong.Max(p => p);
                         var keyMissedShortOpenTrendStartPoint = Utils.GetOpenPositionKey(data.InstrumentID,
@@ -451,15 +464,28 @@ namespace WrapperTest
                         {
                             Utils.SetMissedOpenStartPoint(data.InstrumentID, EnumPosiDirectionType.Short, max);
                         }
-                        var reason = string.Format("{0}最近长趋势向下{1},开出空仓,移动均价开仓{2},开仓启动点{3}", data.InstrumentID,
-                            isPointingDownMinuteLong2, ma, max);
-                        _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true, false, isPointingDownMinuteLong2.Item3);
-                        return;
-                    }
 
-                    if (!isPointingDownMinuteAll.Item1 && isPointingDownMinuteLong2.Item1 && isPointingDownMinuteHalf.Item1)
-                    {
-                        Utils.WriteLine("虽然长趋势向下，中趋势向下，但是大趋势不是，不开空仓", true);
+                        if (data.LastPrice < max - data.LastPrice * Utils.SwingLimit)
+                        {
+                            var reason = string.Format("{0}最近长趋势向下{1},且低于空仓启动点{2},开出空仓,开仓启动点{3},开仓正切{4},开仓角度{5}",
+                                data.InstrumentID,
+                                isPointingDownMinuteLong2, data.LastPrice * Utils.SwingLimit, max,
+                                isPointingDownMinuteLong2.Item2, isPointingDownMinuteLong2.Item3);
+
+
+                            if (Utils.InstrumentToLastPosiDirectionType.ContainsKey(data.InstrumentID) &&
+                                Utils.InstrumentToLastPosiDirectionType[data.InstrumentID] == EnumPosiDirectionType.Long)
+                            {
+                                Utils.WriteLine("反向强制开空仓", true);
+                                _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true, true, isPointingDownMinuteLong2.Item3);
+                            }
+                            else
+                            {
+                                _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, max, true, false, isPointingDownMinuteLong2.Item3);
+                            }
+                        }
+
+                        return;
                     }
 
                     if (!isPointingDownMinuteHalf.Item1 && isPointingDownMinuteLong2.Item1)
@@ -479,16 +505,19 @@ namespace WrapperTest
         {
             try
             {
-                var dtNow = DateTime.Now;
-
-                if (Utils.CurrentChannel != ChannelType.模拟24X7 &&
-                    ((dtNow.Hour >= 0 && dtNow.Hour <= 8) || (dtNow.Hour >= 16 && dtNow.Hour <= 20) ||
-                     dtNow.DayOfWeek == DayOfWeek.Saturday || dtNow.DayOfWeek == DayOfWeek.Sunday)) //排除无效时段的行情
+                lock (Utils.LockerQuote)
                 {
-                    return;
-                }
+                    var dtNow = DateTime.Now;
 
-                Utils.WriteQuote(pDepthMarketData);
+                    if (Utils.CurrentChannel != ChannelType.模拟24X7 &&
+                        ((dtNow.Hour >= 0 && dtNow.Hour <= 8) || (dtNow.Hour >= 16 && dtNow.Hour <= 20) ||
+                         dtNow.DayOfWeek == DayOfWeek.Saturday || dtNow.DayOfWeek == DayOfWeek.Sunday)) //排除无效时段的行情
+                    {
+                        return;
+                    }
+
+                    Utils.WriteQuote(pDepthMarketData);
+                }
             }
             catch (Exception ex)
             {

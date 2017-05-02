@@ -263,6 +263,7 @@ namespace WrapperTest
                 Utils.GetDebugAndInfoLoggers();
                 Utils.ReadStopLossPrices();
                 Utils.GetQuoteLoggers();
+                Utils.WriteLine("我是1");
 
                 Task.Run(() => { ((QuoteAdapter) Utils.QuoteMain).Connect(); });
 

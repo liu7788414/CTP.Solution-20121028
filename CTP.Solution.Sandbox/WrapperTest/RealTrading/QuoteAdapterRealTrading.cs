@@ -270,7 +270,10 @@ namespace WrapperTest
 
                 if (Utils.InstrumentToMinuteByMinuteChart.ContainsKey(data.InstrumentID))
                 {
-                    OpenStrategy(data, false);
+                    lock (Utils.Locker2)
+                    {
+                        OpenStrategy(data, false);
+                    }     
                 }
 
                 #endregion
@@ -462,16 +465,19 @@ namespace WrapperTest
         {
             try
             {
-                var dtNow = DateTime.Now;
-
-                if (Utils.CurrentChannel != ChannelType.模拟24X7 &&
-                    ((dtNow.Hour >= 0 && dtNow.Hour <= 8) || (dtNow.Hour >= 16 && dtNow.Hour <= 20) ||
-                     dtNow.DayOfWeek == DayOfWeek.Saturday || dtNow.DayOfWeek == DayOfWeek.Sunday)) //排除无效时段的行情
+                lock (Utils.LockerQuote)
                 {
-                    return;
-                }
+                    var dtNow = DateTime.Now;
 
-                Utils.WriteQuote(pDepthMarketData);
+                    if (Utils.CurrentChannel != ChannelType.模拟24X7 &&
+                        ((dtNow.Hour >= 0 && dtNow.Hour <= 8) || (dtNow.Hour >= 16 && dtNow.Hour <= 20) ||
+                         dtNow.DayOfWeek == DayOfWeek.Saturday || dtNow.DayOfWeek == DayOfWeek.Sunday)) //排除无效时段的行情
+                    {
+                        return;
+                    }
+
+                    Utils.WriteQuote(pDepthMarketData);
+                }
             }
             catch (Exception ex)
             {

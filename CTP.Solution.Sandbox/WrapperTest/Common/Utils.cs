@@ -195,6 +195,8 @@ namespace WrapperTest
     public static class Utils
     {
         public static object Locker = new object();
+        public static object Locker2 = new object();
+        public static object LockerQuote = new object();
         public static bool IsTraderReady = false;
         public static object Trader;
         public static object QuoteMain;
