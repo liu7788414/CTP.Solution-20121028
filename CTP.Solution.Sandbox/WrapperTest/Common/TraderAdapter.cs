@@ -276,6 +276,37 @@ namespace WrapperTest
             }
         }
 
+        public void SetOpenAngle(string instrumentId, EnumPosiDirectionType posiDirection, EnumDirectionType direction, double openAngle)
+        {
+            var keyToday = Utils.GetPositionKey(instrumentId, posiDirection, EnumPositionDateType.Today);
+            var keyHistory = Utils.GetPositionKey(instrumentId, posiDirection, EnumPositionDateType.History);
+
+            //判断是否持仓，有持仓才动态调整开仓角度
+            if (PositionFields.ContainsKey(keyToday) || PositionFields.ContainsKey(keyHistory))
+            {
+                var keyOpenAngle = Utils.GetOpenPositionKey(instrumentId, direction);
+                if (Utils.InstrumentToOpenAngle.ContainsKey(keyOpenAngle))
+                {
+                    if (posiDirection == EnumPosiDirectionType.Long)
+                    {
+                        if (Utils.InstrumentToOpenAngle[keyOpenAngle] > openAngle)
+                        {
+                            Utils.InstrumentToOpenAngle[keyOpenAngle] = openAngle;
+                            Utils.WriteLine(string.Format("设置{0}的{1}仓开仓角度为{2}", instrumentId, posiDirection, openAngle));
+                        }
+                    }
+                    else
+                    {
+                        if (Utils.InstrumentToOpenAngle[keyOpenAngle] < openAngle)
+                        {
+                            Utils.InstrumentToOpenAngle[keyOpenAngle] = openAngle;
+                            Utils.WriteLine(string.Format("设置{0}的{1}仓开仓角度为{2}", instrumentId, posiDirection, openAngle));
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 开合约的空仓
         /// </summary>
@@ -283,8 +314,7 @@ namespace WrapperTest
         /// <param name="reason"></param>
         public void OpenShortPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
         {
-            Utils.InstrumentToOpenAngle[Utils.GetOpenPositionKey(instrumentId, EnumDirectionType.Sell)] = openAngle;
-            Utils.WriteLine(string.Format("设置{0}空仓开仓角度为{1}", instrumentId, openAngle));
+            SetOpenAngle(instrumentId, EnumPosiDirectionType.Short, EnumDirectionType.Sell, openAngle);
             OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, openTrendStartPoint, bConsiderOppositePosition, bForceOpen);
         }
 
@@ -295,8 +325,7 @@ namespace WrapperTest
         /// <param name="reason"></param>
         public void OpenLongPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
         {
-            Utils.InstrumentToOpenAngle[Utils.GetOpenPositionKey(instrumentId, EnumDirectionType.Buy)] = openAngle;
-            Utils.WriteLine(string.Format("设置{0}多仓开仓角度为{1}", instrumentId, openAngle));
+            SetOpenAngle(instrumentId, EnumPosiDirectionType.Long, EnumDirectionType.Buy, openAngle);
             OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen);
         }
 
