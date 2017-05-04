@@ -351,6 +351,9 @@ namespace WrapperTest
                         minuteByMinuteQuotesLong, MathUtils.Slope2);
 
                     Utils.WriteLine(string.Format("当前长角度{0}", isPointingUpMinuteLong2.Item3));
+                    //Trader.SetOpenAngle(data.InstrumentID, EnumPosiDirectionType.Long, EnumDirectionType.Buy, isPointingUpMinuteLong2.Item3);
+                    //Trader.SetOpenAngle(data.InstrumentID, EnumPosiDirectionType.Short, EnumDirectionType.Sell, isPointingDownMinuteLong2.Item3);
+
                     var minuteHalfXData = new List<double>();
 
                     for (var i = 0; i < sizeHalf; i++)

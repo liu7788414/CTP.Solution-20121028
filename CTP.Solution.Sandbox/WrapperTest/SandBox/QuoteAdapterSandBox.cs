@@ -351,6 +351,9 @@ namespace WrapperTest
                         minuteByMinuteQuotesLong, MathUtils.Slope2);
 
                     Utils.WriteLine(string.Format("当前长角度{0}", isPointingUpMinuteLong2.Item3));
+                    //Trader.SetOpenAngle(data.InstrumentID, EnumPosiDirectionType.Long, EnumDirectionType.Buy, isPointingUpMinuteLong2.Item3);
+                    //Trader.SetOpenAngle(data.InstrumentID, EnumPosiDirectionType.Short, EnumDirectionType.Sell, isPointingDownMinuteLong2.Item3);
+
                     var minuteHalfXData = new List<double>();
 
                     for (var i = 0; i < sizeHalf; i++)
@@ -380,7 +383,7 @@ namespace WrapperTest
                             Utils.SetMissedOpenStartPoint(data.InstrumentID, EnumPosiDirectionType.Long, min);
                         }
 
-                        if (data.LastPrice > min + data.LastPrice*Utils.SwingLimit)
+                        if (data.LastPrice > min + data.LastPrice * Utils.SwingLimit && data.LastPrice <= data.UpperLimitPrice * 0.99) //接近涨停价不开多仓,盈利空间太小
                         {
                             var reason = string.Format("{0}最近趋势向上{1},且高于多仓启动点{2},开出多仓,开仓启动点{3},开仓正切{4},开仓角度{5}",
                                 data.InstrumentID,
@@ -425,7 +428,7 @@ namespace WrapperTest
                             Utils.SetMissedOpenStartPoint(data.InstrumentID, EnumPosiDirectionType.Short, max);
                         }
 
-                        if (data.LastPrice < max - data.LastPrice*Utils.SwingLimit)
+                        if (data.LastPrice < max - data.LastPrice * Utils.SwingLimit && data.LastPrice >= data.LowerLimitPrice * 1.01) //接近跌停价不开空仓,盈利空间太小
                         {
                             var reason = string.Format("{0}最近长趋势向下{1},且低于空仓启动点{2},开出空仓,开仓启动点{3},开仓正切{4},开仓角度{5}",
                                 data.InstrumentID,
