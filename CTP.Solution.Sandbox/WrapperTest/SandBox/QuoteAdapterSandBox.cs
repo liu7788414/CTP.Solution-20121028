@@ -158,7 +158,7 @@ namespace WrapperTest
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    var stopLossValue = data.LastPrice * Utils.SwingLimit * 1.5;
+                    var stopLossValue = data.LastPrice * Utils.SwingLimit;
 
                     //多仓止损
                     if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)

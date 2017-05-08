@@ -157,7 +157,7 @@ namespace WrapperTest
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
         /// <param name="longOrShort"></param>
-        public void OpenPositionByInstrument(string instrumentId, string reason, EnumPosiDirectionType longOrShort, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen)
+        public void OpenPositionByInstrument(string instrumentId, string reason, EnumPosiDirectionType longOrShort, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
         {
             try
             {
@@ -254,6 +254,7 @@ namespace WrapperTest
                                     string.Format("{0}的{1}仓已开,开仓启动点恢复为初始值{2}", instrumentId, longOrShort,
                                         originalOpenTrendStartPoint), true);
                                 Utils.SetMissedOpenStartPoint(instrumentId, longOrShort, originalOpenTrendStartPoint);
+                                SetOpenAngle(instrumentId, longOrShort, buyOrSell, openAngle);
                             }
                             else
                             {
@@ -276,36 +277,13 @@ namespace WrapperTest
             }
         }
 
-        //public void SetOpenAngle(string instrumentId, EnumPosiDirectionType posiDirection, EnumDirectionType direction, double openAngle)
-        //{
-        //    var keyToday = Utils.GetPositionKey(instrumentId, posiDirection, EnumPositionDateType.Today);
-        //    var keyHistory = Utils.GetPositionKey(instrumentId, posiDirection, EnumPositionDateType.History);
-
-        //    //判断是否持仓，有持仓才动态调整开仓角度
-        //    if (PositionFields.ContainsKey(keyToday) || PositionFields.ContainsKey(keyHistory))
-        //    {
-        //        var keyOpenAngle = Utils.GetOpenPositionKey(instrumentId, direction);
-        //        if (Utils.InstrumentToOpenAngle.ContainsKey(keyOpenAngle))
-        //        {
-        //            if (posiDirection == EnumPosiDirectionType.Long)
-        //            {
-        //                if (Utils.InstrumentToOpenAngle[keyOpenAngle] > openAngle)
-        //                {
-        //                    Utils.InstrumentToOpenAngle[keyOpenAngle] = openAngle;
-        //                    Utils.WriteLine(string.Format("设置{0}的{1}仓开仓角度为{2}", instrumentId, posiDirection, openAngle));
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (Utils.InstrumentToOpenAngle[keyOpenAngle] < openAngle)
-        //                {
-        //                    Utils.InstrumentToOpenAngle[keyOpenAngle] = openAngle;
-        //                    Utils.WriteLine(string.Format("设置{0}的{1}仓开仓角度为{2}", instrumentId, posiDirection, openAngle));
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        public void SetOpenAngle(string instrumentId, EnumPosiDirectionType posiDirection, EnumDirectionType direction, double openAngle)
+        {
+            var keyOpenAngle = Utils.GetOpenPositionKey(instrumentId, direction);
+            Utils.InstrumentToOpenAngle[keyOpenAngle] = openAngle;
+            Utils.WriteLine(string.Format("设置{0}的{1}仓开仓角度为{2}", instrumentId, posiDirection, openAngle));
+        }
+        
 
         /// <summary>
         /// 开合约的空仓
@@ -314,7 +292,7 @@ namespace WrapperTest
         /// <param name="reason"></param>
         public void OpenShortPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
         {
-            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, openTrendStartPoint, bConsiderOppositePosition, bForceOpen);
+            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle);
         }
 
         /// <summary>
@@ -324,7 +302,7 @@ namespace WrapperTest
         /// <param name="reason"></param>
         public void OpenLongPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
         {
-            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen);
+            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle);
         }
 
         /// <summary>
