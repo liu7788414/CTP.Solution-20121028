@@ -158,7 +158,7 @@ namespace WrapperTest
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    var stopLossValue = data.LastPrice * Utils.SwingLimit * 1.5;
+                    var stopLossValue = data.LastPrice * Utils.SwingLimit;
 
                     //多仓止损
                     if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
@@ -176,6 +176,32 @@ namespace WrapperTest
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                     }
 
+                    var minuteByMinute = Utils.InstrumentToMinuteByMinuteChart[data.InstrumentID];
+
+                    Tuple<bool, double, double> isPointingUpMinuteLong2 = new Tuple<bool, double, double>(false, 0, 0);
+                    Tuple<bool, double, double> isPointingDownMinuteLong2 = new Tuple<bool, double, double>(false, 0, 0);
+
+                    if (minuteByMinute.Count >= Utils.MinuteByMinuteSizeLong)
+                    {
+                        var count = minuteByMinute.Count;
+
+                        var minuteByMinuteQuotesLong = new List<double>();
+                        for (var i = count - Utils.MinuteByMinuteSizeLong; i < count; i++)
+                        {
+                            if (minuteByMinute[i] != null)
+                            {
+                                minuteByMinuteQuotesLong.Add(minuteByMinute[i].Item2.LastPrice);
+                            }
+                        }
+
+                        isPointingUpMinuteLong2 = MathUtils.IsPointingUp(Utils.MinuteLongXData,
+                            minuteByMinuteQuotesLong, MathUtils.Slope2);
+                        isPointingDownMinuteLong2 = MathUtils.IsPointingDown(Utils.MinuteLongXData,
+                            minuteByMinuteQuotesLong, MathUtils.Slope2);
+
+                        Utils.WriteLine(string.Format("检查当前角度{0}", isPointingUpMinuteLong2.Item3));
+                    }
+
                     double openTrendStartPoint = 0;
 
                     //从多仓的最高盈利跌了一定幅度，平掉多仓，保护盈利，忽略掉小波动
@@ -190,22 +216,28 @@ namespace WrapperTest
                             openTrendStartPoint = Utils.InstrumentToOpenTrendStartPoint[keyLongPosition];
                         }
 
-                        var highestDistance = Math.Abs(stopLossPrices.ForLong - stopLossPrices.CostLong);
-                        var currentDistance = Math.Abs(data.LastPrice - stopLossPrices.CostLong);
-                        var trendDistance = Math.Abs(stopLossPrices.CostLong - openTrendStartPoint);
+                        var highestDistance = stopLossPrices.ForLong - stopLossPrices.CostLong;
+                        var currentDistance = data.LastPrice - stopLossPrices.CostLong;
 
-                        if (highestDistance > data.LastPrice * Utils.HighestDistanceConsiderLimit &&
-                            highestDistance > currentDistance &&
-                            currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit * highestDistance)
+                        var keyLongAngle = Utils.GetOpenPositionKey(data.InstrumentID, EnumDirectionType.Buy);
+                        double limitAngle = 0;
+                        if (Utils.InstrumentToOpenAngle.ContainsKey(keyLongAngle))
                         {
-                            var reason = string.Format("{0}从多仓的最高趋势点{1}跌到了{2}以下，即{3}，平掉多仓，多仓成本价{4}，多仓最高盈利价{5}",
-                                data.InstrumentID, highestDistance + trendDistance,
-                                Utils.CurrentDistanceToHighestDistanceRatioLimit, currentDistance + trendDistance,
-                                stopLossPrices.CostLong, stopLossPrices.ForLong);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, "移动止损平多仓");
+                            limitAngle = Utils.InstrumentToOpenAngle[keyLongAngle];
                         }
 
-                        if (highestDistance > data.LastPrice * Utils.StopProfitRatio)
+                        if (currentDistance >= 1 && isPointingUpMinuteLong2.Item3 < limitAngle)
+                        {
+                            var reason = string.Format("{0}的多仓开仓角度开始减小，平掉多仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingUpMinuteLong2.Item3, limitAngle);
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                        }
+
+                        //if (isPointingUpMinuteLong2.Item3 > limitAngle)
+                        //{
+                        //    Utils.InstrumentToOpenAngle[keyLongAngle] = limitAngle;
+                        //}
+
+                        if (highestDistance >= 5)
                         {
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
                         }
@@ -223,22 +255,28 @@ namespace WrapperTest
                             openTrendStartPoint = Utils.InstrumentToOpenTrendStartPoint[keyShortPosition];
                         }
 
-                        var highestDistance = Math.Abs(stopLossPrices.ForShort - stopLossPrices.CostShort);
-                        var currentDistance = Math.Abs(data.LastPrice - stopLossPrices.CostShort);
-                        var trendDistance = Math.Abs(openTrendStartPoint - stopLossPrices.CostShort);
+                        var highestDistance = stopLossPrices.CostShort - stopLossPrices.ForShort;
+                        var currentDistance = stopLossPrices.CostShort - data.LastPrice;
 
-                        if (highestDistance > data.LastPrice * Utils.HighestDistanceConsiderLimit &&
-                            highestDistance > currentDistance &&
-                            currentDistance <= Utils.CurrentDistanceToHighestDistanceRatioLimit * highestDistance)
+                        var keyShortAngle = Utils.GetOpenPositionKey(data.InstrumentID, EnumDirectionType.Sell);
+                        double limitAngle = 0;
+                        if (Utils.InstrumentToOpenAngle.ContainsKey(keyShortAngle))
                         {
-                            var reason = string.Format("{0}从空仓的最低趋势点{1}涨到了{2}以上，即{3}，平掉空仓，空仓成本价{4}，空仓最高盈利价{5}",
-                                data.InstrumentID, highestDistance + trendDistance,
-                                Utils.CurrentDistanceToHighestDistanceRatioLimit,
-                                currentDistance + trendDistance, stopLossPrices.CostShort, stopLossPrices.ForShort);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, "移动止损平空仓");
+                            limitAngle = Utils.InstrumentToOpenAngle[keyShortAngle];
                         }
 
-                        if (highestDistance > data.LastPrice * Utils.StopProfitRatio)
+                        if (currentDistance >= 1 && isPointingDownMinuteLong2.Item3 > limitAngle)
+                        {
+                            var reason = string.Format("{0}的空仓开仓角度开始减小，平掉空仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingDownMinuteLong2.Item3, limitAngle);
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                        }
+
+                        //if (isPointingDownMinuteLong2.Item3 < limitAngle)
+                        //{
+                        //    Utils.InstrumentToOpenAngle[keyShortAngle] = limitAngle;
+                        //}
+
+                        if (highestDistance >= 5)
                         {
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
                         }
@@ -273,7 +311,7 @@ namespace WrapperTest
                     lock (Utils.Locker2)
                     {
                         OpenStrategy(data, false);
-                    }     
+                    }
                 }
 
                 #endregion
@@ -383,7 +421,7 @@ namespace WrapperTest
                             Utils.SetMissedOpenStartPoint(data.InstrumentID, EnumPosiDirectionType.Long, min);
                         }
 
-                        if (data.LastPrice > min + data.LastPrice * Utils.SwingLimit)
+                        if (data.LastPrice > min + data.LastPrice * Utils.SwingLimit && data.LastPrice <= data.UpperLimitPrice * 0.99) //接近涨停价不开多仓,盈利空间太小
                         {
                             var reason = string.Format("{0}最近趋势向上{1},且高于多仓启动点{2},开出多仓,开仓启动点{3},开仓正切{4},开仓角度{5}",
                                 data.InstrumentID,
@@ -428,7 +466,7 @@ namespace WrapperTest
                             Utils.SetMissedOpenStartPoint(data.InstrumentID, EnumPosiDirectionType.Short, max);
                         }
 
-                        if (data.LastPrice < max - data.LastPrice * Utils.SwingLimit)
+                        if (data.LastPrice < max - data.LastPrice * Utils.SwingLimit && data.LastPrice >= data.LowerLimitPrice * 1.01) //接近跌停价不开空仓,盈利空间太小
                         {
                             var reason = string.Format("{0}最近长趋势向下{1},且低于空仓启动点{2},开出空仓,开仓启动点{3},开仓正切{4},开仓角度{5}",
                                 data.InstrumentID,

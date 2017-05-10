@@ -226,7 +226,7 @@ namespace WrapperTest
                             limitAngle = Utils.InstrumentToOpenAngle[keyLongAngle];
                         }
 
-                        if (currentDistance >= 0 && isPointingUpMinuteLong2.Item3 < limitAngle)
+                        if (currentDistance >= 1 && isPointingUpMinuteLong2.Item3 < limitAngle)
                         {
                             var reason = string.Format("{0}的多仓开仓角度开始减小，平掉多仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingUpMinuteLong2.Item3, limitAngle);
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
@@ -265,7 +265,7 @@ namespace WrapperTest
                             limitAngle = Utils.InstrumentToOpenAngle[keyShortAngle];
                         }
 
-                        if (currentDistance >= 0 && isPointingDownMinuteLong2.Item3 > limitAngle)
+                        if (currentDistance >= 1 && isPointingDownMinuteLong2.Item3 > limitAngle)
                         {
                             var reason = string.Format("{0}的空仓开仓角度开始减小，平掉空仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingDownMinuteLong2.Item3, limitAngle);
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
