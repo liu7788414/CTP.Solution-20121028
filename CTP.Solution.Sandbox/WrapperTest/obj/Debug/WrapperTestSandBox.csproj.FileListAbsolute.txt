@@ -27,5 +27,6 @@ C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\CTP.d
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\MathNet.Numerics.dll
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\CTP.xml
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\MathNet.Numerics.xml
+C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTestSandBox.csprojResolveAssemblyReference.cache
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.exe
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.pdb

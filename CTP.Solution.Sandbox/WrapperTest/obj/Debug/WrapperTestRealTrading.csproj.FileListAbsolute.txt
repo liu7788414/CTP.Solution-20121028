@@ -14,6 +14,6 @@ C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\C
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\MathNet.Numerics.dll
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\CTP.xml
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\MathNet.Numerics.xml
+C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTestRealTrading.csprojResolveAssemblyReference.cache
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.exe
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.pdb
-C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTestRealTrading.csprojResolveAssemblyReference.cache

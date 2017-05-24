@@ -180,9 +180,12 @@ namespace WrapperTest
 
                     Tuple<bool, double, double> isPointingUpMinuteLong2 = new Tuple<bool, double, double>(false, 0, 0);
                     Tuple<bool, double, double> isPointingDownMinuteLong2 = new Tuple<bool, double, double>(false, 0, 0);
+                    Tuple<bool, double, double> isPointingUpMinuteHalf = new Tuple<bool, double, double>(false, 0, 0);
+                    Tuple<bool, double, double> isPointingDownMinuteHalf = new Tuple<bool, double, double>(false, 0, 0);
 
                     if (minuteByMinute.Count >= Utils.MinuteByMinuteSizeLong)
                     {
+                        var sizeHalf = Utils.MinuteByMinuteSizeLong / 2;
                         var count = minuteByMinute.Count;
 
                         var minuteByMinuteQuotesLong = new List<double>();
@@ -194,12 +197,34 @@ namespace WrapperTest
                             }
                         }
 
+                        var minuteByMinuteQuotesHalf = new List<double>();
+                        for (var i = count - sizeHalf; i < count; i++)
+                        {
+                            if (minuteByMinute[i] != null)
+                            {
+                                minuteByMinuteQuotesHalf.Add(minuteByMinute[i].Item2.LastPrice);
+                            }
+                        }
+
                         isPointingUpMinuteLong2 = MathUtils.IsPointingUp(Utils.MinuteLongXData,
                             minuteByMinuteQuotesLong, MathUtils.Slope2);
                         isPointingDownMinuteLong2 = MathUtils.IsPointingDown(Utils.MinuteLongXData,
                             minuteByMinuteQuotesLong, MathUtils.Slope2);
 
-                        Utils.WriteLine(string.Format("检查当前角度{0}", isPointingUpMinuteLong2.Item3));
+                        Utils.WriteLine(string.Format("检查当前长角度{0}", isPointingUpMinuteLong2.Item3));
+
+                        var minuteHalfXData = new List<double>();
+
+                        for (var i = 0; i < sizeHalf; i++)
+                        {
+                            minuteHalfXData.Add(i);
+                        }
+
+                        isPointingUpMinuteHalf = MathUtils.IsPointingUp(minuteHalfXData, minuteByMinuteQuotesHalf,
+                            MathUtils.Slope2);
+                        isPointingDownMinuteHalf = MathUtils.IsPointingDown(minuteHalfXData, minuteByMinuteQuotesHalf,
+                            MathUtils.Slope2);
+                        Utils.WriteLine(string.Format("检查当前短角度{0}", isPointingUpMinuteHalf.Item3));
                     }
 
                     double openTrendStartPoint = 0;
@@ -220,15 +245,15 @@ namespace WrapperTest
                         var currentDistance = data.LastPrice - stopLossPrices.CostLong;
 
                         var keyLongAngle = Utils.GetOpenPositionKey(data.InstrumentID, EnumDirectionType.Buy);
-                        double limitAngle = 0;
-                        if (Utils.InstrumentToOpenAngle.ContainsKey(keyLongAngle))
-                        {
-                            limitAngle = Utils.InstrumentToOpenAngle[keyLongAngle];
-                        }
+                        //double limitAngle = 0;
+                        //if (Utils.InstrumentToOpenAngle.ContainsKey(keyLongAngle))
+                        //{
+                        //    limitAngle = Utils.InstrumentToOpenAngle[keyLongAngle];
+                        //}
 
-                        if (currentDistance >= 1 && isPointingUpMinuteLong2.Item3 < limitAngle)
+                        if (currentDistance >= 1 && isPointingUpMinuteLong2.Item3 < MathUtils.Slope2)
                         {
-                            var reason = string.Format("{0}的多仓开仓角度开始减小，平掉多仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingUpMinuteLong2.Item3, limitAngle);
+                            var reason = string.Format("{0}的多仓开仓角度开始减小，平掉多仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingUpMinuteLong2.Item3, MathUtils.Slope2);
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
                         }
 
@@ -237,9 +262,13 @@ namespace WrapperTest
                         //    Utils.InstrumentToOpenAngle[keyLongAngle] = limitAngle;
                         //}
 
-                        if (highestDistance >= 5)
+                        if (highestDistance >= 5 && isPointingUpMinuteHalf.Item3 < MathUtils.Slope2 / 2)
                         {
                             _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
+                            Thread.Sleep(2000);
+                            Utils.WriteLine("盈利目标达到，退出...", true);
+                            Email.SendMail("盈利目标达到，退出...", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                            Utils.Exit(_trader);
                         }
                     }
 
@@ -259,15 +288,15 @@ namespace WrapperTest
                         var currentDistance = stopLossPrices.CostShort - data.LastPrice;
 
                         var keyShortAngle = Utils.GetOpenPositionKey(data.InstrumentID, EnumDirectionType.Sell);
-                        double limitAngle = 0;
-                        if (Utils.InstrumentToOpenAngle.ContainsKey(keyShortAngle))
-                        {
-                            limitAngle = Utils.InstrumentToOpenAngle[keyShortAngle];
-                        }
+                        //double limitAngle = 0;
+                        //if (Utils.InstrumentToOpenAngle.ContainsKey(keyShortAngle))
+                        //{
+                        //    limitAngle = Utils.InstrumentToOpenAngle[keyShortAngle];
+                        //}
 
-                        if (currentDistance >= 1 && isPointingDownMinuteLong2.Item3 > limitAngle)
+                        if (currentDistance >= 1 && isPointingDownMinuteLong2.Item3 > -MathUtils.Slope2)
                         {
-                            var reason = string.Format("{0}的空仓开仓角度开始减小，平掉空仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingDownMinuteLong2.Item3, limitAngle);
+                            var reason = string.Format("{0}的空仓开仓角度开始减小，平掉空仓，当前角{1}，界限角{2}", data.InstrumentID, isPointingDownMinuteLong2.Item3, -MathUtils.Slope2);
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                         }
 
@@ -276,9 +305,13 @@ namespace WrapperTest
                         //    Utils.InstrumentToOpenAngle[keyShortAngle] = limitAngle;
                         //}
 
-                        if (highestDistance >= 5)
+                        if (highestDistance >= 5 && isPointingDownMinuteHalf.Item3 > -MathUtils.Slope2 / 2)
                         {
                             _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
+                            Thread.Sleep(2000);
+                            Utils.WriteLine("盈利目标达到，退出...", true);
+                            Email.SendMail("盈利目标达到，退出...", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                            Utils.Exit(_trader);
                         }
                     }
                 }
