@@ -5,5 +5,6 @@ C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox2\CTP.
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox2\MathNet.Numerics.dll
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox2\CTP.xml
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox2\MathNet.Numerics.xml
+C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTestSandBox2.csprojResolveAssemblyReference.cache
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.exe
 C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\obj\Debug\WrapperTest.pdb
