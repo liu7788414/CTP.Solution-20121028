@@ -54,3 +54,8 @@ Temporary Items
 *.cache
 *.opensdf
 *.txt
+*.suo
+*.sdf
+*.txt
+*.exe
+*.pdb
