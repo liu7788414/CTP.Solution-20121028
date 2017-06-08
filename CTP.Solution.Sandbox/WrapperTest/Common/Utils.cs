@@ -30,6 +30,15 @@ namespace WrapperTest
         宏源期货
     }
 
+    public enum 多空性质
+    {
+        多开,
+        多平,
+        空开,
+        空平,
+        双开双平多换空换
+    }
+
     public static class MathUtils
     {
         /// <summary>
@@ -360,18 +369,18 @@ namespace WrapperTest
             return time.Substring(0, 5);
         }
 
-        public static string FormatQuote(ThostFtdcDepthMarketDataField pDepthMarketData)
+        public static string FormatQuote(ThostFtdcDepthMarketDataField pDepthMarketData, int xianshou = 0, double cangcha = 0.0, 多空性质 xingzhi = 多空性质.双开双平多换空换)
         {
             var s =
                 string.Format(
-                    "合约:{0},最新价:{1},开盘价:{2},昨结价:{3},昨收价:{4},最高价:{5},最低价:{6},涨停价:{7},跌停价:{8},更新时间:{9},毫秒数:{10},平均价:{11},最新价与平均价距离:{12},成交量:{13},交易日:{14}",
+                    "合约:{0},最新:{1},开盘:{2},昨结:{3},昨收:{4},最高:{5},最低:{6},涨停:{7},跌停:{8},更新时间:{9},毫秒:{10},平均:{11:N2},最新距平均:{12:N2},成交量:{13},交易日:{14},持仓:{15},买一价:{16},买一量:{17},卖一价:{18},卖一量:{19},现手:{20},仓差:{21},性质:{22}",
                     pDepthMarketData.InstrumentID, pDepthMarketData.LastPrice, pDepthMarketData.OpenPrice,
                     pDepthMarketData.PreSettlementPrice,
                     pDepthMarketData.PreClosePrice, pDepthMarketData.HighestPrice, pDepthMarketData.LowestPrice,
                     pDepthMarketData.UpperLimitPrice, pDepthMarketData.LowerLimitPrice, pDepthMarketData.UpdateTime,
                     pDepthMarketData.UpdateMillisec,
                     GetAveragePrice(pDepthMarketData), pDepthMarketData.LastPrice - GetAveragePrice(pDepthMarketData),
-                    pDepthMarketData.Volume, pDepthMarketData.TradingDay);
+                    pDepthMarketData.Volume, pDepthMarketData.TradingDay, pDepthMarketData.OpenInterest, pDepthMarketData.BidPrice1, pDepthMarketData.BidVolume1, pDepthMarketData.AskPrice1, pDepthMarketData.AskVolume1, xianshou, cangcha, xingzhi);
 
             return s;
         }
@@ -480,7 +489,56 @@ namespace WrapperTest
                 {
                     InstrumentToQuotes[pDepthMarketData.InstrumentID] = new List<ThostFtdcDepthMarketDataField>();
                 }
-                
+
+                var xianshou = 0;
+                var cangcha = 0.0;
+                var xingzhi = 多空性质.双开双平多换空换;
+
+                //计算多开、多平、空开、空平
+                if (InstrumentToLastTick.ContainsKey(instrumentId)) //至少要两个tick行情才能计算
+                {
+                    var preTick = InstrumentToLastTick[instrumentId];
+
+                    xianshou = pDepthMarketData.Volume - preTick.Volume;
+                    cangcha = pDepthMarketData.OpenInterest - preTick.OpenInterest;
+                    xingzhi = 多空性质.双开双平多换空换;
+
+                    if (xianshou != Math.Abs(cangcha)) //不考虑双开\双平\多换\空换情况
+                    {
+                        if (cangcha != 0)
+                        {
+                            if (cangcha > 0) //开仓
+                            {
+                                if (pDepthMarketData.LastPrice == pDepthMarketData.AskPrice1) //以卖价成交，多开
+                                {
+                                    xingzhi = 多空性质.多开;
+                                }
+
+                                if (pDepthMarketData.LastPrice == pDepthMarketData.BidPrice1) //以买价成交，空开
+                                {
+                                    xingzhi = 多空性质.空开;
+                                }
+                            }
+                            else
+                            {
+                                if (cangcha < 0) //平仓
+                                {
+                                    if (pDepthMarketData.LastPrice == pDepthMarketData.AskPrice1) //以卖价成交，空平
+                                    {
+                                        xingzhi = 多空性质.空平;
+                                    }
+
+                                    if (pDepthMarketData.LastPrice == pDepthMarketData.BidPrice1) //以买价成交，多平
+                                    {
+                                        xingzhi = 多空性质.多平;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                InstrumentToLastTick[instrumentId] = pDepthMarketData;
                 InstrumentToQuotes[pDepthMarketData.InstrumentID].Add(pDepthMarketData);
 
                 //每10个行情取均值，计算多空仓止损参考价
@@ -548,7 +606,7 @@ namespace WrapperTest
                     }
                 }
 
-                var s = FormatQuote(pDepthMarketData);
+                var s = FormatQuote(pDepthMarketData, xianshou, cangcha, xingzhi);
 
                 try
                 {
@@ -1252,6 +1310,9 @@ namespace WrapperTest
         /// </summary>
         public static ConcurrentDictionary<string, DateTime> InstrumentToLastCloseTime =
             new ConcurrentDictionary<string, DateTime>();
+
+        public static ConcurrentDictionary<string, ThostFtdcDepthMarketDataField> InstrumentToLastTick =
+            new ConcurrentDictionary<string, ThostFtdcDepthMarketDataField>();
 
         /// <summary>
         /// 记录合约开仓的趋势启动点，分为多仓和空仓
