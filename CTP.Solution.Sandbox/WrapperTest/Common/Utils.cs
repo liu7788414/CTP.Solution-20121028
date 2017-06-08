@@ -509,12 +509,12 @@ namespace WrapperTest
                         {
                             if (cangcha > 0) //开仓
                             {
-                                if (pDepthMarketData.LastPrice == pDepthMarketData.AskPrice1) //以卖价成交，多开
+                                if (pDepthMarketData.LastPrice == preTick.AskPrice1) //以卖价成交，多开
                                 {
                                     xingzhi = 多空性质.多开;
                                 }
 
-                                if (pDepthMarketData.LastPrice == pDepthMarketData.BidPrice1) //以买价成交，空开
+                                if (pDepthMarketData.LastPrice == preTick.BidPrice1) //以买价成交，空开
                                 {
                                     xingzhi = 多空性质.空开;
                                 }
@@ -523,12 +523,12 @@ namespace WrapperTest
                             {
                                 if (cangcha < 0) //平仓
                                 {
-                                    if (pDepthMarketData.LastPrice == pDepthMarketData.AskPrice1) //以卖价成交，空平
+                                    if (pDepthMarketData.LastPrice == preTick.AskPrice1) //以卖价成交，空平
                                     {
                                         xingzhi = 多空性质.空平;
                                     }
 
-                                    if (pDepthMarketData.LastPrice == pDepthMarketData.BidPrice1) //以买价成交，多平
+                                    if (pDepthMarketData.LastPrice == preTick.BidPrice1) //以买价成交，多平
                                     {
                                         xingzhi = 多空性质.多平;
                                     }
