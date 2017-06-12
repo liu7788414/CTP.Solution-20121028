@@ -22,6 +22,60 @@ using SendMail;
 
 namespace WrapperTest
 {
+    public enum 信号
+    {
+        多开空平,
+        空开多平,
+        无
+    }
+    public class MarketData
+    {
+        public ThostFtdcDepthMarketDataField pDepthMarketData;
+        public int xianshou = 0;
+        public double cangcha = 0.0;
+        public 多空性质 xingzhi = 多空性质.忽略;
+        public double 近期多头势力 = 0;
+        public double 近期空头势力 = 0;
+        public string 时段;
+        public double 多空比
+        {
+            get 
+            {
+                if (近期空头势力 != 0)
+                {
+                    return 近期多头势力 / 近期空头势力;
+                }
+
+                return 0;
+            }
+        }
+
+        public 信号 信号
+        {
+            get 
+            {
+                if (近期空头势力 > Utils.多空比计算的阈值 && 多空比 > Utils.多空比计算的比例)
+                {
+                    return WrapperTest.信号.多开空平;
+                }
+
+                if (近期多头势力 > Utils.多空比计算的阈值 && 多空比 < 1 / Utils.多空比计算的比例)
+                {
+                    return WrapperTest.信号.空开多平;
+                }
+
+                return 信号.无;
+            }
+        }
+
+        public double 多空差
+        {
+            get
+            {
+                return 近期多头势力 - 近期空头势力;
+            }
+        }
+    }
     public enum ChannelType
     {
         模拟24X7,
@@ -36,7 +90,7 @@ namespace WrapperTest
         多平,
         空开,
         空平,
-        双开双平多换空换
+        忽略
     }
 
     public static class MathUtils
@@ -289,6 +343,11 @@ namespace WrapperTest
         /// </summary>
         public static double SwingLimit = 0.005;
 
+        public static double 多空比计算的秒数周期 = 60;
+
+        public static double 多空比计算的阈值 = 1000;
+
+        public static double 多空比计算的比例 = 3;
         /// <summary>
         /// 止盈比例
         /// </summary>
@@ -369,18 +428,22 @@ namespace WrapperTest
             return time.Substring(0, 5);
         }
 
-        public static string FormatQuote(ThostFtdcDepthMarketDataField pDepthMarketData, int xianshou = 0, double cangcha = 0.0, 多空性质 xingzhi = 多空性质.双开双平多换空换)
+        public static string FormatQuote(MarketData marketData)
         {
             var s =
                 string.Format(
-                    "合约:{0},最新:{1},开盘:{2},昨结:{3},昨收:{4},最高:{5},最低:{6},涨停:{7},跌停:{8},更新时间:{9},毫秒:{10},平均:{11:N2},最新距平均:{12:N2},成交量:{13},交易日:{14},持仓:{15},买一价:{16},买一量:{17},卖一价:{18},卖一量:{19},现手:{20},仓差:{21},性质:{22}",
-                    pDepthMarketData.InstrumentID, pDepthMarketData.LastPrice, pDepthMarketData.OpenPrice,
-                    pDepthMarketData.PreSettlementPrice,
-                    pDepthMarketData.PreClosePrice, pDepthMarketData.HighestPrice, pDepthMarketData.LowestPrice,
-                    pDepthMarketData.UpperLimitPrice, pDepthMarketData.LowerLimitPrice, pDepthMarketData.UpdateTime,
-                    pDepthMarketData.UpdateMillisec,
-                    GetAveragePrice(pDepthMarketData), pDepthMarketData.LastPrice - GetAveragePrice(pDepthMarketData),
-                    pDepthMarketData.Volume, pDepthMarketData.TradingDay, pDepthMarketData.OpenInterest, pDepthMarketData.BidPrice1, pDepthMarketData.BidVolume1, pDepthMarketData.AskPrice1, pDepthMarketData.AskVolume1, xianshou, cangcha, xingzhi);
+                    "{0},{1},{9}.{10},量:{13},持:{15},卖:{16},买:{18},现:{20},仓差:{21},性:{22},多:{23},空:{24},比:{25:N2},差:{26},信:{27},时:{28}",
+                    marketData.pDepthMarketData.InstrumentID, marketData.pDepthMarketData.LastPrice, marketData.pDepthMarketData.OpenPrice,
+                    marketData.pDepthMarketData.PreSettlementPrice,
+                    marketData.pDepthMarketData.PreClosePrice, marketData.pDepthMarketData.HighestPrice, marketData.pDepthMarketData.LowestPrice,
+                    marketData.pDepthMarketData.UpperLimitPrice, marketData.pDepthMarketData.LowerLimitPrice, marketData.pDepthMarketData.UpdateTime,
+                    marketData.pDepthMarketData.UpdateMillisec,
+                    GetAveragePrice(marketData.pDepthMarketData), marketData.pDepthMarketData.LastPrice - GetAveragePrice(marketData.pDepthMarketData),
+                    marketData.pDepthMarketData.Volume, marketData.pDepthMarketData.TradingDay,
+                    marketData.pDepthMarketData.OpenInterest, marketData.pDepthMarketData.AskPrice1,
+                    marketData.pDepthMarketData.BidVolume1, marketData.pDepthMarketData.BidPrice1,
+                    marketData.pDepthMarketData.AskVolume1, marketData.xianshou, marketData.cangcha, marketData.xingzhi,
+                    marketData.近期多头势力, marketData.近期空头势力, marketData.多空比, marketData.多空差, marketData.信号, marketData.时段);
 
             return s;
         }
@@ -472,8 +535,12 @@ namespace WrapperTest
                         {
                             try
                             {
+                                var marketdata = new MarketData
+                                {
+                                    pDepthMarketData = preQuote
+                                };
                                 LogMinuteQuotes[GetInstrumentCategory(pDepthMarketData.InstrumentID)].Debug(
-                                    FormatQuote(preQuote));
+                                    FormatQuote(marketdata));
                             }
                             catch (Exception)
                             {
@@ -492,7 +559,7 @@ namespace WrapperTest
 
                 var xianshou = 0;
                 var cangcha = 0.0;
-                var xingzhi = 多空性质.双开双平多换空换;
+                var xingzhi = 多空性质.忽略;
 
                 //计算多开、多平、空开、空平
                 if (InstrumentToLastTick.ContainsKey(instrumentId)) //至少要两个tick行情才能计算
@@ -501,7 +568,7 @@ namespace WrapperTest
 
                     xianshou = pDepthMarketData.Volume - preTick.Volume;
                     cangcha = pDepthMarketData.OpenInterest - preTick.OpenInterest;
-                    xingzhi = 多空性质.双开双平多换空换;
+                    xingzhi = 多空性质.忽略;
 
                     if (xianshou != Math.Abs(cangcha)) //不考虑双开\双平\多换\空换情况
                     {
@@ -606,7 +673,94 @@ namespace WrapperTest
                     }
                 }
 
-                var s = FormatQuote(pDepthMarketData, xianshou, cangcha, xingzhi);
+                var marketData = new MarketData
+                {
+                    pDepthMarketData = pDepthMarketData,
+                    xianshou = xianshou,
+                    cangcha = cangcha,
+                    xingzhi = xingzhi
+                };
+
+                if(!InstrumentToMarketData.ContainsKey(instrumentId))
+                {
+                    InstrumentToMarketData[instrumentId] = new List<MarketData>();
+                }
+
+                var count = InstrumentToMarketData[instrumentId].Count;
+
+                if (count > 0)
+                {
+                    var start = InstrumentToMarketData[instrumentId][0];
+                    var dtNow = Convert.ToDateTime(pDepthMarketData.UpdateTime);
+                    var dtStart = Convert.ToDateTime(start.pDepthMarketData.UpdateTime);
+
+                    if (dtNow - dtStart >= new TimeSpan(0, 0, (int)多空比计算的秒数周期))
+                    {
+                        for (var i = count - 1; i >= 0; i--)
+                        {
+                            var md = InstrumentToMarketData[instrumentId][i];
+                            var dtThen = Convert.ToDateTime(md.pDepthMarketData.UpdateTime);
+
+                            if (dtNow - dtThen < new TimeSpan(0, 0, (int)(多空比计算的秒数周期 * 1.1)) && dtNow - dtThen > new TimeSpan(0, 0, (int)(多空比计算的秒数周期 * 0.9)))
+                            {
+                                var list = InstrumentToMarketData[instrumentId];
+                                var listRange = list.GetRange(i, count - i);
+
+                                var p = from d in listRange where d.xingzhi == 多空性质.多开 || d.xingzhi == 多空性质.空平 select Math.Abs(d.cangcha);
+                                marketData.近期多头势力 = p.Sum();
+
+                                var q = from d in listRange where d.xingzhi == 多空性质.空开 || d.xingzhi == 多空性质.多平 select Math.Abs(d.cangcha);
+                                marketData.近期空头势力 = q.Sum();
+
+                                //补上当前tick的数据
+                                if (marketData.xingzhi == 多空性质.多开 || marketData.xingzhi == 多空性质.空平)
+                                {
+                                    marketData.近期多头势力 += Math.Abs(marketData.cangcha);
+                                }
+
+                                if (marketData.xingzhi == 多空性质.空开 || marketData.xingzhi == 多空性质.多平)
+                                {
+                                    marketData.近期空头势力 += Math.Abs(marketData.cangcha);
+                                }
+
+                                marketData.时段 = string.Format("{0}.{1}|{2}.{3}", md.pDepthMarketData.UpdateTime, md.pDepthMarketData.UpdateMillisec, pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
+                                break;
+                            }
+                        }
+                    }
+                    else //小于周期时
+                    {
+                        var list = InstrumentToMarketData[instrumentId];
+
+                        var p = from d in list where d.xingzhi == 多空性质.多开 || d.xingzhi == 多空性质.空平 select Math.Abs(d.cangcha);
+                        marketData.近期多头势力 = p.Sum();
+
+                        var q = from d in list where d.xingzhi == 多空性质.空开 || d.xingzhi == 多空性质.多平 select Math.Abs(d.cangcha);
+                        marketData.近期空头势力 = q.Sum();
+
+                        //补上当前tick的数据
+                        if (marketData.xingzhi == 多空性质.多开 || marketData.xingzhi == 多空性质.空平)
+                        {
+                            marketData.近期多头势力 += Math.Abs(marketData.cangcha);
+                        }
+
+                        if (marketData.xingzhi == 多空性质.空开 || marketData.xingzhi == 多空性质.多平)
+                        {
+                            marketData.近期空头势力 += Math.Abs(marketData.cangcha);
+                        }
+
+                        if (list.Count > 0)
+                        {
+                            marketData.时段 = string.Format("{0}.{1}|{2}.{3}", list[0].pDepthMarketData.UpdateTime, list[0].pDepthMarketData.UpdateMillisec, pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
+                        }
+
+                    }
+                }
+
+                    
+                InstrumentToMarketData[instrumentId].Add(marketData);
+                
+                var s = FormatQuote(marketData);
 
                 try
                 {
@@ -800,6 +954,15 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 StopProfitRatio = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                多空比计算的秒数周期 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                多空比计算的阈值 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                多空比计算的比例 = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }
@@ -1344,6 +1507,10 @@ namespace WrapperTest
         /// </summary>
         public static ConcurrentDictionary<string, double> InstrumentToOpenAngle =
             new ConcurrentDictionary<string, double>();
+
+        /// </summary>
+        public static ConcurrentDictionary<string, List<MarketData>> InstrumentToMarketData =
+            new ConcurrentDictionary<string, List<MarketData>>();
     }
 
 
