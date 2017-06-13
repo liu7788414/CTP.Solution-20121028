@@ -454,14 +454,14 @@ namespace WrapperTest
 
                 //收盘前10分钟就禁止再开仓
                 if ((dateTime.Hour == 14 && dateTime.Minute == 55) ||
-                    (dateTime.Hour == 23 && dateTime.Minute == 25))
+                    (dateTime.Hour == 22 && dateTime.Minute == 55))
                 {
                     Utils.WriteLine(string.Format("到达禁止开仓时间{0}", dateTime));
                     Utils.IsOpenLocked = true;
                 }
 
                 if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 30) ||
-                    (dateTime.Hour == 23 && dateTime.Minute == 29 && dateTime.Second >= 30))
+                    (dateTime.Hour == 22 && dateTime.Minute == 29 && dateTime.Second >= 30))
                 {
                     Utils.WriteLine(string.Format("临近收盘，平掉所有持仓{0}", dateTime), true);
                     ((TraderAdapter) Utils.Trader).CloseAllPositions();
