@@ -263,7 +263,7 @@ namespace WrapperTest
                 Utils.GetDebugAndInfoLoggers();
                 Utils.ReadStopLossPrices();
                 Utils.GetQuoteLoggers();
-                Utils.WriteLine("我是2");
+                Utils.WriteLine("我是1");
 
                 Task.Run(() => { ((QuoteAdapter)Utils.QuoteMain).Connect(); });
 
@@ -454,14 +454,14 @@ namespace WrapperTest
 
                 //收盘前10分钟就禁止再开仓
                 if ((dateTime.Hour == 14 && dateTime.Minute == 55) ||
-                    (dateTime.Hour == 23 && dateTime.Minute == 25))
+                    (dateTime.Hour == 22 && dateTime.Minute == 55))
                 {
                     Utils.WriteLine(string.Format("到达禁止开仓时间{0}", dateTime));
                     Utils.IsOpenLocked = true;
                 }
 
                 if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 30) ||
-                    (dateTime.Hour == 23 && dateTime.Minute == 29 && dateTime.Second >= 30))
+                    (dateTime.Hour == 22 && dateTime.Minute == 59 && dateTime.Second >= 30))
                 {
                     Utils.WriteLine(string.Format("临近收盘，平掉所有持仓{0}", dateTime), true);
                     ((TraderAdapter)Utils.Trader).CloseAllPositions();
@@ -478,6 +478,17 @@ namespace WrapperTest
         {
             try
             {
+                foreach (var key in Utils.InstrumentToMatchPrice.Keys)
+                {
+                    var dict = Utils.InstrumentToMatchPrice[key];
+                    dict = dict.OrderBy(k => k.Key).ToDictionary(k => k.Key, v => v.Value);
+
+                    foreach (var m in dict)
+                    {
+                        Utils.WriteLine(string.Format("成交价:{0},成交量:{1}", m.Key, m.Value.Volume));
+                    }
+                }
+
                 var dateTime = DateTime.Now;
                 Utils.WriteLine(string.Format("检查是否退出{0}", dateTime));
 

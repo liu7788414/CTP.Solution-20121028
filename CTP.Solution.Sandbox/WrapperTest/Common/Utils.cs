@@ -32,6 +32,8 @@ namespace WrapperTest
     {
         public ThostFtdcDepthMarketDataField pDepthMarketData;
         public int 现手 = 0;
+        public int 总多 = 0;
+        public int 总空 = 0;
         public double 仓差 = 0.0;
         public 多空性质 性质 = 多空性质.____;
         public double 近期多头势力 = 0;
@@ -319,7 +321,8 @@ namespace WrapperTest
         public static double LimitCloseRange = 0.995;
         public static int OpenVolumePerTime = 1;
         public static int CategoryUpperLimit = 8;
-
+        public static int 总多 = 0;
+        public static int 总空 = 0;
         /// <summary>
         /// 用于拟合的分时图节点个数之一，短
         /// </summary>
@@ -446,7 +449,7 @@ namespace WrapperTest
         {
             var s =
                 string.Format(
-                    ",{0},{1,-5},{9}.{10,-3},量:{13,-6},持:{15},卖:{16},买:{18},现:{20,-5},仓差:{21,-5},性:{22},多:{23,-5},空:{24,-5},比:{25,-4},差:{26,-5},信:{27},时:{28,-12}|{29,-12}",
+                    ",{0},{1,-5},{9}.{10,-3},量:{13,-6},持:{15},卖:{16},买:{18},现:{20,-5},仓差:{21,-5},性:{22},多:{23,-5},空:{24,-5},比:{25,-4},差:{26,-5},信:{27},时:{28,-12}|{29,-12},总多:{30,-6},总空:{31,-6}",
                     marketData.pDepthMarketData.InstrumentID, marketData.pDepthMarketData.LastPrice, marketData.pDepthMarketData.OpenPrice,
                     marketData.pDepthMarketData.PreSettlementPrice,
                     marketData.pDepthMarketData.PreClosePrice, marketData.pDepthMarketData.HighestPrice, marketData.pDepthMarketData.LowestPrice,
@@ -457,7 +460,7 @@ namespace WrapperTest
                     marketData.pDepthMarketData.OpenInterest, marketData.pDepthMarketData.AskPrice1,
                     marketData.pDepthMarketData.BidVolume1, marketData.pDepthMarketData.BidPrice1,
                     marketData.pDepthMarketData.AskVolume1, marketData.现手, marketData.仓差, marketData.性质,
-                    marketData.近期多头势力, marketData.近期空头势力, marketData.多空比, marketData.多空差, marketData.信号, marketData.时段开始, marketData.时段结束);
+                    marketData.近期多头势力, marketData.近期空头势力, marketData.多空比, marketData.多空差, marketData.信号, marketData.时段开始, marketData.时段结束, marketData.总多, marketData.总空);
 
             return s;
         }
@@ -589,7 +592,27 @@ namespace WrapperTest
                     仓差 = pDepthMarketData.OpenInterest - preTick.OpenInterest;
                     性质 = 多空性质.____;
 
-                    if (现手 != Math.Abs(仓差)) //不考虑双开\双平\多换\空换情况
+                    //记录成交价分布
+                    if(!InstrumentToMatchPrice.ContainsKey(instrumentId))
+                    {
+                        InstrumentToMatchPrice[instrumentId] = new Dictionary<double, MatchPriceVolume>();
+                    }
+
+                    var dictMatchPriceVolume = InstrumentToMatchPrice[instrumentId];
+
+                    var price =  Math.Round(pDepthMarketData.LastPrice, 2);
+
+                    if (!dictMatchPriceVolume.ContainsKey(price))
+                    {
+                        dictMatchPriceVolume[price] = new MatchPriceVolume { Price = price, Volume = (int)Math.Abs(仓差) };
+                    }
+                    else
+                    {
+                        var d = dictMatchPriceVolume[price];
+                        d.Volume += (int)Math.Abs(仓差);
+                    }
+
+                    if (现手 != (int)Math.Abs(仓差)) //不考虑双开\双平\多换\空换情况
                     {
                         if (仓差 != 0)
                         {
@@ -598,12 +621,14 @@ namespace WrapperTest
                                 if (DoubleEqual(pDepthMarketData.LastPrice, preTick.AskPrice1) || pDepthMarketData.LastPrice >= preTick.AskPrice1) //以卖价成交，多开，价涨
                                 {
                                     性质 = 多空性质.多开;
+                                    总多 += (int)Math.Abs(仓差);
                                 }
                                 else
                                 {
                                     if (DoubleEqual(pDepthMarketData.LastPrice, preTick.BidPrice1) || pDepthMarketData.LastPrice <= preTick.BidPrice1) //以买价成交，空开，价跌
                                     {
                                         性质 = 多空性质.空开;
+                                        总空 += (int)Math.Abs(仓差);
                                     }
                                     else
                                     {
@@ -619,12 +644,14 @@ namespace WrapperTest
                                     if (DoubleEqual(pDepthMarketData.LastPrice, preTick.AskPrice1) || pDepthMarketData.LastPrice >= preTick.AskPrice1) //以卖价成交，空平，价涨
                                     {
                                         性质 = 多空性质.空平;
+                                        总多 += (int)Math.Abs(仓差);
                                     }
                                     else
                                     {
                                         if (DoubleEqual(pDepthMarketData.LastPrice, preTick.BidPrice1) || pDepthMarketData.LastPrice <= preTick.BidPrice1) //以买价成交，多平，价跌
                                         {
                                             性质 = 多空性质.多平;
+                                            总空 += (int)Math.Abs(仓差);
                                         }
                                         else
                                         {
@@ -711,7 +738,9 @@ namespace WrapperTest
                     pDepthMarketData = pDepthMarketData,
                     现手 = 现手,
                     仓差 = 仓差,
-                    性质 = 性质
+                    性质 = 性质,
+                    总多 = 总多,
+                    总空 = 总空
                 };
 
                 if(!InstrumentToMarketData.ContainsKey(instrumentId))
@@ -1545,10 +1574,20 @@ namespace WrapperTest
         /// <summary>
         /// 合约成交价分布
         /// </summary>
-        public static ConcurrentDictionary<string, Dictionary<double, int>> InstrumentToMatchPrice = 
-            new ConcurrentDictionary<string, Dictionary<double, int>>();
+        public static ConcurrentDictionary<string, Dictionary<double, MatchPriceVolume>> InstrumentToMatchPrice =
+            new ConcurrentDictionary<string, Dictionary<double, MatchPriceVolume>>();
     }
 
+    public class MatchPriceVolume : IComparable<MatchPriceVolume>
+    {
+        public double Price;
+        public int Volume;
+
+        public int CompareTo(MatchPriceVolume other)
+        {
+            return Price.CompareTo(other.Price);
+        }
+    }
 
     public class ExchangeTime
     {
