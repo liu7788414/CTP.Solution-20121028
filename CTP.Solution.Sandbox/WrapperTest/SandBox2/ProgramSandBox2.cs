@@ -9,13 +9,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using  CTP;
+using CTP;
 using log4net;
 using SendMail;
 using System.Timers;
 using System.Windows.Forms;
 
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTest.exe.config", Watch = true)]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestSandBox2.exe.config", Watch = true)]
 
 namespace WrapperTest
 {
@@ -82,74 +82,74 @@ namespace WrapperTest
                 switch (Convert.ToInt32(line))
                 {
                     case 1:
-                    {
-                        //模拟
-                        Utils.Trader = new TraderAdapter
                         {
-                            BrokerId = "9999",
-                            InvestorId = Utils.SimNowAccount,
-                            Password = Utils.SimNowPassword,
-                            Front = new[] {"tcp://180.168.146.187:10030"} //模拟24*7
-                        };
+                            //模拟
+                            Utils.Trader = new TraderAdapter
+                            {
+                                BrokerId = "9999",
+                                InvestorId = Utils.SimNowAccount,
+                                Password = Utils.SimNowPassword,
+                                Front = new[] { "tcp://180.168.146.187:10030" } //模拟24*7
+                            };
 
-                        Utils.QuoteMain = new QuoteAdapter((TraderAdapter) Utils.Trader)
-                        {
-                            BrokerId = "9999",
-                            InvestorId = Utils.SimNowAccount,
-                            Password = Utils.SimNowPassword,
-                            Front = new[] {"tcp://180.168.146.187:10031"} //模拟24*7
-                        };
+                            Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            {
+                                BrokerId = "9999",
+                                InvestorId = Utils.SimNowAccount,
+                                Password = Utils.SimNowPassword,
+                                Front = new[] { "tcp://180.168.146.187:10031" } //模拟24*7
+                            };
 
-                        Utils.CurrentChannel = ChannelType.模拟24X7;
+                            Utils.CurrentChannel = ChannelType.模拟24X7;
 
-                        break;
-                    }
+                            break;
+                        }
                     case 2:
-                    {
-                        //模拟
-                        Utils.Trader = new TraderAdapter
                         {
-                            BrokerId = "9999",
-                            InvestorId = Utils.SimNowAccount,
-                            Password = Utils.SimNowPassword,
-                            Front =
-                                new[]
+                            //模拟
+                            Utils.Trader = new TraderAdapter
+                            {
+                                BrokerId = "9999",
+                                InvestorId = Utils.SimNowAccount,
+                                Password = Utils.SimNowPassword,
+                                Front =
+                                    new[]
                                 {
                                     "tcp://180.168.146.187:10000", "tcp://180.168.146.187:10001",
                                     "tcp://218.202.237.33:10002"
                                 }
-                            //模拟交易所时间
-                        };
+                                //模拟交易所时间
+                            };
 
-                        //华泰期货的行情
-                        Utils.QuoteMain = new QuoteAdapter((TraderAdapter) Utils.Trader)
-                        {
-                            BrokerId = "9999",
-                            InvestorId = "20051875",
-                            Password = "91418",
-                            Front =
-                                new[]
+                            //华泰期货的行情
+                            Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            {
+                                BrokerId = "9999",
+                                InvestorId = "20051875",
+                                Password = "91418",
+                                Front =
+                                    new[]
                                 {
                                     "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
                                     "tcp://180.168.212.230:41213",
                                     "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
                                     "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
                                 } //模拟交易所时间
-                        };
+                            };
 
-                        Utils.CurrentChannel = ChannelType.模拟交易所;
-                        break;
-                    }
+                            Utils.CurrentChannel = ChannelType.模拟交易所;
+                            break;
+                        }
                     case 3:
-                    {
-                        //华泰
-                        Utils.Trader = new TraderAdapter
                         {
-                            BrokerId = "8080",
-                            InvestorId = "20051875",
-                            Password = "414887",
-                            Front =
-                                new[]
+                            //华泰
+                            Utils.Trader = new TraderAdapter
+                            {
+                                BrokerId = "8080",
+                                InvestorId = "20051875",
+                                Password = "414887",
+                                Front =
+                                    new[]
                                 {
                                     "tcp://180.168.212.228:41205", "tcp://180.168.212.229:41205",
                                     "tcp://180.168.212.230:41205",
@@ -157,38 +157,38 @@ namespace WrapperTest
                                     "tcp://180.168.212.233:41205",
                                     "tcp://180.168.212.234:41205"
                                 }
-                        };
+                            };
 
-                        //华泰期货的行情
-                        Utils.QuoteMain = new QuoteAdapter((TraderAdapter) Utils.Trader)
-                        {
-                            BrokerId = "9999",
-                            InvestorId = "20051875",
-                            Password = "91418",
-                            Front =
-                                new[]
+                            //华泰期货的行情
+                            Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            {
+                                BrokerId = "9999",
+                                InvestorId = "20051875",
+                                Password = "91418",
+                                Front =
+                                    new[]
                                 {
                                     "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
                                     "tcp://180.168.212.230:41213",
                                     "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
                                     "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
                                 }
-                        };
+                            };
 
-                        Utils.CurrentChannel = ChannelType.华泰期货;
+                            Utils.CurrentChannel = ChannelType.华泰期货;
 
-                        break;
-                    }
+                            break;
+                        }
                     case 4:
-                    {
-                        //宏源
-                        Utils.Trader = new TraderAdapter
                         {
-                            BrokerId = "1080",
-                            InvestorId = "901200953",
-                            Password = "414887",
-                            Front =
-                                new[]
+                            //宏源
+                            Utils.Trader = new TraderAdapter
+                            {
+                                BrokerId = "1080",
+                                InvestorId = "901200953",
+                                Password = "414887",
+                                Front =
+                                    new[]
                                 {
                                     "tcp://180.169.112.52:41205", "tcp://180.169.112.53:41205",
                                     "tcp://180.169.112.54:41205",
@@ -200,74 +200,74 @@ namespace WrapperTest
                                     "tcp://140.207.168.9:41213",
                                     "tcp://140.207.168.10:41213",
                                 }
-                        };
+                            };
 
-                        ////宏源期货的行情
-                        //Utils.QuoteMain = new QuoteAdapter(Utils.Trader)
-                        //{
-                        //    BrokerId = "1080",
-                        //    InvestorId = "901200953",
-                        //    Password = "091418",
-                        //    Front =
-                        //        new[]
-                        //        {
-                        //            "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
-                        //            "tcp://180.169.112.54:41213",
-                        //            "tcp://180.169.112.55:41213"
-                        //        }
-                        //};
+                            ////宏源期货的行情
+                            //Utils.QuoteMain = new QuoteAdapter(Utils.Trader)
+                            //{
+                            //    BrokerId = "1080",
+                            //    InvestorId = "901200953",
+                            //    Password = "091418",
+                            //    Front =
+                            //        new[]
+                            //        {
+                            //            "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
+                            //            "tcp://180.169.112.54:41213",
+                            //            "tcp://180.169.112.55:41213"
+                            //        }
+                            //};
 
-                        //华泰期货的行情
-                        Utils.QuoteMain = new QuoteAdapter((TraderAdapter) Utils.Trader)
-                        {
-                            BrokerId = "9999",
-                            InvestorId = "20051875",
-                            Password = "91418",
-                            Front =
-                                new[]
+                            //华泰期货的行情
+                            Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            {
+                                BrokerId = "9999",
+                                InvestorId = "20051875",
+                                Password = "91418",
+                                Front =
+                                    new[]
                                 {
                                     "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
                                     "tcp://180.168.212.230:41213",
                                     "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
                                     "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
                                 }
-                        };
+                            };
 
-                        Utils.CurrentChannel = ChannelType.宏源期货;
-                        break;
-                    }
+                            Utils.CurrentChannel = ChannelType.宏源期货;
+                            break;
+                        }
                     default:
-                    {
-                        //模拟
-                        Utils.Trader = new TraderAdapter
                         {
-                            BrokerId = "9999",
-                            InvestorId = Utils.SimNowAccount,
-                            Password = Utils.SimNowPassword,
-                            Front = new[] {"tcp://180.168.146.187:10030"} //模拟24*7
-                        };
+                            //模拟
+                            Utils.Trader = new TraderAdapter
+                            {
+                                BrokerId = "9999",
+                                InvestorId = Utils.SimNowAccount,
+                                Password = Utils.SimNowPassword,
+                                Front = new[] { "tcp://180.168.146.187:10030" } //模拟24*7
+                            };
 
-                        Utils.QuoteMain = new QuoteAdapter((TraderAdapter) Utils.Trader)
-                        {
-                            BrokerId = "9999",
-                            InvestorId = Utils.SimNowAccount,
-                            Password = Utils.SimNowPassword,
-                            Front = new[] {"tcp://180.168.146.187:10031"} //模拟24*7
-                        };
+                            Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            {
+                                BrokerId = "9999",
+                                InvestorId = Utils.SimNowAccount,
+                                Password = Utils.SimNowPassword,
+                                Front = new[] { "tcp://180.168.146.187:10031" } //模拟24*7
+                            };
 
-                        Utils.CurrentChannel = ChannelType.模拟24X7;
-                        break;
-                    }
+                            Utils.CurrentChannel = ChannelType.模拟24X7;
+                            break;
+                        }
                 }
 
                 Utils.GetDebugAndInfoLoggers();
                 Utils.ReadStopLossPrices();
                 Utils.GetQuoteLoggers();
-                Utils.WriteLine("我是2");
+                Utils.WriteLine("我是1");
 
-                Task.Run(() => { ((QuoteAdapter) Utils.QuoteMain).Connect(); });
+                Task.Run(() => { ((QuoteAdapter)Utils.QuoteMain).Connect(); });
 
-                while (!((QuoteAdapter) Utils.QuoteMain).IsReady)
+                while (!((QuoteAdapter)Utils.QuoteMain).IsReady)
                 {
                     Utils.WriteLine("等待行情连接");
                     Thread.Sleep(100);
@@ -275,7 +275,7 @@ namespace WrapperTest
 
                 Utils.WriteLine("行情连接成功！！！");
 
-                Task.Run(() => { ((TraderAdapter) Utils.Trader).Connect(); });
+                Task.Run(() => { ((TraderAdapter)Utils.Trader).Connect(); });
 
                 while (!Utils.IsTraderReady)
                 {
@@ -286,7 +286,7 @@ namespace WrapperTest
                 Utils.WriteLine("交易连接成功！！！");
 
                 var mainInstrumentsFile = string.Format("{0}主力合约{1}.txt", Utils.AssemblyPath,
-                    ((TraderAdapter) Utils.Trader).TradingDay);
+                    ((TraderAdapter)Utils.Trader).TradingDay);
 
                 if (File.Exists(mainInstrumentsFile)) //本交易日已经查询过主力合约
                 {
@@ -296,7 +296,7 @@ namespace WrapperTest
                     string instrument = null;
                     while ((instrument = sr.ReadLine()) != null)
                     {
-                        var s = instrument.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries);
+                        var s = instrument.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                         Utils.CategoryToMainInstrument[s[0]] = s[1];
                     }
                     sr.Close();
@@ -305,7 +305,7 @@ namespace WrapperTest
                 {
                     while (true)
                     {
-                        QryInstrumentDepthMarketData((TraderAdapter) Utils.Trader);
+                        QryInstrumentDepthMarketData((TraderAdapter)Utils.Trader);
 
                         //主力合约排序
                         Utils.WriteLine("主力合约排序");
@@ -342,14 +342,14 @@ namespace WrapperTest
 
 
 
-                Email.SendMail(((TraderAdapter) Utils.Trader).InvestorId + "今日主力合约列表",
+                Email.SendMail(((TraderAdapter)Utils.Trader).InvestorId + "今日主力合约列表",
                     DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled,
                     mainInstrumentsFile);
 
                 //订阅全部主力合约行情
                 Utils.WriteLine("订阅全部主力合约行情", true);
-                ((QuoteAdapter) Utils.QuoteMain).SubscribeMarketData(Utils.CategoryToMainInstrument.Values.ToArray());
-                ((QuoteAdapter) Utils.QuoteMain).SubscribedQuotes.AddRange(Utils.CategoryToMainInstrument.Values);
+                ((QuoteAdapter)Utils.QuoteMain).SubscribeMarketData(Utils.CategoryToMainInstrument.Values.ToArray());
+                ((QuoteAdapter)Utils.QuoteMain).SubscribedQuotes.AddRange(Utils.CategoryToMainInstrument.Values);
 
                 //初始化开仓手数
                 foreach (var kv in Utils.CategoryToMainInstrument)
@@ -365,7 +365,7 @@ namespace WrapperTest
 
                 var positionsToClose = new List<ThostFtdcInvestorPositionField>();
 
-                foreach (var kv in ((TraderAdapter) Utils.Trader).PositionFields)
+                foreach (var kv in ((TraderAdapter)Utils.Trader).PositionFields)
                 {
                     if (!Utils.CategoryToMainInstrument.Values.Contains(kv.Value.InstrumentID))
                     {
@@ -376,9 +376,9 @@ namespace WrapperTest
                 //首先需要获取要平掉的非主力合约的行情
                 if (positionsToClose.Count > 0)
                 {
-                    ((QuoteAdapter) Utils.QuoteMain).SubscribeMarketData(
+                    ((QuoteAdapter)Utils.QuoteMain).SubscribeMarketData(
                         positionsToClose.Select(s => s.InstrumentID).ToArray());
-                    ((QuoteAdapter) Utils.QuoteMain).SubscribedQuotes.AddRange(
+                    ((QuoteAdapter)Utils.QuoteMain).SubscribedQuotes.AddRange(
                         positionsToClose.Select(s => s.InstrumentID));
 
                     Thread.Sleep(1000);
@@ -387,13 +387,13 @@ namespace WrapperTest
                     {
                         if (position.PosiDirection == EnumPosiDirectionType.Long)
                         {
-                            ((TraderAdapter) Utils.Trader).CloseLongPositionByInstrument(position.InstrumentID,
+                            ((TraderAdapter)Utils.Trader).CloseLongPositionByInstrument(position.InstrumentID,
                                 "平掉非主力多仓");
                         }
 
                         if (position.PosiDirection == EnumPosiDirectionType.Short)
                         {
-                            ((TraderAdapter) Utils.Trader).CloseShortPositionByInstrument(position.InstrumentID,
+                            ((TraderAdapter)Utils.Trader).CloseShortPositionByInstrument(position.InstrumentID,
                                 "平掉非主力空仓");
                         }
                     }
@@ -402,7 +402,7 @@ namespace WrapperTest
                 #endregion
 
                 //准备完毕后才进入开平仓检查，防止在查询过程中进入
-                ((QuoteAdapter) Utils.QuoteMain).StartTimer();
+                ((QuoteAdapter)Utils.QuoteMain).StartTimer();
 
                 if (Utils.CurrentChannel == ChannelType.模拟24X7)
                 {
@@ -453,19 +453,19 @@ namespace WrapperTest
                 Utils.WriteLine(string.Format("检查是否全部平仓{0}", dateTime));
 
                 //收盘前10分钟就禁止再开仓
-                if ((dateTime.Hour == 14 && dateTime.Minute == 55) ||
-                    (dateTime.Hour == 23 && dateTime.Minute == 25))
+                if ((dateTime.Hour == 14 && dateTime.Minute == 58) ||
+                    (dateTime.Hour == 22 && dateTime.Minute == 58))
                 {
                     Utils.WriteLine(string.Format("到达禁止开仓时间{0}", dateTime));
                     Utils.IsOpenLocked = true;
                 }
 
                 if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 30) ||
-                    (dateTime.Hour == 23 && dateTime.Minute == 29 && dateTime.Second >= 30))
+                    (dateTime.Hour == 22 && dateTime.Minute == 59 && dateTime.Second >= 30))
                 {
                     Utils.WriteLine(string.Format("临近收盘，平掉所有持仓{0}", dateTime), true);
-                    ((TraderAdapter) Utils.Trader).CloseAllPositions();
-                    ((System.Timers.Timer) sender).Stop();
+                    ((TraderAdapter)Utils.Trader).CloseAllPositions();
+                    ((System.Timers.Timer)sender).Stop();
                 }
             }
             catch (Exception ex)
@@ -478,6 +478,17 @@ namespace WrapperTest
         {
             try
             {
+                foreach (var key in Utils.InstrumentToMatchPrice.Keys)
+                {
+                    var dict = Utils.InstrumentToMatchPrice[key];
+                    dict = dict.OrderBy(k => k.Key).ToDictionary(k => k.Key, v => v.Value);
+
+                    foreach (var m in dict)
+                    {
+                        Utils.WriteLine(string.Format("成交价:{0},成交量:{1}", m.Key, m.Value.Volume));
+                    }
+                }
+
                 var dateTime = DateTime.Now;
                 Utils.WriteLine(string.Format("检查是否退出{0}", dateTime));
 
@@ -493,25 +504,25 @@ namespace WrapperTest
                 if (dateTime.Hour == 8 &&
                     (dateTime.Minute == 45 || dateTime.Minute == 46 || dateTime.Minute == 47 || dateTime.Minute == 48 ||
                      dateTime.Minute == 49) && !Utils.IsTraderReady)
-                    //上午开盘时通道没有准备好，每隔一分钟尝试重新连接
+                //上午开盘时通道没有准备好，每隔一分钟尝试重新连接
                 {
                     Utils.WriteLine(string.Format("通道没有准备好，重新连接，{0}", dateTime));
                     Email.SendMail("通道没有准备好，重新连接", DateTime.Now.ToString(CultureInfo.InvariantCulture),
                         Utils.IsMailingEnabled);
 
-                    ((TraderAdapter) Utils.Trader).CreateNewTrader();
+                    ((TraderAdapter)Utils.Trader).CreateNewTrader();
                 }
 
                 if (dateTime.Hour == 8 && dateTime.Minute == 44) //早盘开盘前，主动重新登录一次
                 {
                     var t = new ThostFtdcUserLogoutField
                     {
-                        BrokerID = ((TraderAdapter) Utils.Trader).BrokerId,
-                        UserID = ((TraderAdapter) Utils.Trader).InvestorId
+                        BrokerID = ((TraderAdapter)Utils.Trader).BrokerId,
+                        UserID = ((TraderAdapter)Utils.Trader).InvestorId
                     };
-                    ((TraderAdapter) Utils.Trader).ReqUserLogout(t, TraderAdapter.RequestId++);
-                    Utils.WriteLine(string.Format("登出{0}", ((TraderAdapter) Utils.Trader).InvestorId), true);
-                    Email.SendMail(string.Format("登出{0}", ((TraderAdapter) Utils.Trader).InvestorId),
+                    ((TraderAdapter)Utils.Trader).ReqUserLogout(t, TraderAdapter.RequestId++);
+                    Utils.WriteLine(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId), true);
+                    Email.SendMail(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId),
                         DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
                 }
             }

@@ -24,9 +24,9 @@ namespace WrapperTest
 {
     public enum 信号
     {
-        多,
-        空,
-        __
+        L,
+        S,
+        _
     }
     public class MarketData
     {
@@ -35,7 +35,7 @@ namespace WrapperTest
         public int 总多 = 0;
         public int 总空 = 0;
         public double 仓差 = 0.0;
-        public 多空性质 性质 = 多空性质.____;
+        public 多空性质 性质 = 多空性质.__;
         public double 近期多头势力 = 0;
         public double 近期空头势力 = 0;
         public string 时段开始;
@@ -69,15 +69,15 @@ namespace WrapperTest
 
                 if (近期多头势力 - 近期空头势力 > Utils.多空差幅度)
                 {
-                    return WrapperTest.信号.多;
+                    return WrapperTest.信号.L;
                 }
 
                 if (近期空头势力 - 近期多头势力 > Utils.多空差幅度)
                 {
-                    return WrapperTest.信号.空;
+                    return WrapperTest.信号.S;
                 }
 
-                return 信号.__;
+                return 信号._;
             }
         }
 
@@ -99,12 +99,12 @@ namespace WrapperTest
 
     public enum 多空性质
     {
-        多开,
-        多平,
-        空开,
-        空平,
-        ____,
-        未定
+        DK,
+        DP,
+        KK,
+        KP,
+        __,
+        WD
     }
 
     public static class MathUtils
@@ -449,7 +449,7 @@ namespace WrapperTest
         {
             var s =
                 string.Format(
-                    ",{0},{1,-5},{9}.{10,-3},量:{13,-6},持:{15},卖:{16},买:{18},现:{20,-5},仓差:{21,-5},性:{22},多:{23,-5},空:{24,-5},比:{25,-4},差:{26,-5},信:{27},时:{28,-12}|{29,-12},总多:{30,-6},总空:{31,-6}",
+                    ",{0},{1,-5},{9}.{10,-3},{13,-6},{15},{16},{18},{20,-5},{21,-5},{22},{23,-5},{24,-5},{25,-4},{26,-5},{27},{28,-12}|{29,-12},{30,-6},{31,-6}",
                     marketData.pDepthMarketData.InstrumentID, marketData.pDepthMarketData.LastPrice, marketData.pDepthMarketData.OpenPrice,
                     marketData.pDepthMarketData.PreSettlementPrice,
                     marketData.pDepthMarketData.PreClosePrice, marketData.pDepthMarketData.HighestPrice, marketData.pDepthMarketData.LowestPrice,
@@ -581,7 +581,7 @@ namespace WrapperTest
 
                 var 现手 = 0;
                 var 仓差 = 0.0;
-                var 性质 = 多空性质.____;
+                var 性质 = 多空性质.__;
 
                 //计算多开、多平、空开、空平
                 if (InstrumentToLastTick.ContainsKey(instrumentId)) //至少要两个tick行情才能计算
@@ -590,7 +590,7 @@ namespace WrapperTest
 
                     现手 = pDepthMarketData.Volume - preTick.Volume;
                     仓差 = pDepthMarketData.OpenInterest - preTick.OpenInterest;
-                    性质 = 多空性质.____;
+                    性质 = 多空性质.__;
 
                     //记录成交价分布
                     if(!InstrumentToMatchPrice.ContainsKey(instrumentId))
@@ -620,19 +620,19 @@ namespace WrapperTest
                             {
                                 if (DoubleEqual(pDepthMarketData.LastPrice, preTick.AskPrice1) || pDepthMarketData.LastPrice >= preTick.AskPrice1) //以卖价成交，多开，价涨
                                 {
-                                    性质 = 多空性质.多开;
+                                    性质 = 多空性质.DK;
                                     总多 += (int)Math.Abs(仓差);
                                 }
                                 else
                                 {
                                     if (DoubleEqual(pDepthMarketData.LastPrice, preTick.BidPrice1) || pDepthMarketData.LastPrice <= preTick.BidPrice1) //以买价成交，空开，价跌
                                     {
-                                        性质 = 多空性质.空开;
+                                        性质 = 多空性质.KK;
                                         总空 += (int)Math.Abs(仓差);
                                     }
                                     else
                                     {
-                                        性质 = 多空性质.未定;
+                                        性质 = 多空性质.WD;
                                         WriteLine(string.Format("未定:仓差{0},现价{1},前卖{2},前买{3}", 仓差, pDepthMarketData.LastPrice, preTick.AskPrice1, preTick.BidPrice1), true);
                                     }
                                 }
@@ -643,19 +643,19 @@ namespace WrapperTest
                                 {
                                     if (DoubleEqual(pDepthMarketData.LastPrice, preTick.AskPrice1) || pDepthMarketData.LastPrice >= preTick.AskPrice1) //以卖价成交，空平，价涨
                                     {
-                                        性质 = 多空性质.空平;
+                                        性质 = 多空性质.KP;
                                         总多 += (int)Math.Abs(仓差);
                                     }
                                     else
                                     {
                                         if (DoubleEqual(pDepthMarketData.LastPrice, preTick.BidPrice1) || pDepthMarketData.LastPrice <= preTick.BidPrice1) //以买价成交，多平，价跌
                                         {
-                                            性质 = 多空性质.多平;
+                                            性质 = 多空性质.DP;
                                             总空 += (int)Math.Abs(仓差);
                                         }
                                         else
                                         {
-                                            性质 = 多空性质.未定;
+                                            性质 = 多空性质.WD;
                                             WriteLine(string.Format("未定:仓差{0},现价{1},前卖{2},前买{3}", 仓差, pDepthMarketData.LastPrice, preTick.AskPrice1, preTick.BidPrice1), true);
                                         }
                                     }
@@ -763,19 +763,19 @@ namespace WrapperTest
                         var list = InstrumentToMarketData[instrumentId];
                         var listRange = list.GetRange(iStart, backCount);
 
-                        var p = from d in listRange where d.性质 == 多空性质.多开 || d.性质 == 多空性质.空平 select Math.Abs(d.仓差);
+                        var p = from d in listRange where d.性质 == 多空性质.DK || d.性质 == 多空性质.KP select Math.Abs(d.仓差);
                         marketData.近期多头势力 = p.Sum();
 
-                        var q = from d in listRange where d.性质 == 多空性质.空开 || d.性质 == 多空性质.多平 select Math.Abs(d.仓差);
+                        var q = from d in listRange where d.性质 == 多空性质.KK || d.性质 == 多空性质.DP select Math.Abs(d.仓差);
                         marketData.近期空头势力 = q.Sum();
 
                         //补上当前tick的数据
-                        if (marketData.性质 == 多空性质.多开 || marketData.性质 == 多空性质.空平)
+                        if (marketData.性质 == 多空性质.DK || marketData.性质 == 多空性质.KP)
                         {
                             marketData.近期多头势力 += Math.Abs(marketData.仓差);
                         }
 
-                        if (marketData.性质 == 多空性质.空开 || marketData.性质 == 多空性质.多平)
+                        if (marketData.性质 == 多空性质.KK || marketData.性质 == 多空性质.DP)
                         {
                             marketData.近期空头势力 += Math.Abs(marketData.仓差);
                         }
@@ -787,19 +787,19 @@ namespace WrapperTest
                     {
                         var list = InstrumentToMarketData[instrumentId];
 
-                        var p = from d in list where d.性质 == 多空性质.多开 || d.性质 == 多空性质.空平 select Math.Abs(d.仓差);
+                        var p = from d in list where d.性质 == 多空性质.DK || d.性质 == 多空性质.KP select Math.Abs(d.仓差);
                         marketData.近期多头势力 = p.Sum();
 
-                        var q = from d in list where d.性质 == 多空性质.空开 || d.性质 == 多空性质.多平 select Math.Abs(d.仓差);
+                        var q = from d in list where d.性质 == 多空性质.KK || d.性质 == 多空性质.DP select Math.Abs(d.仓差);
                         marketData.近期空头势力 = q.Sum();
 
                         //补上当前tick的数据
-                        if (marketData.性质 == 多空性质.多开 || marketData.性质 == 多空性质.空平)
+                        if (marketData.性质 == 多空性质.DK || marketData.性质 == 多空性质.KP)
                         {
                             marketData.近期多头势力 += Math.Abs(marketData.仓差);
                         }
 
-                        if (marketData.性质 == 多空性质.空开 || marketData.性质 == 多空性质.多平)
+                        if (marketData.性质 == 多空性质.KK || marketData.性质 == 多空性质.DP)
                         {
                             marketData.近期空头势力 += Math.Abs(marketData.仓差);
                         }
@@ -809,9 +809,14 @@ namespace WrapperTest
                             marketData.时段开始 = string.Format("{0}.{1}", list[0].pDepthMarketData.UpdateTime, list[0].pDepthMarketData.UpdateMillisec);
                             marketData.时段结束 = string.Format("{0}.{1}", pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
                         }
-
                     }
                 }
+                else
+                {
+                    marketData.时段开始 = string.Format("{0}.{1}", pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
+                    marketData.时段结束 = string.Format("{0}.{1}", pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
+                }
+
 
                     
                 InstrumentToMarketData[instrumentId].Add(marketData);

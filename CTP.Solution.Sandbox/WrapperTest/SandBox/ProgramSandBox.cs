@@ -15,7 +15,7 @@ using SendMail;
 using System.Timers;
 using System.Windows.Forms;
 
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTest.exe.config", Watch = true)]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestSandBox.exe.config", Watch = true)]
 
 namespace WrapperTest
 {

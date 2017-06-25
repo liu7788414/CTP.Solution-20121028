@@ -93,6 +93,15 @@ namespace WrapperTest
             set { _positionFields = value; }
         }
 
+        private ConcurrentDictionary<string, ThostFtdcOrderField> _orderFields =
+            new ConcurrentDictionary<string, ThostFtdcOrderField>();
+
+        public ConcurrentDictionary<string, ThostFtdcOrderField> OrderFields
+        {
+            get { return _orderFields; }
+            set { _orderFields = value; }
+        }
+
         private System.Timers.Timer _timerReportPosition = new System.Timers.Timer(1000*60*60); //每小时报告一次
 
         public TraderAdapter()
@@ -118,6 +127,96 @@ namespace WrapperTest
             OnRspError += TraderAdapter_OnRspError;
             OnRtnTrade += TraderAdapter_OnRtnTrade;
             OnRspUserLogout += TraderAdapter_OnRspUserLogout;
+            OnRspQryOrder += TraderAdapter_OnRspQryOrder;
+            OnRspQryTrade += TraderAdapter_OnRspQryTrade;
+        }
+
+        private void TraderAdapter_OnRspQryTrade(ThostFtdcTradeField pTrade, ThostFtdcRspInfoField pRspInfo, int nRequestID, bool bIsLast)
+        {
+            try
+            {
+                Utils.ReportError(pRspInfo, "查询成交回报错误");
+                if (pTrade != null)
+                {
+                    var temp =
+                        string.Format(
+                            "查询成交回报:合约:{0},买卖:{1},交易所:{2},开平:{3},成交量:{4},报单引用:{5},成交时间:{6},成交日期:{7},系统号:{8},成交价:{9}",
+                            pTrade.InstrumentID, pTrade.Direction, pTrade.ExchangeID, pTrade.OffsetFlag, pTrade.Volume,
+                            pTrade.OrderRef, pTrade.TradeTime, pTrade.TradeDate, pTrade.OrderSysID, pTrade.Price);
+
+                    Utils.WriteLine(temp, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteException(ex);
+            }
+        }
+
+        public int ReqOrderAction(int frontId, int sessionId, string orderRef, string instrumentId, EnumActionFlagType actionFlag = EnumActionFlagType.Delete)
+        {
+            var req = new ThostFtdcInputOrderActionField
+            {
+                ActionFlag = actionFlag,
+                BrokerID = _brokerId,
+                InvestorID = _investorId,
+                FrontID = frontId,
+                SessionID = sessionId,
+                OrderRef = orderRef,
+                InstrumentID = instrumentId
+            };
+
+            int ret = ReqOrderAction(req, ++RequestId);
+
+            return ret;
+        }
+
+        public int ReqOrderAction(string exchangeId, string orderSysId, string instrumentId, EnumActionFlagType actionFlag = EnumActionFlagType.Delete)
+        {
+            var req = new ThostFtdcInputOrderActionField
+            {
+                ActionFlag = actionFlag,
+                ExchangeID = exchangeId,
+                OrderSysID = orderSysId,
+                InstrumentID = instrumentId
+            };
+
+            int ret = ReqOrderAction(req, ++RequestId);
+
+            return ret;
+        }
+
+        void TraderAdapter_OnRspQryOrder(ThostFtdcOrderField pOrder, ThostFtdcRspInfoField pRspInfo, int nRequestID, bool bIsLast)
+        {
+            try
+            {
+                Utils.ReportError(pRspInfo, "查询委托回报错误");
+
+                if (pOrder != null)
+                {
+                    var temp = string.Format(
+                        "查询委托回报:合约:{0},买卖:{1},交易所:{2},开平:{3},委托状态:{4},委托价格类型:{5},委托价格:{6},委托数量:{7},已成交数量:{8},报单引用:{9},前台编号:{10},对话编号:{11},系统号:{12}",
+                        pOrder.InstrumentID, pOrder.Direction, pOrder.ExchangeID, pOrder.CombOffsetFlag_0, pOrder.OrderStatus, pOrder.OrderPriceType, pOrder.LimitPrice, pOrder.VolumeTotalOriginal, pOrder.VolumeTraded,
+                        pOrder.OrderRef, pOrder.FrontID, pOrder.SessionID, pOrder.OrderSysID);
+
+                    Utils.WriteLine(temp);
+                    OrderFields[pOrder.OrderRef] = pOrder;
+
+                    if (pOrder.OrderStatus == EnumOrderStatusType.PartTradedQueueing || pOrder.OrderStatus == EnumOrderStatusType.NoTradeQueueing)
+                    {
+                        Utils.OrderRefToUnFinishedOrders[pOrder.OrderRef] = pOrder;
+                    }
+                }
+
+                if (bIsLast)
+                {
+                    Utils.IsTraderReady = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteException(ex);
+            }
         }
 
         void TraderAdapter_OnRspUserLogout(ThostFtdcUserLogoutField pUserLogout, ThostFtdcRspInfoField pRspInfo,
@@ -243,7 +342,7 @@ namespace WrapperTest
 
                             if (bForceOpen || (mamp.Swing/quote.PreSettlementPrice >= Utils.SwingLimit))
                             {
-                                OrderInsertLimitPrice(instrumentId, buyOrSell, Utils.OpenVolumePerTime,
+                                OrderInsertOffsetPrice(instrumentId, buyOrSell, Utils.OpenVolumePerTime,
                                     EnumOffsetFlagType.Open,
                                     reason);
 
@@ -337,7 +436,7 @@ namespace WrapperTest
                             Utils.RestoreInstrumentToMaxAndMinPrice(instrumentId);
 
                             //平今仓
-                            OrderInsertLimitPrice(instrumentId,
+                            OrderInsertOffsetPrice(instrumentId,
                                 longOrShort == EnumPosiDirectionType.Long
                                     ? EnumDirectionType.Sell
                                     : EnumDirectionType.Buy,
@@ -360,7 +459,7 @@ namespace WrapperTest
                             Utils.RestoreInstrumentToMaxAndMinPrice(instrumentId); 
 
                             //平昨仓
-                            OrderInsertLimitPrice(instrumentId,
+                            OrderInsertOffsetPrice(instrumentId,
                                 longOrShort == EnumPosiDirectionType.Long
                                     ? EnumDirectionType.Sell
                                     : EnumDirectionType.Buy,
@@ -813,9 +912,16 @@ namespace WrapperTest
         {
             try
             {
+                Utils.ReportError(pRspInfo, "撤单回报错误");
                 if (pInputOrderAction != null)
                 {
                     Utils.OutputField(pInputOrderAction);
+
+                    if(pInputOrderAction.ActionFlag == EnumActionFlagType.Delete)
+                    {
+                        ThostFtdcOrderField cancelledOrder;
+                        Utils.OrderRefToUnFinishedOrders.TryRemove(pInputOrderAction.OrderRef, out cancelledOrder);
+                    }
                 }
             }
             catch (Exception ex)
@@ -1037,7 +1143,8 @@ namespace WrapperTest
 
                 if (bIsLast)
                 {
-                    Utils.IsTraderReady = true;
+                    Thread.Sleep(1000);
+                    ReqQryOrder();
                 }
             }
             catch (Exception ex)
@@ -1091,6 +1198,12 @@ namespace WrapperTest
         {
             var req = new ThostFtdcQryInvestorPositionField {BrokerID = BrokerId, InvestorID = InvestorId};
             int iResult = ReqQryInvestorPosition(req, RequestId++);
+        }
+
+        private void ReqQryOrder()
+        {
+            var req = new ThostFtdcQryOrderField { BrokerID = BrokerId, InvestorID = InvestorId };
+            int iResult = ReqQryOrder(req, RequestId++);
         }
 
         private void TraderAdapter_OnRspQryTradingAccount(ThostFtdcTradingAccountField pTradingAccount,
@@ -1406,7 +1519,67 @@ namespace WrapperTest
             var iResult = ReqSettlementInfoConfirm(req, RequestId++);
         }
 
-        public int OrderInsertLimitPrice(string instrumentId, EnumDirectionType direction, int nVolume,
+        //public int OrderInsertLimitPrice(string instrumentId, EnumDirectionType direction, int nVolume,
+        //    EnumOffsetFlagType openOrClose, string reason,
+        //    EnumTimeConditionType timeCondition = EnumTimeConditionType.GFD,
+        //    EnumVolumeConditionType volumeCondition = EnumVolumeConditionType.AV)
+        //{
+        //    try
+        //    {
+        //        if (Utils.InstrumentToQuotes.ContainsKey(instrumentId))
+        //        {
+        //            double price;
+        //            var quotes = Utils.InstrumentToQuotes[instrumentId];
+
+        //            if (quotes.Count > 0)
+        //            {
+        //                var quote = quotes[quotes.Count - 1];
+        //                switch (direction)
+        //                {
+        //                    case EnumDirectionType.Buy: //买
+        //                    {
+        //                        price = quote.UpperLimitPrice;
+        //                        break;
+        //                    }
+        //                    case EnumDirectionType.Sell: //卖
+        //                    {
+        //                        price = quote.LowerLimitPrice;
+        //                        break;
+        //                    }
+        //                    default:
+        //                    {
+        //                        price = 0;
+        //                        break;
+        //                    }
+        //                }
+
+        //                ReqOrderInsert(instrumentId, direction, price, nVolume, openOrClose, timeCondition,
+        //                    volumeCondition,
+        //                    reason);
+        //            }
+        //        }
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Utils.WriteException(ex);
+        //    }
+        //    return -1;
+        //}
+
+        /// <summary>
+        /// give a offset price
+        /// </summary>
+        /// <param name="instrumentId"></param>
+        /// <param name="direction"></param>
+        /// <param name="nVolume"></param>
+        /// <param name="openOrClose"></param>
+        /// <param name="reason"></param>
+        /// <param name="timeCondition"></param>
+        /// <param name="volumeCondition"></param>
+        /// <returns></returns>
+        public int OrderInsertOffsetPrice(string instrumentId, EnumDirectionType direction, int nVolume,
             EnumOffsetFlagType openOrClose, string reason,
             EnumTimeConditionType timeCondition = EnumTimeConditionType.GFD,
             EnumVolumeConditionType volumeCondition = EnumVolumeConditionType.AV)
@@ -1424,20 +1597,20 @@ namespace WrapperTest
                         switch (direction)
                         {
                             case EnumDirectionType.Buy: //买
-                            {
-                                price = quote.UpperLimitPrice;
-                                break;
-                            }
+                                {
+                                    price = quote.LastPrice - 5;
+                                    break;
+                                }
                             case EnumDirectionType.Sell: //卖
-                            {
-                                price = quote.LowerLimitPrice;
-                                break;
-                            }
+                                {
+                                    price = quote.LastPrice + 5;
+                                    break;
+                                }
                             default:
-                            {
-                                price = 0;
-                                break;
-                            }
+                                {
+                                    price = 0;
+                                    break;
+                                }
                         }
 
                         ReqOrderInsert(instrumentId, direction, price, nVolume, openOrClose, timeCondition,

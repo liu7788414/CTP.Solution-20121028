@@ -1,1 +1,0 @@
-AutoTrader.exe 2> AutoTrader.log

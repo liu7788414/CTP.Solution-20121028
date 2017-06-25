@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperTestSandBox2", "Wrap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperTestRealTrading", "WrapperTest\WrapperTestRealTrading.csproj", "{602C1AF3-62CE-47CC-8D5A-65859D0A54CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunStrategy", "RunStrategy\RunStrategy.csproj", "{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,16 @@ Global
 		{602C1AF3-62CE-47CC-8D5A-65859D0A54CA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{602C1AF3-62CE-47CC-8D5A-65859D0A54CA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{602C1AF3-62CE-47CC-8D5A-65859D0A54CA}.Release|Win32.ActiveCfg = Release|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DC5D088E-AA90-48FB-B7C9-8CABB059B9F0}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
