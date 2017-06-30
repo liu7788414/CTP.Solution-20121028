@@ -162,20 +162,32 @@ namespace WrapperTest
 
                         if (marketData.信号 == 信号.L)
                         {
-                            //var reason = string.Format("{0}看多信号，平空", data.InstrumentID);
-                            //_trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
-
-                            var reason = string.Format("{0}看多信号，开多", data.InstrumentID);
-                            _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, 0, true, true, 0);
+                            var reason = string.Format("{0}看多信号，平空", data.InstrumentID);
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                         }
 
                         if (marketData.信号 == 信号.S)
                         {
-                            //var reason = string.Format("{0}看空信号，平多", data.InstrumentID);
-                            //_trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                            var reason = string.Format("{0}看空信号，平多", data.InstrumentID);
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                        }
 
-                            var reason = string.Format("{0}看空信号，开空", data.InstrumentID);
-                            _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, 9999, true, true, 0);
+                        if (marketData.信号 == 信号.L)
+                        {
+                            if ((data.LastPrice / data.PreClosePrice) > 0.98)
+                            {
+                                var reason = string.Format("{0}看多信号，开多", data.InstrumentID);
+                                _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, 0, true, true, 0);
+                            }
+                        }
+
+                        if (marketData.信号 == 信号.S)
+                        {
+                            if ((data.LastPrice / data.PreClosePrice) < 1.02)
+                            {
+                                var reason = string.Format("{0}看空信号，开空", data.InstrumentID);
+                                _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, 9999, true, true, 0);
+                            }
                         }
                     }
                 }
@@ -184,7 +196,7 @@ namespace WrapperTest
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    var stopLossValue = data.LastPrice * 0.005;
+                    var stopLossValue = 10;
 
                     //多仓止损
                     if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
@@ -202,32 +214,50 @@ namespace WrapperTest
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                     }
 
-                    var movingStopLossValueForLong = (stopLossPrices.ForLong - stopLossPrices.CostLong) * 0.5;
+                    var longDistance = stopLossPrices.ForLong - stopLossPrices.CostLong;
+                    var currentLongDistance = data.LastPrice - stopLossPrices.CostLong;
+                    var movingStopLossValueForLong = longDistance * 0.5;
 
                     //多仓止损
-                    if (stopLossPrices.ForLong - stopLossPrices.CostLong > 10 && data.LastPrice < stopLossPrices.ForLong - movingStopLossValueForLong)
+                    if (longDistance > 10 && longDistance <= 20 && data.LastPrice < stopLossPrices.ForLong - movingStopLossValueForLong)
                     {
                         var reason = string.Format("{0}从多仓的最高盈利价{1}跌到了移动止损价{2}以下，即{3}，平掉多仓", data.InstrumentID,
                             stopLossPrices.ForLong, stopLossPrices.ForLong - movingStopLossValueForLong, data.LastPrice);
                         _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
                     }
+                    else
+                    {
+                        if (longDistance > 20 && currentLongDistance < 10)
+                        {
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, "移动止损，平掉多仓");
+                        }
+                    }
 
-                    var movingStopLossValueForShort = (stopLossPrices.CostShort - stopLossPrices.ForShort) * 0.5;
+                    var shortDistance = stopLossPrices.CostShort - stopLossPrices.ForShort;
+                    var currentShortDistance = stopLossPrices.CostShort - data.LastPrice;
+                    var movingStopLossValueForShort = shortDistance * 0.5;
 
                     //空仓止损
-                    if (stopLossPrices.CostShort - stopLossPrices.ForShort > 10 && data.LastPrice > stopLossPrices.ForShort + movingStopLossValueForShort)
+                    if (shortDistance > 10 && shortDistance <= 20 && data.LastPrice > stopLossPrices.ForShort + movingStopLossValueForShort)
                     {
                         var reason = string.Format("{0}从空仓的最高盈利价{1}涨到了移动止损价{2}以上，即{3}，平掉空仓", data.InstrumentID,
                             stopLossPrices.ForShort, stopLossPrices.ForShort + movingStopLossValueForShort, data.LastPrice);
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
                     }
+                    else
+                    {
+                        if (shortDistance > 20 && currentShortDistance < 10)
+                        {
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, "移动止损，平掉空仓");
+                        }
+                    }
 
-                    if (stopLossPrices.ForLong - stopLossPrices.CostLong >= data.LastPrice * 0.015)
+                    if (stopLossPrices.ForLong - stopLossPrices.CostLong >= 20)
                     {
                         _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
                     }
 
-                    if (stopLossPrices.CostShort - stopLossPrices.ForShort >= data.LastPrice * 0.015)
+                    if (stopLossPrices.CostShort - stopLossPrices.ForShort >= 20)
                     {
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
                     }

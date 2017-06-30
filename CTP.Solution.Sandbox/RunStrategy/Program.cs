@@ -52,6 +52,12 @@ namespace RunStrategy
                     Console.WriteLine("启动WrapperTestSandBox2");
                     StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox2\WrapperTestSandBox2.exe", "true 2");
                 }
+
+                if (!strategyProcesses.Contains("WrapperTestQuote"))
+                {
+                    Console.WriteLine("启动WrapperTestQuote");
+                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugQuote\WrapperTestQuote.exe", "true 3");
+                }
             }
 
             if(now.Hour == 15 && (now.Minute >= 5))
