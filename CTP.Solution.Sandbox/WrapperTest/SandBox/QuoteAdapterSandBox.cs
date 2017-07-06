@@ -162,32 +162,14 @@ namespace WrapperTest
 
                         if (marketData.信号 == 信号.L)
                         {
-                            var reason = string.Format("{0}看多信号，平空", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                            var reason = string.Format("{0}看多信号，开多", data.InstrumentID);
+                            _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, 0, true, true, 0);
                         }
 
                         if (marketData.信号 == 信号.S)
                         {
-                            var reason = string.Format("{0}看空信号，平多", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
-                        }
-
-                        if (marketData.信号 == 信号.L)
-                        {
-                            if ((data.LastPrice / data.PreClosePrice) > 0.98)
-                            {
-                                var reason = string.Format("{0}看多信号，开多", data.InstrumentID);
-                                _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, 0, true, true, 0);
-                            }
-                        }
-
-                        if (marketData.信号 == 信号.S)
-                        {
-                            if ((data.LastPrice / data.PreClosePrice) < 1.02)
-                            {
-                                var reason = string.Format("{0}看空信号，开空", data.InstrumentID);
-                                _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, 9999, true, true, 0);
-                            }
+                            var reason = string.Format("{0}看空信号，开空", data.InstrumentID);
+                            _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, 9999, true, true, 0);
                         }
                     }
                 }
@@ -196,7 +178,7 @@ namespace WrapperTest
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    var stopLossValue = data.LastPrice * 0.005;
+                    var stopLossValue = 10;
 
                     //多仓止损
                     if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
@@ -252,14 +234,36 @@ namespace WrapperTest
                         }
                     }
 
-                    if (stopLossPrices.ForLong - stopLossPrices.CostLong >= data.LastPrice * 0.015)
+                    if (stopLossPrices.ForLong - stopLossPrices.CostLong >= 20)
                     {
                         _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
                     }
 
-                    if (stopLossPrices.CostShort - stopLossPrices.ForShort >= data.LastPrice * 0.015)
+                    if (stopLossPrices.CostShort - stopLossPrices.ForShort >= 20)
                     {
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
+                    }
+
+                    var stop = 3;
+
+                    if (data.LastPrice - stopLossPrices.CostLong >= stop)
+                    {
+                        var key = Utils.GetPositionKey(data.InstrumentID, EnumPosiDirectionType.Long, EnumPositionDateType.Today);
+                        if (_trader.PositionFields.ContainsKey(key))
+                        {
+                            var position = _trader.PositionFields[key];
+                            _trader.ReqOrderInsert(data.InstrumentID, EnumDirectionType.Sell, stopLossPrices.CostLong + stop, position.Position, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "立即平多仓");
+                        }
+                    }
+
+                    if (stopLossPrices.CostShort - data.LastPrice >= stop)
+                    {
+                        var key = Utils.GetPositionKey(data.InstrumentID, EnumPosiDirectionType.Short, EnumPositionDateType.Today);
+                        if (_trader.PositionFields.ContainsKey(key))
+                        {
+                            var position = _trader.PositionFields[key];
+                            _trader.ReqOrderInsert(data.InstrumentID, EnumDirectionType.Buy, stopLossPrices.CostShort - stop, position.Position, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "立即平空仓");
+                        }
                     }
                 }
             }

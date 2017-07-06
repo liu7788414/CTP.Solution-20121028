@@ -365,6 +365,8 @@ namespace WrapperTest
         public static double 多空比计算的比例 = 3;
 
         public static double 多空差幅度 = 5000;
+
+        public static double 开仓偏移量 = 1;
         /// <summary>
         /// 止盈比例
         /// </summary>
@@ -1027,6 +1029,9 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 多空差幅度 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                开仓偏移量 = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }

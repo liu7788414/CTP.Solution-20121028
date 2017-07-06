@@ -365,6 +365,8 @@ namespace WrapperTest
         public static double 多空比计算的比例 = 3;
 
         public static double 多空差幅度 = 5000;
+
+        public static double 开仓偏移量 = 1;
         /// <summary>
         /// 止盈比例
         /// </summary>
@@ -675,25 +677,9 @@ namespace WrapperTest
                 {
                     var quotes = InstrumentToQuotes[pDepthMarketData.InstrumentID];
 
-                    if (quotes.Count >= movingAverageCount)
+                    if (quotes.Count > 0)
                     {
-                        var listTemp = new List<ThostFtdcDepthMarketDataField>();
-                        var nullCount = 0;
-                        for (var i = quotes.Count - 1; i >= quotes.Count - movingAverageCount; i--)
-                        {
-                            //行情里面会有空值
-                            if (quotes[i] != null && quotes[i].LastPrice >= pDepthMarketData.LowerLimitPrice && quotes[i].LastPrice <= pDepthMarketData.UpperLimitPrice)
-                            {
-                                listTemp.Add(quotes[i]);
-                            }
-                            else
-                            {
-                                nullCount++;
-                                WriteLine(string.Format("发现无效值,nullCount={0}", nullCount), true);
-                            }
-                        }
-
-                        var averageLastPrice = listTemp.Average(p => p.LastPrice);
+                        var averageLastPrice = quotes[quotes.Count - 1].LastPrice;
 
                         if (InstrumentToStopLossPrices.ContainsKey(pDepthMarketData.InstrumentID))
                         {
@@ -1027,6 +1013,9 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 多空差幅度 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                开仓偏移量 = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }

@@ -372,7 +372,7 @@ namespace WrapperTest
                         {
 
                             OrderInsertOffsetPrice(instrumentId, buyOrSell, Utils.OpenVolumePerTime,
-                                EnumOffsetFlagType.Open, 2,
+                                EnumOffsetFlagType.Open, Utils.开仓偏移量,
                                 reason);
                         }
                     }
@@ -771,7 +771,6 @@ namespace WrapperTest
         {
             try
             {
-                Utils.WriteLine("报单插入回报", true);
                 Utils.ReportError(pRspInfo, "报单插入回报错误");
 
                 if (pInputOrder != null)
