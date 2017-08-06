@@ -103,7 +103,7 @@ namespace WrapperTest
         }
 
         private System.Timers.Timer _timerReportPosition = new System.Timers.Timer(1000 * 60 * 60); //每小时报告一次
-        private System.Timers.Timer _timerCancelOrder = new System.Timers.Timer(1000 * 60);
+        private System.Timers.Timer _timerCancelOrder = new System.Timers.Timer(1000 * 10);
 
         public TraderAdapter()
         {
@@ -143,16 +143,40 @@ namespace WrapperTest
 
                 foreach (var order in UnFinishedOrderFields.Values)
                 {
-                    ////只撤开仓单
-                    //if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
-                    //{
+                    //只撤开仓单
+                    if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
+                    {
                         var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 1, 0))
+                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 30))
                         {
                             ordersToCancel.Add(order);
                         }
-                    //}
+                    }
+                }
+
+                foreach (var order in ordersToCancel)
+                {
+                    if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
+                    {
+                        ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
+                    }
+                }
+
+                ordersToCancel.Clear();
+
+                //撤平仓单
+                foreach (var order in UnFinishedOrderFields.Values)
+                {
+                    if (order.CombOffsetFlag_0 == EnumOffsetFlagType.Close || order.CombOffsetFlag_0 == EnumOffsetFlagType.CloseToday || order.CombOffsetFlag_0 == EnumOffsetFlagType.CloseYesterday)
+                    {
+                        var updateTime = Convert.ToDateTime(order.InsertTime);
+
+                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 30))
+                        {
+                            ordersToCancel.Add(order);
+                        }
+                    }
                 }
 
                 foreach (var order in ordersToCancel)
@@ -318,7 +342,7 @@ namespace WrapperTest
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
         /// <param name="longOrShort"></param>
-        public void OpenPositionByInstrument(string instrumentId, string reason, EnumPosiDirectionType longOrShort, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
+        public void OpenPositionByInstrument(string instrumentId, string reason, EnumPosiDirectionType longOrShort, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle, double price)
         {
             try
             {
@@ -374,10 +398,9 @@ namespace WrapperTest
 
                         if (Utils.InstrumentToQuotes.ContainsKey(instrumentId))
                         {
-
                             OrderInsertOffsetPrice(instrumentId, buyOrSell, Utils.OpenVolumePerTime,
                                 EnumOffsetFlagType.Open, Utils.开仓偏移量,
-                                reason);
+                                reason, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, price);
                         }
                     }
                 }
@@ -393,9 +416,9 @@ namespace WrapperTest
         /// </summary>
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
-        public void OpenShortPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
+        public void OpenShortPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle, double price)
         {
-            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle);
+            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle, price);
         }
 
         /// <summary>
@@ -403,9 +426,9 @@ namespace WrapperTest
         /// </summary>
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
-        public void OpenLongPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle)
+        public void OpenLongPositionByInstrument(string instrumentId, string reason, double openTrendStartPoint, bool bConsiderOppositePosition, bool bForceOpen, double openAngle, double price)
         {
-            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle);
+            OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle, price);
         }
 
         /// <summary>
@@ -416,7 +439,7 @@ namespace WrapperTest
         /// <param name="longOrShort"></param>
         /// <param name="isForceClose">是否强制平仓操作</param>
         public void ClosePositionByInstrument(string instrumentId, string reason, EnumPosiDirectionType longOrShort, double offset,
-            bool isForceClose = false)
+            bool isForceClose = false, double price = 0)
         {
             try
             {
@@ -443,7 +466,7 @@ namespace WrapperTest
                                     ? EnumDirectionType.Sell
                                     : EnumDirectionType.Buy,
                                 pos.Position,
-                                offsetFlag, offset, reason);
+                                offsetFlag, offset, reason, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, price);
                         }
                     }
 
@@ -464,7 +487,7 @@ namespace WrapperTest
                                     ? EnumDirectionType.Sell
                                     : EnumDirectionType.Buy,
                                 pos.Position,
-                                offsetFlag, offset, reason);
+                                offsetFlag, offset, reason, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, price);
                         }
 
                     }
@@ -482,9 +505,9 @@ namespace WrapperTest
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
         /// <param name="isForceClose"></param>
-        public void CloseLongPositionByInstrument(string instrumentId, string reason, bool isForceClose = false)
+        public void CloseLongPositionByInstrument(string instrumentId, string reason, bool isForceClose, double price)
         {
-            ClosePositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, -10, isForceClose);
+            ClosePositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, -10, isForceClose, price);
         }
 
         /// <summary>
@@ -493,9 +516,9 @@ namespace WrapperTest
         /// <param name="instrumentId"></param>
         /// <param name="reason"></param>
         /// <param name="isForceClose"></param>
-        public void CloseShortPositionByInstrument(string instrumentId, string reason, bool isForceClose = false)
+        public void CloseShortPositionByInstrument(string instrumentId, string reason, bool isForceClose, double price)
         {
-            ClosePositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, -10, isForceClose);
+            ClosePositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Short, -10, isForceClose, price);
         }
 
         private void SetStopLossPrice(ThostFtdcTradeField pTrade, StopLossPrices stopLossPrices)
@@ -664,7 +687,7 @@ namespace WrapperTest
                     if (Utils.IsInitialized) //初始化完成后才发送成交回报，也就是交易过程中
                     {
                         //Email.SendMail("成交回报", temp, Utils.IsMailingEnabled);
-                    }                
+                    }
                 }
             }
             catch (Exception ex)
@@ -777,6 +800,7 @@ namespace WrapperTest
                     Utils.WriteLine(temp, true);
 
                     ForceQuit(pInputOrder.InstrumentID);
+                    Utils.UnlockInstrument(pInputOrder.InstrumentID, pInputOrder.CombOffsetFlag_0);
                 }
             }
             catch (Exception ex)
@@ -990,6 +1014,7 @@ namespace WrapperTest
                             ThostFtdcOrderField pOrderTemp;
                             UnFinishedOrderFields.TryRemove(GetOrderKey(order), out pOrderTemp);
 
+                            //Thread.Sleep(2000); //报单回报和成交回报之间有延时,目前发现1.5秒,故此处延迟2秒
                             Utils.UnlockInstrument(order.InstrumentID, order.CombOffsetFlag_0);
                         }
                         else
@@ -997,7 +1022,7 @@ namespace WrapperTest
                             Utils.WriteLine(string.Format("错误:未找到OrderRef为{0}的成交回报的报单信息!", pOrder.OrderRef), true);
                         }
                     }
-                  
+
 
                     if (pOrder.InstrumentID.StartsWith("au"))
                     {
@@ -1597,36 +1622,39 @@ namespace WrapperTest
         public int OrderInsertOffsetPrice(string instrumentId, EnumDirectionType direction, int nVolume,
             EnumOffsetFlagType openOrClose, double offset, string reason,
             EnumTimeConditionType timeCondition = EnumTimeConditionType.GFD,
-            EnumVolumeConditionType volumeCondition = EnumVolumeConditionType.AV)
+            EnumVolumeConditionType volumeCondition = EnumVolumeConditionType.AV, double priceIn = 0)
         {
             try
             {
+                var price = 0.0;
+
+                switch (direction)
+                {
+                    case EnumDirectionType.Buy: //买
+                        {
+                            price = priceIn - offset;
+                            break;
+                        }
+                    case EnumDirectionType.Sell: //卖
+                        {
+                            price = priceIn + offset;
+                            break;
+                        }
+                    default:
+                        {
+                            price = 0;
+                            break;
+                        }
+                }
+
                 if (Utils.InstrumentToQuotes.ContainsKey(instrumentId))
                 {
-                    double price;
                     var quotes = Utils.InstrumentToQuotes[instrumentId];
 
                     if (quotes.Count > 0)
                     {
-                        var quote = quotes[quotes.Count - 1];
-                        switch (direction)
-                        {
-                            case EnumDirectionType.Buy: //买
-                                {
-                                    price = quote.LastPrice - offset;
-                                    break;
-                                }
-                            case EnumDirectionType.Sell: //卖
-                                {
-                                    price = quote.LastPrice + offset;
-                                    break;
-                                }
-                            default:
-                                {
-                                    price = 0;
-                                    break;
-                                }
-                        }
+                        var quote = quotes[0];
+
 
                         if (price > quote.UpperLimitPrice)
                         {
@@ -1643,8 +1671,6 @@ namespace WrapperTest
                             reason);
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -1672,13 +1698,13 @@ namespace WrapperTest
                     {
                         if (position.PosiDirection == EnumPosiDirectionType.Long)
                         {
-                            CloseLongPositionByInstrument(position.InstrumentID, "收盘平多仓", true);
+                            CloseLongPositionByInstrument(position.InstrumentID, "收盘平多仓", true, 0);
                             Thread.Sleep(2000); //防止有相同的合约平仓互相影响，保证前一个已经完成，再报第二笔
                         }
 
                         if (position.PosiDirection == EnumPosiDirectionType.Short)
                         {
-                            CloseShortPositionByInstrument(position.InstrumentID, "收盘平空仓", true);
+                            CloseShortPositionByInstrument(position.InstrumentID, "收盘平空仓", true, 99999);
                             Thread.Sleep(2000);
                         }
                     }

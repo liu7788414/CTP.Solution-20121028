@@ -116,8 +116,6 @@ namespace WrapperTest
                             BuyOrSell(depthMarketDataField);
                         }
                     }
-
-                    Utils.SaveInstrumentTotalPrices();
                 }
             }
             catch (Exception ex)
@@ -152,67 +150,27 @@ namespace WrapperTest
         {
             try
             {
-                if (Utils.InstrumentToMarketData.ContainsKey(data.InstrumentID))
-                {
-                    var marketDataList = Utils.InstrumentToMarketData[data.InstrumentID];
-
-                    if (marketDataList.Count > 0)
-                    {
-                        var marketData = marketDataList[marketDataList.Count - 1];
-
-                        //if (marketData.信号 == 信号.L)
-                        //{
-                        //    var reason = string.Format("{0}看多信号，平空", data.InstrumentID);
-                        //    _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
-                        //}
-
-                        //if (marketData.信号 == 信号.S)
-                        //{
-                        //    var reason = string.Format("{0}看空信号，平多", data.InstrumentID);
-                        //    _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
-                        //}
-
-                        if (marketData.信号 == 信号.L)
-                        {
-                            if ((data.LastPrice / data.PreClosePrice) > 0.98)
-                            {
-                                var reason = string.Format("{0}看多信号，开多", data.InstrumentID);
-                                _trader.OpenLongPositionByInstrument(data.InstrumentID, reason, 0, true, true, 0);
-                            }
-                        }
-
-                        if (marketData.信号 == 信号.S)
-                        {
-                            if ((data.LastPrice / data.PreClosePrice) < 1.02)
-                            {
-                                var reason = string.Format("{0}看空信号，开空", data.InstrumentID);
-                                _trader.OpenShortPositionByInstrument(data.InstrumentID, reason, 9999, true, true, 0);
-                            }
-                        }
-                    }
-                }
-
                 if (Utils.InstrumentToStopLossPrices.ContainsKey(data.InstrumentID))
                 {
                     var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
 
-                    //var stopLossValue = 10;
+                    var stopLossValue = Utils.绝对止损点数;
 
-                    ////多仓止损
-                    //if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
-                    //{
-                    //    var reason = string.Format("{0}从多仓的成本价{1}跌到了绝对止损值{2}以下，即{3}，平掉多仓", data.InstrumentID,
-                    //        stopLossPrices.CostLong, stopLossValue, data.LastPrice);
-                    //    _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
-                    //}
+                    //多仓止损
+                    if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
+                    {
+                        var reason = string.Format("{0}从多仓的成本价{1}跌到了绝对止损值{2}以下，即{3}，平掉多仓", data.InstrumentID,
+                            stopLossPrices.CostLong, stopLossValue, data.LastPrice);
+                        _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
+                    }
 
-                    ////空仓止损
-                    //if (data.LastPrice > stopLossPrices.CostShort + stopLossValue)
-                    //{
-                    //    var reason = string.Format("{0}从空仓的成本价{1}涨到了绝对止损值{2}以上，即{3}，平掉空仓", data.InstrumentID,
-                    //        stopLossPrices.CostShort, stopLossValue, data.LastPrice);
-                    //    _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
-                    //}
+                    //空仓止损
+                    if (data.LastPrice > stopLossPrices.CostShort + stopLossValue)
+                    {
+                        var reason = string.Format("{0}从空仓的成本价{1}涨到了绝对止损值{2}以上，即{3}，平掉空仓", data.InstrumentID,
+                            stopLossPrices.CostShort, stopLossValue, data.LastPrice);
+                        _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
+                    }
 
                     //var longDistance = stopLossPrices.ForLong - stopLossPrices.CostLong;
                     //var currentLongDistance = data.LastPrice - stopLossPrices.CostLong;
@@ -223,13 +181,13 @@ namespace WrapperTest
                     //{
                     //    var reason = string.Format("{0}从多仓的最高盈利价{1}跌到了移动止损价{2}以下，即{3}，平掉多仓", data.InstrumentID,
                     //        stopLossPrices.ForLong, stopLossPrices.ForLong - movingStopLossValueForLong, data.LastPrice);
-                    //    _trader.CloseLongPositionByInstrument(data.InstrumentID, reason);
+                    //    _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
                     //}
                     //else
                     //{
                     //    if (longDistance > 20 && currentLongDistance < 10)
                     //    {
-                    //        _trader.CloseLongPositionByInstrument(data.InstrumentID, "移动止损，平掉多仓");
+                    //        _trader.CloseLongPositionByInstrument(data.InstrumentID, "移动止损，平掉多仓", false, 0);
                     //    }
                     //}
 
@@ -242,25 +200,37 @@ namespace WrapperTest
                     //{
                     //    var reason = string.Format("{0}从空仓的最高盈利价{1}涨到了移动止损价{2}以上，即{3}，平掉空仓", data.InstrumentID,
                     //        stopLossPrices.ForShort, stopLossPrices.ForShort + movingStopLossValueForShort, data.LastPrice);
-                    //    _trader.CloseShortPositionByInstrument(data.InstrumentID, reason);
+                    //    _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
                     //}
                     //else
                     //{
                     //    if (shortDistance > 20 && currentShortDistance < 10)
                     //    {
-                    //        _trader.CloseShortPositionByInstrument(data.InstrumentID, "移动止损，平掉空仓");
+                    //        _trader.CloseShortPositionByInstrument(data.InstrumentID, "移动止损，平掉空仓", false, 99999);
                     //    }
                     //}
 
-                    if (stopLossPrices.ForLong - stopLossPrices.CostLong >= 20)
-                    {
-                        _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈");
-                    }
+                    //if (stopLossPrices.ForLong - stopLossPrices.CostLong >= 20)
+                    //{
+                    //    _trader.CloseLongPositionByInstrument(data.InstrumentID, "多仓止盈", false, 0);
+                    //}
 
-                    if (stopLossPrices.CostShort - stopLossPrices.ForShort >= 20)
-                    {
-                        _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈");
-                    }
+                    //if (stopLossPrices.CostShort - stopLossPrices.ForShort >= 20)
+                    //{
+                    //    _trader.CloseShortPositionByInstrument(data.InstrumentID, "空仓止盈", false, 99999);
+                    //}
+
+                    //var stop = Utils.立即平仓点数;
+
+                    //if (data.LastPrice - stopLossPrices.CostLong >= stop)
+                    //{
+                    //    _trader.CloseLongPositionByInstrument(data.InstrumentID, "立即平多仓", false, data.LastPrice);
+                    //}
+
+                    //if (stopLossPrices.CostShort - data.LastPrice >= stop)
+                    //{
+                    //    _trader.CloseShortPositionByInstrument(data.InstrumentID, "立即平空仓", false, data.LastPrice);
+                    //}
                 }
             }
             catch (Exception ex)

@@ -388,13 +388,13 @@ namespace WrapperTest
                         if (position.PosiDirection == EnumPosiDirectionType.Long)
                         {
                             ((TraderAdapter)Utils.Trader).CloseLongPositionByInstrument(position.InstrumentID,
-                                "平掉非主力多仓");
+                                "平掉非主力多仓", false, 0);
                         }
 
                         if (position.PosiDirection == EnumPosiDirectionType.Short)
                         {
                             ((TraderAdapter)Utils.Trader).CloseShortPositionByInstrument(position.InstrumentID,
-                                "平掉非主力空仓");
+                                "平掉非主力空仓", false, 99999);
                         }
                     }
                 }

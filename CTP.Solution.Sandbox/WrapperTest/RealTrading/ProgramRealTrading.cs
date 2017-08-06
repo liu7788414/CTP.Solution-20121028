@@ -261,7 +261,7 @@ namespace WrapperTest
                 }
 
                 Utils.GetDebugAndInfoLoggers();
-                Utils.ReadStopLossPrices();
+                //Utils.ReadStopLossPrices();
                 Utils.GetQuoteLoggers();
                 Utils.WriteLine("我是1");
 
@@ -361,45 +361,45 @@ namespace WrapperTest
 
                 Thread.Sleep(1000);
 
-                #region 平掉非主力合约仓位
+                //#region 平掉非主力合约仓位
 
-                var positionsToClose = new List<ThostFtdcInvestorPositionField>();
+                //var positionsToClose = new List<ThostFtdcInvestorPositionField>();
 
-                foreach (var kv in ((TraderAdapter)Utils.Trader).PositionFields)
-                {
-                    if (!Utils.CategoryToMainInstrument.Values.Contains(kv.Value.InstrumentID))
-                    {
-                        positionsToClose.Add(kv.Value);
-                    }
-                }
+                //foreach (var kv in ((TraderAdapter)Utils.Trader).PositionFields)
+                //{
+                //    if (!Utils.CategoryToMainInstrument.Values.Contains(kv.Value.InstrumentID))
+                //    {
+                //        positionsToClose.Add(kv.Value);
+                //    }
+                //}
 
-                //首先需要获取要平掉的非主力合约的行情
-                if (positionsToClose.Count > 0)
-                {
-                    ((QuoteAdapter)Utils.QuoteMain).SubscribeMarketData(
-                        positionsToClose.Select(s => s.InstrumentID).ToArray());
-                    ((QuoteAdapter)Utils.QuoteMain).SubscribedQuotes.AddRange(
-                        positionsToClose.Select(s => s.InstrumentID));
+                ////首先需要获取要平掉的非主力合约的行情
+                //if (positionsToClose.Count > 0)
+                //{
+                //    ((QuoteAdapter)Utils.QuoteMain).SubscribeMarketData(
+                //        positionsToClose.Select(s => s.InstrumentID).ToArray());
+                //    ((QuoteAdapter)Utils.QuoteMain).SubscribedQuotes.AddRange(
+                //        positionsToClose.Select(s => s.InstrumentID));
 
-                    Thread.Sleep(1000);
+                //    Thread.Sleep(1000);
 
-                    foreach (var position in positionsToClose)
-                    {
-                        if (position.PosiDirection == EnumPosiDirectionType.Long)
-                        {
-                            ((TraderAdapter)Utils.Trader).CloseLongPositionByInstrument(position.InstrumentID,
-                                "平掉非主力多仓");
-                        }
+                //    foreach (var position in positionsToClose)
+                //    {
+                //        if (position.PosiDirection == EnumPosiDirectionType.Long)
+                //        {
+                //            ((TraderAdapter)Utils.Trader).CloseLongPositionByInstrument(position.InstrumentID,
+                //                "平掉非主力多仓", false, 0);
+                //        }
 
-                        if (position.PosiDirection == EnumPosiDirectionType.Short)
-                        {
-                            ((TraderAdapter)Utils.Trader).CloseShortPositionByInstrument(position.InstrumentID,
-                                "平掉非主力空仓");
-                        }
-                    }
-                }
+                //        if (position.PosiDirection == EnumPosiDirectionType.Short)
+                //        {
+                //            ((TraderAdapter)Utils.Trader).CloseShortPositionByInstrument(position.InstrumentID,
+                //                "平掉非主力空仓", false, 99999);
+                //        }
+                //    }
+                //}
 
-                #endregion
+                //#endregion
 
                 //准备完毕后才进入开平仓检查，防止在查询过程中进入
                 ((QuoteAdapter)Utils.QuoteMain).StartTimer();
@@ -461,7 +461,7 @@ namespace WrapperTest
                 }
 
                 if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 30) ||
-                    (dateTime.Hour == 22 && dateTime.Minute == 59 && dateTime.Second >= 30))
+                    (dateTime.Hour == 22 && dateTime.Minute == 59 && dateTime.Second >= 30 && dateTime.DayOfWeek == DayOfWeek.Friday))
                 {
                     Utils.WriteLine(string.Format("临近收盘，平掉所有持仓{0}", dateTime), true);
                     ((TraderAdapter)Utils.Trader).CloseAllPositions();

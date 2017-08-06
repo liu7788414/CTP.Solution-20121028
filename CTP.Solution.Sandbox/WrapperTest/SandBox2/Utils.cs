@@ -42,7 +42,7 @@ namespace WrapperTest
         public string 时段结束;
         public string 多空比
         {
-            get 
+            get
             {
                 if (近期空头势力 != 0)
                 {
@@ -141,7 +141,7 @@ namespace WrapperTest
                         sum += temp[j];
                     }
 
-                    var average = sum/interval;
+                    var average = sum / interval;
                     result.Add(average);
                 }
                 return result;
@@ -197,8 +197,8 @@ namespace WrapperTest
                 }
 
                 var line = Fit.Line(xdata.ToArray(), ydata.ToArray());
-                return new Tuple<bool, double, double>(line.Item2 > Math.Tan(slope/180.0*Math.PI), line.Item2,
-                    Math.Atan(line.Item2)*180/Math.PI);
+                return new Tuple<bool, double, double>(line.Item2 > Math.Tan(slope / 180.0 * Math.PI), line.Item2,
+                    Math.Atan(line.Item2) * 180 / Math.PI);
             }
             catch (Exception ex)
             {
@@ -252,8 +252,8 @@ namespace WrapperTest
                 }
 
                 var line = Fit.Line(xdata.ToArray(), ydata.ToArray());
-                return new Tuple<bool, double, double>(line.Item2 < Math.Tan(-slope/180.0*Math.PI), line.Item2,
-                    Math.Atan(line.Item2)*180/Math.PI);
+                return new Tuple<bool, double, double>(line.Item2 < Math.Tan(-slope / 180.0 * Math.PI), line.Item2,
+                    Math.Atan(line.Item2) * 180 / Math.PI);
             }
             catch (Exception ex)
             {
@@ -365,6 +365,12 @@ namespace WrapperTest
         public static double 多空比计算的比例 = 3;
 
         public static double 多空差幅度 = 5000;
+
+        public static double 开仓偏移量 = 1;
+
+        public static double 立即平仓点数 = 3;
+
+        public static double 绝对止损点数 = 8;
         /// <summary>
         /// 止盈比例
         /// </summary>
@@ -490,7 +496,7 @@ namespace WrapperTest
                     mamp.MinPrice = Math.Min(mamp.MinPrice, pDepthMarketData.LastPrice);
                     mamp.MaxPrice = Math.Max(mamp.MaxPrice, pDepthMarketData.LastPrice);
                     WriteLine(string.Format("当前最高价{0},最低价{1},昨结价{2},振幅{3:P}", mamp.MaxPrice, mamp.MinPrice,
-                        pDepthMarketData.PreSettlementPrice, mamp.Swing/pDepthMarketData.PreSettlementPrice));
+                        pDepthMarketData.PreSettlementPrice, mamp.Swing / pDepthMarketData.PreSettlementPrice));
                 }
                 else
                 {
@@ -550,7 +556,7 @@ namespace WrapperTest
                         {
                             minuteByMinuteChart.Add(tuple);
                         }
-                       
+
                         //到下一分钟之前，记录当前分钟的最后一个行情，作为分时图节点
                         if (preQuote != null &&
                             GetHourAndMinute(preQuote.UpdateTime) != GetHourAndMinute(pDepthMarketData.UpdateTime))
@@ -593,14 +599,14 @@ namespace WrapperTest
                     性质 = 多空性质.__;
 
                     //记录成交价分布
-                    if(!InstrumentToMatchPrice.ContainsKey(instrumentId))
+                    if (!InstrumentToMatchPrice.ContainsKey(instrumentId))
                     {
                         InstrumentToMatchPrice[instrumentId] = new Dictionary<double, MatchPriceVolume>();
                     }
 
                     var dictMatchPriceVolume = InstrumentToMatchPrice[instrumentId];
 
-                    var price =  Math.Round(pDepthMarketData.LastPrice, 2);
+                    var price = Math.Round(pDepthMarketData.LastPrice, 2);
 
                     if (!dictMatchPriceVolume.ContainsKey(price))
                     {
@@ -675,25 +681,9 @@ namespace WrapperTest
                 {
                     var quotes = InstrumentToQuotes[pDepthMarketData.InstrumentID];
 
-                    if (quotes.Count >= movingAverageCount)
+                    if (quotes.Count > 0)
                     {
-                        var listTemp = new List<ThostFtdcDepthMarketDataField>();
-                        var nullCount = 0;
-                        for (var i = quotes.Count - 1; i >= quotes.Count - movingAverageCount; i--)
-                        {
-                            //行情里面会有空值
-                            if (quotes[i] != null && quotes[i].LastPrice >= pDepthMarketData.LowerLimitPrice && quotes[i].LastPrice <= pDepthMarketData.UpperLimitPrice)
-                            {
-                                listTemp.Add(quotes[i]);
-                            }
-                            else
-                            {
-                                nullCount++;
-                                WriteLine(string.Format("发现无效值,nullCount={0}", nullCount), true);
-                            }
-                        }
-
-                        var averageLastPrice = listTemp.Average(p => p.LastPrice);
+                        var averageLastPrice = quotes[quotes.Count - 1].LastPrice;
 
                         if (InstrumentToStopLossPrices.ContainsKey(pDepthMarketData.InstrumentID))
                         {
@@ -743,7 +733,7 @@ namespace WrapperTest
                     总空 = 总空
                 };
 
-                if(!InstrumentToMarketData.ContainsKey(instrumentId))
+                if (!InstrumentToMarketData.ContainsKey(instrumentId))
                 {
                     InstrumentToMarketData[instrumentId] = new List<MarketData>();
                 }
@@ -817,10 +807,50 @@ namespace WrapperTest
                     marketData.时段结束 = string.Format("{0}.{1}", pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
                 }
 
-
-                    
                 InstrumentToMarketData[instrumentId].Add(marketData);
-                
+
+                var averageCount = 10;
+                var averagePrice = 0.0;
+                var marketDataQuotes = Utils.InstrumentToMarketData[instrumentId];
+                var sb = new StringBuilder();
+
+                if (marketDataQuotes.Count > 0 && marketDataQuotes.Count <= averageCount)
+                {
+                    averagePrice = (int)marketDataQuotes.Average(q => q.pDepthMarketData.LastPrice);
+
+                    foreach (var qo in marketDataQuotes)
+                    {
+                        sb.Append(qo.pDepthMarketData.LastPrice + ",");
+                    }
+                }
+
+                if (marketDataQuotes.Count > averageCount)
+                {
+                    var nCount = marketDataQuotes.Count;
+                    var subQuotes = marketDataQuotes.GetRange(nCount - averageCount, averageCount);
+                    averagePrice = (int)subQuotes.Average(q => q.pDepthMarketData.LastPrice);
+                    
+                    foreach (var qo in subQuotes)
+                    {
+                        sb.Append(qo.pDepthMarketData.LastPrice + ",");
+                    }
+                }
+
+
+                if (marketData.信号 == 信号.L)
+                {
+                    var reason = string.Format("{0}看多信号，开多", instrumentId);
+                    ((TraderAdapter)Trader).OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, averagePrice);
+                    Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                }
+
+                if (marketData.信号 == 信号.S)
+                {
+                    var reason = string.Format("{0}看空信号，开空", instrumentId);
+                    ((TraderAdapter)Trader).OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, averagePrice);
+                    Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                }
+
                 var s = FormatQuote(marketData);
 
                 try
@@ -843,10 +873,10 @@ namespace WrapperTest
 
         public static double GetAveragePrice(ThostFtdcDepthMarketDataField data)
         {
-            return data.AveragePrice/data.PreClosePrice < 2
+            return data.AveragePrice / data.PreClosePrice < 2
                 ? data.AveragePrice
                 : InstrumentToInstrumentInfo.ContainsKey(data.InstrumentID)
-                    ? data.AveragePrice/InstrumentToInstrumentInfo[data.InstrumentID].VolumeMultiple
+                    ? data.AveragePrice / InstrumentToInstrumentInfo[data.InstrumentID].VolumeMultiple
                     : data.AveragePrice;
         }
 
@@ -945,7 +975,7 @@ namespace WrapperTest
 
                 var line = sr.ReadLine();
 
-                var s = GetLineData(line).Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+                var s = GetLineData(line).Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                 AllowedCategories.AddRange(s.Where(t => !string.IsNullOrWhiteSpace(t)));
 
                 line = sr.ReadLine();
@@ -1027,13 +1057,22 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 多空差幅度 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                开仓偏移量 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                立即平仓点数 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                绝对止损点数 = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }
 
         public static string GetLineData(string line)
         {
-            var s = line.Split(new[] {'#'}, StringSplitOptions.RemoveEmptyEntries);
+            var s = line.Split(new[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (s.Length > 0)
             {
@@ -1074,7 +1113,7 @@ namespace WrapperTest
 
         public static string GetInstrumentIdFromPositionKey(string positionKey)
         {
-            var s = positionKey.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries);
+            var s = positionKey.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             return s[0];
         }
 
@@ -1143,7 +1182,7 @@ namespace WrapperTest
             try
             {
                 //新交易日未开盘时，最高价和最低价为无效值，要排除；交易日中途启动时，暂时设最高价最低价，其实应该读取上次的参考价。
-                var stopLossPrices = new StopLossPrices {Instrument = pDepthMarketData.InstrumentID};
+                var stopLossPrices = new StopLossPrices { Instrument = pDepthMarketData.InstrumentID };
 
                 if (pDepthMarketData.HighestPrice > 1 && pDepthMarketData.LowestPrice > 1)
                 {
@@ -1240,7 +1279,7 @@ namespace WrapperTest
 
                 while ((line = sr.ReadLine()) != null)
                 {
-                    var s = line.Split(new[] {":"}, StringSplitOptions.RemoveEmptyEntries);
+                    var s = line.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
 
                     if (s.Length > 4)
                     {
@@ -1313,45 +1352,6 @@ namespace WrapperTest
 
                 sr.Close();
             }
-        }
-
-        public static void SaveInstrumentTotalPrices()
-        {
-            try
-            {
-                //保存一手合约的当前总价
-                if (CategoryToMainInstrument.Count > 0)
-                {
-                    var sw = new StreamWriter(AssemblyPath + string.Format("{0}_InstrumentPrices.txt", CurrentChannel),
-                        false, Encoding.UTF8);
-                    var sb = new StringBuilder();
-                    foreach (var kv in CategoryToMainInstrument)
-                    {
-                        if (InstrumentToInstrumentInfo.ContainsKey(kv.Value) &&
-                            InstrumentToQuotes.ContainsKey(kv.Value))
-                        {
-                            var instrumentInfo = InstrumentToInstrumentInfo[kv.Value];
-                            var quotes = InstrumentToQuotes[kv.Value];
-                            if (quotes.Count > 0)
-                            {
-                                var quote = quotes[quotes.Count - 1];
-                                var totalPrice = instrumentInfo.VolumeMultiple*quote.LastPrice;
-                                InstrumentToTotalPrice[kv.Value] = totalPrice;
-                                var temp = string.Format("{0}:{1}:{2}", kv.Key, kv.Value, totalPrice);
-                                sb.AppendLine(temp);
-                            }
-                        }
-                    }
-
-                    sw.WriteLine(sb);
-                    sw.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                WriteException(ex);
-            }
-
         }
 
         public static void Exit(object trader = null)
@@ -1561,7 +1561,7 @@ namespace WrapperTest
 
                     if (kvp.Key.Contains(";"))
                     {
-                        var instrumentIds = kvp.Key.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+                        var instrumentIds = kvp.Key.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                         s.AddRange(instrumentIds);
                     }
 
@@ -1629,7 +1629,7 @@ namespace WrapperTest
         {
             try
             {
-                return dt.Hour*3600 + dt.Minute*60 + dt.Second;
+                return dt.Hour * 3600 + dt.Minute * 60 + dt.Second;
             }
             catch (Exception ex)
             {

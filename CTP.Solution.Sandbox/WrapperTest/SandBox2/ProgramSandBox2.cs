@@ -115,8 +115,7 @@ namespace WrapperTest
                                 Front =
                                     new[]
                                 {
-                                    "tcp://180.168.146.187:10000", "tcp://180.168.146.187:10001",
-                                    "tcp://218.202.237.33:10002"
+                                    "tcp://180.168.146.187:10003"
                                 }
                                 //模拟交易所时间
                             };
@@ -125,15 +124,12 @@ namespace WrapperTest
                             Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
                             {
                                 BrokerId = "9999",
-                                InvestorId = "20051875",
-                                Password = "91418",
+                                InvestorId = "031116",
+                                Password = "7788414liu",
                                 Front =
                                     new[]
                                 {
-                                    "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
-                                    "tcp://180.168.212.230:41213",
-                                    "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
-                                    "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
+                                    "tcp://180.168.146.187:10013"
                                 } //模拟交易所时间
                             };
 
@@ -388,13 +384,13 @@ namespace WrapperTest
                         if (position.PosiDirection == EnumPosiDirectionType.Long)
                         {
                             ((TraderAdapter)Utils.Trader).CloseLongPositionByInstrument(position.InstrumentID,
-                                "平掉非主力多仓");
+                                "平掉非主力多仓", false, 0);
                         }
 
                         if (position.PosiDirection == EnumPosiDirectionType.Short)
                         {
                             ((TraderAdapter)Utils.Trader).CloseShortPositionByInstrument(position.InstrumentID,
-                                "平掉非主力空仓");
+                                "平掉非主力空仓", false, 99999);
                         }
                     }
                 }

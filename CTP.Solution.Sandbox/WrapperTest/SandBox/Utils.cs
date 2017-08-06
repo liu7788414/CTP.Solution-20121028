@@ -367,6 +367,10 @@ namespace WrapperTest
         public static double 多空差幅度 = 5000;
 
         public static double 开仓偏移量 = 1;
+
+        public static double 立即平仓点数 = 3;
+
+        public static double 绝对止损点数 = 8;
         /// <summary>
         /// 止盈比例
         /// </summary>
@@ -803,9 +807,49 @@ namespace WrapperTest
                     marketData.时段结束 = string.Format("{0}.{1}", pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
                 }
 
-
-
                 InstrumentToMarketData[instrumentId].Add(marketData);
+
+                var averageCount = 10;
+                var averagePrice = 0.0;
+                var marketDataQuotes = Utils.InstrumentToMarketData[instrumentId];
+                var sb = new StringBuilder();
+
+                if (marketDataQuotes.Count > 0 && marketDataQuotes.Count <= averageCount)
+                {
+                    averagePrice = (int)marketDataQuotes.Average(q => q.pDepthMarketData.LastPrice);
+
+                    foreach (var qo in marketDataQuotes)
+                    {
+                        sb.Append(qo.pDepthMarketData.LastPrice + ",");
+                    }
+                }
+
+                if (marketDataQuotes.Count > averageCount)
+                {
+                    var nCount = marketDataQuotes.Count;
+                    var subQuotes = marketDataQuotes.GetRange(nCount - averageCount, averageCount);
+                    averagePrice = (int)subQuotes.Average(q => q.pDepthMarketData.LastPrice);
+
+                    foreach (var qo in subQuotes)
+                    {
+                        sb.Append(qo.pDepthMarketData.LastPrice + ",");
+                    }
+                }
+
+
+                if (marketData.信号 == 信号.L)
+                {
+                    var reason = string.Format("{0}看多信号，开多", instrumentId);
+                    ((TraderAdapter)Trader).OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, averagePrice);
+                    Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                }
+
+                if (marketData.信号 == 信号.S)
+                {
+                    var reason = string.Format("{0}看空信号，开空", instrumentId);
+                    ((TraderAdapter)Trader).OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, averagePrice);
+                    Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                }
 
                 var s = FormatQuote(marketData);
 
@@ -1016,6 +1060,12 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 开仓偏移量 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                立即平仓点数 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                绝对止损点数 = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }
@@ -1302,45 +1352,6 @@ namespace WrapperTest
 
                 sr.Close();
             }
-        }
-
-        public static void SaveInstrumentTotalPrices()
-        {
-            try
-            {
-                //保存一手合约的当前总价
-                if (CategoryToMainInstrument.Count > 0)
-                {
-                    var sw = new StreamWriter(AssemblyPath + string.Format("{0}_InstrumentPrices.txt", CurrentChannel),
-                        false, Encoding.UTF8);
-                    var sb = new StringBuilder();
-                    foreach (var kv in CategoryToMainInstrument)
-                    {
-                        if (InstrumentToInstrumentInfo.ContainsKey(kv.Value) &&
-                            InstrumentToQuotes.ContainsKey(kv.Value))
-                        {
-                            var instrumentInfo = InstrumentToInstrumentInfo[kv.Value];
-                            var quotes = InstrumentToQuotes[kv.Value];
-                            if (quotes.Count > 0)
-                            {
-                                var quote = quotes[quotes.Count - 1];
-                                var totalPrice = instrumentInfo.VolumeMultiple * quote.LastPrice;
-                                InstrumentToTotalPrice[kv.Value] = totalPrice;
-                                var temp = string.Format("{0}:{1}:{2}", kv.Key, kv.Value, totalPrice);
-                                sb.AppendLine(temp);
-                            }
-                        }
-                    }
-
-                    sw.WriteLine(sb);
-                    sw.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                WriteException(ex);
-            }
-
         }
 
         public static void Exit(object trader = null)
