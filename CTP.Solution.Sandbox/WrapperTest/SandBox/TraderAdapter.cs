@@ -148,7 +148,7 @@ namespace WrapperTest
                     {
                         var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 30))
+                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 60))
                         {
                             ordersToCancel.Add(order);
                         }
@@ -312,30 +312,6 @@ namespace WrapperTest
             Utils.WriteLine(string.Format("登出回报,设置准备状态为{0}", Utils.IsTraderReady), true);
         }
 
-        public bool IsLessThanCategoryUpperLimit()
-        {
-            try
-            {
-                if (PositionFields.Count < Utils.CategoryUpperLimit - Utils.LockedOpenInstruments.Count)
-                {
-                    return true;
-                }
-
-                if (Utils.LockedOpenInstruments.Count > 0)
-                {
-                    Utils.WriteLine(string.Format("开仓后会超过 品种上限:{0} 和 开仓在途:{1}之差:{2}，不能开仓...", Utils.CategoryUpperLimit,
-                        Utils.LockedOpenInstruments.Count, Utils.CategoryUpperLimit - Utils.LockedOpenInstruments.Count));
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                Utils.WriteException(ex);
-            }
-            return false;
-        }
-
         /// <summary>
         /// 开合约的仓位
         /// </summary>
@@ -363,8 +339,7 @@ namespace WrapperTest
 
                 //只有主力合约才考虑开仓，否则只能平仓；只有在合约的交易时间才开仓；只有没有该合约的持仓时，才开仓；持有品种的数量不能超过上限
                 if (Utils.IsTradableInstrument(instrumentId) && Utils.IsInInstrumentTradingTime(instrumentId) &&
-                    !PositionFields.ContainsKey(keyToday) && !PositionFields.ContainsKey(keyHistory) &&
-                    IsLessThanCategoryUpperLimit()) //没有空仓，卖出开仓
+                    !PositionFields.ContainsKey(keyToday) && !PositionFields.ContainsKey(keyHistory)) //没有空仓，卖出开仓
                 {
                     if (IsUnFinishedOrderExisting(instrumentId, buyOrSell, EnumOffsetFlagType.Open))
                     //该合约还有未完成的开仓报单，不报单
@@ -617,6 +592,9 @@ namespace WrapperTest
                         //开仓成交回报，不会影响昨仓的持仓；只有开仓才需要调整止损价参考值
                         case EnumOffsetFlagType.Open:
                             {
+                                Utils.PositionTime = DateTime.Now;
+                                Utils.WriteLine(string.Format("设置持仓起始时间为{0}", Utils.PositionTime), true);
+
                                 if (Utils.InstrumentToStopLossPrices.ContainsKey(pTrade.InstrumentID))
                                 {
                                     var stopLossPrices = Utils.InstrumentToStopLossPrices[pTrade.InstrumentID];
@@ -663,7 +641,6 @@ namespace WrapperTest
                                     };
                                 }
 
-                                Utils.RemoveLockedOpenInstrument(pTrade.InstrumentID);
                                 break;
                             }
                         case EnumOffsetFlagType.Close:
@@ -800,7 +777,6 @@ namespace WrapperTest
                     Utils.WriteLine(temp, true);
 
                     ForceQuit(pInputOrder.InstrumentID);
-                    Utils.UnlockInstrument(pInputOrder.InstrumentID, pInputOrder.CombOffsetFlag_0);
                 }
             }
             catch (Exception ex)
@@ -944,9 +920,6 @@ namespace WrapperTest
                 {
                     var temp = Utils.OutputField(pInputOrder);
                     Email.SendMail("交易所报单错误", temp, Utils.IsMailingEnabled);
-
-                    Utils.UnlockInstrument(pInputOrder.InstrumentID, pInputOrder.CombOffsetFlag_0);
-
                     ForceQuit(pInputOrder.InstrumentID);
                 }
             }
@@ -1002,7 +975,6 @@ namespace WrapperTest
                         Utils.WriteLine(string.Format("OrderRef为{0}的报单被撤单，从未完成报单列表中移除", pOrder.OrderRef), true);
                         ThostFtdcOrderField pOrderTemp;
                         UnFinishedOrderFields.TryRemove(GetOrderKey(pOrder), out pOrderTemp);
-                        Utils.UnlockInstrument(pOrder.InstrumentID, pOrderTemp.CombOffsetFlag_0);
                     }
 
                     if (pOrder.OrderStatus == EnumOrderStatusType.AllTraded) //报单到达终结状态后移除
@@ -1013,9 +985,6 @@ namespace WrapperTest
                             Utils.WriteLine(string.Format("OrderRef为{0}的报单完全成交，从未完成报单列表中移除", pOrder.OrderRef), true);
                             ThostFtdcOrderField pOrderTemp;
                             UnFinishedOrderFields.TryRemove(GetOrderKey(order), out pOrderTemp);
-
-                            //Thread.Sleep(2000); //报单回报和成交回报之间有延时,目前发现1.5秒,故此处延迟2秒
-                            Utils.UnlockInstrument(order.InstrumentID, order.CombOffsetFlag_0);
                         }
                         else
                         {
@@ -1118,6 +1087,37 @@ namespace WrapperTest
                         var keyHistory = Utils.GetPositionKey(pInvestorPosition.InstrumentID,
                             pInvestorPosition.PosiDirection,
                             EnumPositionDateType.History);
+
+                        var volumeMultiple = Utils.InstrumentToInstrumentInfo[pInvestorPosition.InstrumentID].VolumeMultiple;
+
+                        StopLossPrices stopLossPrices = null;
+                        if (Utils.InstrumentToStopLossPrices.ContainsKey(pInvestorPosition.InstrumentID))
+                        {
+                            stopLossPrices = Utils.InstrumentToStopLossPrices[pInvestorPosition.InstrumentID];
+                        }
+                        else
+                        {
+                            stopLossPrices = new StopLossPrices
+                            {
+                                Instrument = pInvestorPosition.InstrumentID,
+                                ForLong = 0,
+                                ForShort = 0
+                            };
+                        }
+
+                        if (pInvestorPosition.PosiDirection == EnumPosiDirectionType.Long)
+                        {
+                            stopLossPrices.CostLong = Convert.ToInt32(pInvestorPosition.OpenCost / volumeMultiple / pInvestorPosition.Position);
+                        }
+                        else
+                        {
+                            stopLossPrices.CostShort = Convert.ToInt32(pInvestorPosition.OpenCost / volumeMultiple / pInvestorPosition.Position);
+                        }
+
+                        Utils.InstrumentToStopLossPrices[stopLossPrices.Instrument] = stopLossPrices;
+                        Utils.WriteLine(string.Format("设置合约{0},多仓成本价{1},空仓成本价{2},多仓止损价{3},空仓止损价{4}", stopLossPrices.Instrument,
+                        stopLossPrices.CostLong, stopLossPrices.CostShort, stopLossPrices.ForLong,
+                        stopLossPrices.ForShort), true);
 
                         if (Utils.IsShfeInstrument(pInvestorPosition.InstrumentID)) //上期所合约今仓昨仓分开
                         {
@@ -1694,18 +1694,38 @@ namespace WrapperTest
                 //首先需要获取要平掉的非主力合约的行情
                 if (positionsToClose.Count > 0)
                 {
+
                     foreach (var position in positionsToClose)
                     {
+                        var marketDataList = Utils.InstrumentToMarketData[position.InstrumentID];
+
+                        var marketData = marketDataList[marketDataList.Count - 1];
+
+
                         if (position.PosiDirection == EnumPosiDirectionType.Long)
                         {
-                            CloseLongPositionByInstrument(position.InstrumentID, "收盘平多仓", true, 0);
-                            Thread.Sleep(2000); //防止有相同的合约平仓互相影响，保证前一个已经完成，再报第二笔
+                            if (marketData.pDepthMarketData.LastPrice < marketData.pDepthMarketData.PreSettlementPrice * 1.01 || DateTime.Now.DayOfWeek == DayOfWeek.Friday)
+                            {
+                                CloseLongPositionByInstrument(position.InstrumentID, "收盘平多仓", true, 0);
+                                Thread.Sleep(2000); //防止有相同的合约平仓互相影响，保证前一个已经完成，再报第二笔
+                            }
+                            else
+                            {
+                                Utils.WriteLine("收盘保留多仓");
+                            }
                         }
 
                         if (position.PosiDirection == EnumPosiDirectionType.Short)
                         {
-                            CloseShortPositionByInstrument(position.InstrumentID, "收盘平空仓", true, 99999);
-                            Thread.Sleep(2000);
+                            if (marketData.pDepthMarketData.LastPrice > marketData.pDepthMarketData.PreSettlementPrice * 0.99 || DateTime.Now.DayOfWeek == DayOfWeek.Friday)
+                            {
+                                CloseShortPositionByInstrument(position.InstrumentID, "收盘平空仓", true, 99999);
+                                Thread.Sleep(2000);
+                            }
+                            else
+                            {
+                                Utils.WriteLine("收盘保留空仓");
+                            }
                         }
                     }
                 }
@@ -1724,10 +1744,9 @@ namespace WrapperTest
         {
             try
             {
-                //合约还有报单在途中，不报单
-                if (Utils.IsInstrumentLocked(instrumentId))
+                if (UnFinishedOrderFields.Count > 0)
                 {
-                    Utils.WriteLine(string.Format("合约{0}还有在途单，不能报单", instrumentId), true);
+                    Utils.WriteLine("有未完成的报单，不报新单...", true);
                     return -1;
                 }
 
@@ -1762,37 +1781,8 @@ namespace WrapperTest
                 var iResult = -1;
                 bool isOrderInserted = false;
 
-                if (req.CombOffsetFlag_0 == EnumOffsetFlagType.Open &&
-                    Utils.InstrumentToOpenCount.ContainsKey(req.InstrumentID)) //开仓的时候要判断开仓次数是否超过上限
-                {
-                    if (Utils.LockedOpenInstruments.ContainsKey(req.InstrumentID))
-                    {
-                        Utils.WriteLine(string.Format("合约{0}还有在途开仓单，不能开仓", req.InstrumentID), true);
-                    }
-                    else
-                    {
-                        var count = Utils.InstrumentToOpenCount[req.InstrumentID];
-
-                        if (count < 100)
-                        {
-                            iResult = ReqOrderInsert(req, RequestId++);
-                            Utils.LockOpenInstrument(req.InstrumentID);
-                            Utils.InstrumentToOpenCount[req.InstrumentID]++;
-                            isOrderInserted = true;
-                        }
-                        else
-                        {
-                            Utils.WriteLine(string.Format("合约{0}的开仓次数{1}超过了上限，不能开仓", req.InstrumentID, count), true);
-                        }
-                    }
-
-                }
-                else
-                {
-                    iResult = ReqOrderInsert(req, RequestId++);
-                    Utils.LockInstrument(req.InstrumentID);
-                    isOrderInserted = true;
-                }
+                iResult = ReqOrderInsert(req, RequestId++);
+                isOrderInserted = true;
 
                 if (isOrderInserted)
                 {

@@ -38,20 +38,20 @@ namespace RunStrategy
                 if (!strategyProcesses.Contains("WrapperTestRealTrading"))
                 {
                     Console.WriteLine("启动WrapperTestRealTrading");
-                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\WrapperTestRealTrading.exe", "true 4");
+                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\WrapperTestRealTrading.exe", "true 5");
                 }
 
-                if (!strategyProcesses.Contains("WrapperTestSandBox"))
-                {
-                    Console.WriteLine("启动WrapperTestSandBox");
-                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\WrapperTestSandBox.exe", "true 2");
-                }
+                //if (!strategyProcesses.Contains("WrapperTestSandBox"))
+                //{
+                //    Console.WriteLine("启动WrapperTestSandBox");
+                //    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\WrapperTestSandBox.exe", "true 2");
+                //}
 
-                if (!strategyProcesses.Contains("WrapperTestSandBox2"))
-                {
-                    Console.WriteLine("启动WrapperTestSandBox2");
-                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox2\WrapperTestSandBox2.exe", "true 2");
-                }
+                //if (!strategyProcesses.Contains("WrapperTestSandBox2"))
+                //{
+                //    Console.WriteLine("启动WrapperTestSandBox2");
+                //    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox2\WrapperTestSandBox2.exe", "true 2");
+                //}
 
                 if (!strategyProcesses.Contains("WrapperTestQuote"))
                 {

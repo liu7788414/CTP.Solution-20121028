@@ -449,7 +449,7 @@ namespace WrapperTest
         {
             var s =
                 string.Format(
-                    ",{0},{1,-5},{9}.{10,-3},{13,-6},{15},{16},{18},{20,-5},{21,-5},{22},{23,-5},{24,-5},{25,-4},{26,-5},{27},{28,-12}|{29,-12},{30,-6},{31,-6}",
+                    ",{0},{1,-5},{9}.{10,-3},{13,-6},{15},{16},{18},{20,-5},{21,-5},{22},{23,-5},{24,-5},{25,-4},{26,-5},{27},{28,-12}|{29,-12},{30,-6},{31,-6},{32,-5}",
                     marketData.pDepthMarketData.InstrumentID, marketData.pDepthMarketData.LastPrice, marketData.pDepthMarketData.OpenPrice,
                     marketData.pDepthMarketData.PreSettlementPrice,
                     marketData.pDepthMarketData.PreClosePrice, marketData.pDepthMarketData.HighestPrice, marketData.pDepthMarketData.LowestPrice,
@@ -460,7 +460,7 @@ namespace WrapperTest
                     marketData.pDepthMarketData.OpenInterest, marketData.pDepthMarketData.AskPrice1,
                     marketData.pDepthMarketData.BidVolume1, marketData.pDepthMarketData.BidPrice1,
                     marketData.pDepthMarketData.AskVolume1, marketData.现手, marketData.仓差, marketData.性质,
-                    marketData.近期多头势力, marketData.近期空头势力, marketData.多空比, marketData.多空差, marketData.信号, marketData.时段开始, marketData.时段结束, marketData.总多, marketData.总空);
+                    marketData.近期多头势力, marketData.近期空头势力, marketData.多空比, marketData.多空差, marketData.信号, marketData.时段开始, marketData.时段结束, marketData.总多, marketData.总空, GetAveragePrice(marketData.pDepthMarketData));
 
             return s;
         }

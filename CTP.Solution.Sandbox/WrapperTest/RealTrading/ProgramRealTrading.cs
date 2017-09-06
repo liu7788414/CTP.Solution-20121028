@@ -63,7 +63,7 @@ namespace WrapperTest
                 timerExit.Elapsed += timerExit_Elapsed;
                 timerExit.Start();
 
-                var timerCloseAllPositions = new System.Timers.Timer(10000);
+                var timerCloseAllPositions = new System.Timers.Timer(5000);
                 timerCloseAllPositions.Elapsed += timerCloseAllPosition_Elapsed;
                 timerCloseAllPositions.Start();
 
@@ -75,7 +75,7 @@ namespace WrapperTest
                 }
                 else //手动方式
                 {
-                    Console.WriteLine("选择登录类型，1-模拟24*7，2-模拟交易所，3-华泰，4-宏源");
+                    Console.WriteLine("选择登录类型，1-模拟24*7，2-模拟交易所，3-华泰，4-宏源，5-华安");
                     line = Console.ReadLine();
                 }
 
@@ -203,35 +203,85 @@ namespace WrapperTest
                             };
 
                             ////宏源期货的行情
-                            //Utils.QuoteMain = new QuoteAdapter(Utils.Trader)
-                            //{
-                            //    BrokerId = "1080",
-                            //    InvestorId = "901200953",
-                            //    Password = "091418",
-                            //    Front =
-                            //        new[]
-                            //        {
-                            //            "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
-                            //            "tcp://180.169.112.54:41213",
-                            //            "tcp://180.169.112.55:41213"
-                            //        }
-                            //};
-
-                            //华泰期货的行情
                             Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
                             {
-                                BrokerId = "9999",
-                                InvestorId = "20051875",
-                                Password = "91418",
+                                BrokerId = "1080",
+                                InvestorId = "901200953",
+                                Password = "091418",
                                 Front =
                                     new[]
-                                {
-                                    "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
-                                    "tcp://180.168.212.230:41213",
-                                    "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
-                                    "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
-                                }
+                                    {
+                                        "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
+                                        "tcp://180.169.112.54:41213",
+                                        "tcp://180.169.112.55:41213"
+                                    }
                             };
+
+                            //华泰期货的行情
+                            //Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            //{
+                            //    BrokerId = "9999",
+                            //    InvestorId = "20051875",
+                            //    Password = "91418",
+                            //    Front =
+                            //        new[]
+                            //    {
+                            //        "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
+                            //        "tcp://180.168.212.230:41213",
+                            //        "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
+                            //        "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
+                            //    }
+                            //};
+
+                            Utils.CurrentChannel = ChannelType.宏源期货;
+                            break;
+                        }
+                    case 5:
+                        {
+                            //华安
+                            Utils.Trader = new TraderAdapter
+                            {
+                                BrokerId = "6020",
+                                InvestorId = "100866770",
+                                Password = "091418",
+                                Front =
+                                    new[]
+                                    {
+						                "tcp://180.166.37.178:41205",
+						                "tcp://180.166.37.179:41205"
+                                    }
+                            };
+
+                            ////宏源期货的行情
+                            Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            {
+                                BrokerId = "1080",
+                                InvestorId = "901200953",
+                                Password = "091418",
+                                Front =
+                                    new[]
+                                    {
+                                        "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
+                                        "tcp://180.169.112.54:41213",
+                                        "tcp://180.169.112.55:41213"
+                                    }
+                            };
+
+                            //华泰期货的行情
+                            //Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            //{
+                            //    BrokerId = "9999",
+                            //    InvestorId = "20051875",
+                            //    Password = "91418",
+                            //    Front =
+                            //        new[]
+                            //    {
+                            //        "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
+                            //        "tcp://180.168.212.230:41213",
+                            //        "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
+                            //        "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
+                            //    }
+                            //};
 
                             Utils.CurrentChannel = ChannelType.宏源期货;
                             break;
@@ -351,92 +401,13 @@ namespace WrapperTest
                 ((QuoteAdapter)Utils.QuoteMain).SubscribeMarketData(Utils.CategoryToMainInstrument.Values.ToArray());
                 ((QuoteAdapter)Utils.QuoteMain).SubscribedQuotes.AddRange(Utils.CategoryToMainInstrument.Values);
 
-                //初始化开仓手数
-                foreach (var kv in Utils.CategoryToMainInstrument)
-                {
-                    Utils.InstrumentToOpenCount[kv.Value] = 0;
-                }
-
                 Utils.IsInitialized = true;
 
                 Thread.Sleep(1000);
 
-                //#region 平掉非主力合约仓位
-
-                //var positionsToClose = new List<ThostFtdcInvestorPositionField>();
-
-                //foreach (var kv in ((TraderAdapter)Utils.Trader).PositionFields)
-                //{
-                //    if (!Utils.CategoryToMainInstrument.Values.Contains(kv.Value.InstrumentID))
-                //    {
-                //        positionsToClose.Add(kv.Value);
-                //    }
-                //}
-
-                ////首先需要获取要平掉的非主力合约的行情
-                //if (positionsToClose.Count > 0)
-                //{
-                //    ((QuoteAdapter)Utils.QuoteMain).SubscribeMarketData(
-                //        positionsToClose.Select(s => s.InstrumentID).ToArray());
-                //    ((QuoteAdapter)Utils.QuoteMain).SubscribedQuotes.AddRange(
-                //        positionsToClose.Select(s => s.InstrumentID));
-
-                //    Thread.Sleep(1000);
-
-                //    foreach (var position in positionsToClose)
-                //    {
-                //        if (position.PosiDirection == EnumPosiDirectionType.Long)
-                //        {
-                //            ((TraderAdapter)Utils.Trader).CloseLongPositionByInstrument(position.InstrumentID,
-                //                "平掉非主力多仓", false, 0);
-                //        }
-
-                //        if (position.PosiDirection == EnumPosiDirectionType.Short)
-                //        {
-                //            ((TraderAdapter)Utils.Trader).CloseShortPositionByInstrument(position.InstrumentID,
-                //                "平掉非主力空仓", false, 99999);
-                //        }
-                //    }
-                //}
-
-                //#endregion
-
                 //准备完毕后才进入开平仓检查，防止在查询过程中进入
                 ((QuoteAdapter)Utils.QuoteMain).StartTimer();
 
-                if (Utils.CurrentChannel == ChannelType.模拟24X7)
-                {
-                    //_trader.CloseAllPositions();
-
-                    //Thread.Sleep(2000);
-
-                    //Utils.IsOpenLocked = false;
-
-                    //foreach (var kv in Utils.CategoryToMainInstrument)
-                    //{
-                    //    _trader.OpenLongPositionByInstrument(kv.Value, "测试开多仓",
-                    //        Utils.InstrumentToQuotes[kv.Value][0].LastPrice, false);
-                    //    Thread.Sleep(2000);
-                    //    _trader.OpenShortPositionByInstrument(kv.Value, "测试开空仓",
-                    //        Utils.InstrumentToQuotes[kv.Value][0].LastPrice, false);
-                    //}
-
-                    //Thread.Sleep(2000);
-                    //foreach (var kv in Utils.CategoryToMainInstrument)
-                    //{
-                    //    _trader.CloseLongPositionByInstrument(kv.Value, "测试平多仓");
-                    //    Thread.Sleep(2000);
-                    //    _trader.CloseShortPositionByInstrument(kv.Value, "测试平空仓");
-                    //}
-
-                    //Thread.Sleep(10000);
-                    //foreach (var kv in Utils.CategoryToMainInstrument)
-                    //{
-                    //    _trader.OpenLongPositionByInstrument(kv.Value, "测试开多仓");
-                    //    Thread.Sleep(2000);
-                    //    _trader.OpenShortPositionByInstrument(kv.Value, "测试开空仓");
-                    //}
-                }
                 Thread.Sleep(100000000);
             }
             catch (Exception ex)
@@ -460,8 +431,8 @@ namespace WrapperTest
                     Utils.IsOpenLocked = true;
                 }
 
-                if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 30) ||
-                    (dateTime.Hour == 22 && dateTime.Minute == 59 && dateTime.Second >= 30 && dateTime.DayOfWeek == DayOfWeek.Friday))
+                if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 0) ||
+                    (dateTime.Hour == 22 && dateTime.Minute == 59 && dateTime.Second >= 0 && dateTime.DayOfWeek == DayOfWeek.Friday))
                 {
                     Utils.WriteLine(string.Format("临近收盘，平掉所有持仓{0}", dateTime), true);
                     ((TraderAdapter)Utils.Trader).CloseAllPositions();
@@ -478,17 +449,6 @@ namespace WrapperTest
         {
             try
             {
-                foreach (var key in Utils.InstrumentToMatchPrice.Keys)
-                {
-                    var dict = Utils.InstrumentToMatchPrice[key];
-                    dict = dict.OrderBy(k => k.Key).ToDictionary(k => k.Key, v => v.Value);
-
-                    foreach (var m in dict)
-                    {
-                        Utils.WriteLine(string.Format("成交价:{0},成交量:{1}", m.Key, m.Value.Volume));
-                    }
-                }
-
                 var dateTime = DateTime.Now;
                 Utils.WriteLine(string.Format("检查是否退出{0}", dateTime));
 
@@ -524,6 +484,12 @@ namespace WrapperTest
                     Utils.WriteLine(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId), true);
                     Email.SendMail(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId),
                         DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
+                }
+
+                if(dateTime.Hour == 8 && dateTime.Minute >= 50 && dateTime.Minute <= 59)
+                {
+                    Utils.PositionTime = DateTime.Now;
+                    Utils.WriteLine(string.Format("设置持仓起始时间为{0}", Utils.PositionTime), true);
                 }
             }
             catch (Exception ex)

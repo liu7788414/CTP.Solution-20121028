@@ -383,6 +383,19 @@ namespace WrapperTest
         public static List<double> MinuteLongXData;
         public static List<double> MinuteMiddleXData;
         public static bool IsOpenLocked = false;
+        public static DateTime PositionTime = DateTime.Now;
+        public static DateTime BuyOpenLockTime = DateTime.Now;
+        public static DateTime SellOpenLockTime = DateTime.Now;
+        public static bool IsBuyOpenLocked = false;
+        public static bool IsSellOpenLocked = false;
+        public static TimeSpan timeSpan5 = new TimeSpan(0, 5, 0);
+        public static TimeSpan timeSpan10 = new TimeSpan(0, 10, 0);
+        public static TimeSpan timeSpan15 = new TimeSpan(0, 15, 0);
+        public static TimeSpan timeSpan20 = new TimeSpan(0, 20, 0);
+        public static TimeSpan timeSpan30 = new TimeSpan(0, 30, 0);
+        public static TimeSpan timeSpan60 = new TimeSpan(0, 60, 0);
+        public static TimeSpan timeSpan120 = new TimeSpan(0, 120, 0);
+        public static TimeSpan timeSpan180 = new TimeSpan(0, 180, 0);
 
         public static void GetQuoteLoggers()
         {
@@ -455,7 +468,7 @@ namespace WrapperTest
         {
             var s =
                 string.Format(
-                    ",{0},{1,-5},{9}.{10,-3},{13,-6},{15},{16},{18},{20,-5},{21,-5},{22},{23,-5},{24,-5},{25,-4},{26,-5},{27},{28,-12}|{29,-12},{30,-6},{31,-6}",
+                    ",{0},{1,-5},{9}.{10,-3},{13,-6},{15},{16},{18},{20,-5},{21,-5},{22},{23,-5},{24,-5},{25,-4},{26,-5},{27},{28,-12}|{29,-12},{30,-6},{31,-6},{32,-5}",
                     marketData.pDepthMarketData.InstrumentID, marketData.pDepthMarketData.LastPrice, marketData.pDepthMarketData.OpenPrice,
                     marketData.pDepthMarketData.PreSettlementPrice,
                     marketData.pDepthMarketData.PreClosePrice, marketData.pDepthMarketData.HighestPrice, marketData.pDepthMarketData.LowestPrice,
@@ -466,7 +479,7 @@ namespace WrapperTest
                     marketData.pDepthMarketData.OpenInterest, marketData.pDepthMarketData.AskPrice1,
                     marketData.pDepthMarketData.BidVolume1, marketData.pDepthMarketData.BidPrice1,
                     marketData.pDepthMarketData.AskVolume1, marketData.现手, marketData.仓差, marketData.性质,
-                    marketData.近期多头势力, marketData.近期空头势力, marketData.多空比, marketData.多空差, marketData.信号, marketData.时段开始, marketData.时段结束, marketData.总多, marketData.总空);
+                    marketData.近期多头势力, marketData.近期空头势力, marketData.多空比, marketData.多空差, marketData.信号, marketData.时段开始, marketData.时段结束, marketData.总多, marketData.总空, GetAveragePrice(marketData.pDepthMarketData));
 
             return s;
         }
@@ -839,16 +852,44 @@ namespace WrapperTest
 
                 if (marketData.信号 == 信号.L)
                 {
-                    var reason = string.Format("{0}看多信号，开多", instrumentId);
-                    ((TraderAdapter)Trader).OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, averagePrice);
-                    Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                    if (marketData.pDepthMarketData.LastPrice >= GetAveragePrice(marketData.pDepthMarketData))
+                    {
+                        if (Utils.IsBuyOpenLocked)
+                        {
+                            Utils.WriteLine(string.Format("{0}开多锁定中...", instrumentId), true);
+                        }
+                        else
+                        {
+                            var reason = string.Format("{0}看多信号，开多", instrumentId);
+                            ((TraderAdapter)Trader).OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, averagePrice);
+                            Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                        }
+                    }
+                    else
+                    {
+                        Utils.WriteLine(string.Format("{0}最新价{1}低于均价,不开多", instrumentId, marketData.pDepthMarketData.LastPrice), true);
+                    }
                 }
 
                 if (marketData.信号 == 信号.S)
                 {
-                    var reason = string.Format("{0}看空信号，开空", instrumentId);
-                    ((TraderAdapter)Trader).OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, averagePrice);
-                    Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                    if (marketData.pDepthMarketData.LastPrice <= GetAveragePrice(marketData.pDepthMarketData))
+                    {
+                        if (Utils.IsSellOpenLocked)
+                        {
+                            Utils.WriteLine(string.Format("{0}开空锁定中...", instrumentId), true);
+                        }
+                        else
+                        {
+                            var reason = string.Format("{0}看空信号，开空", instrumentId);
+                            ((TraderAdapter)Trader).OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, averagePrice);
+                            Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
+                        }
+                    }
+                    else
+                    {
+                        Utils.WriteLine(string.Format("{0}以最新价{1}高于均价,不开空", instrumentId, marketData.pDepthMarketData.LastPrice), true);
+                    }
                 }
 
                 var s = FormatQuote(marketData);
@@ -1204,67 +1245,6 @@ namespace WrapperTest
             return null;
         }
 
-        public static bool IsInstrumentLocked(string instrumentId)
-        {
-            if (LockedInstruments.ContainsKey(instrumentId))
-            {
-                WriteLine(string.Format("合约{0}还有报单在途中，不报单", instrumentId), true);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 锁定正在开仓的合约
-        /// </summary>
-        /// <param name="instrumentId"></param>
-        public static void LockOpenInstrument(string instrumentId)
-        {
-            LockedOpenInstruments[instrumentId] = instrumentId;
-            WriteLine(string.Format("增加开仓在途记录{0}", instrumentId), true);
-        }
-
-        public static void RemoveLockedOpenInstrument(string instrumentId)
-        {
-            if (LockedOpenInstruments.ContainsKey(instrumentId))
-            {
-                string temp;
-                LockedOpenInstruments.TryRemove(instrumentId, out temp);
-                WriteLine(string.Format("减少开仓在途记录{0}", instrumentId), true);
-            }
-        }
-
-        /// <summary>
-        /// 锁定正在报单的合约
-        /// </summary>
-        /// <param name="instrumentId"></param>
-        public static void LockInstrument(string instrumentId)
-        {
-            LockedInstruments[instrumentId] = instrumentId;
-            WriteLine(string.Format("锁定{0}", instrumentId), true);
-        }
-
-        public static void RemoveLockedInstrument(string instrumentId)
-        {
-            if (LockedInstruments.ContainsKey(instrumentId))
-            {
-                string temp;
-                LockedInstruments.TryRemove(instrumentId, out temp);
-                WriteLine(string.Format("解锁{0}", instrumentId), true);
-            }
-        }
-
-        public static void UnlockInstrument(string instrumentId, EnumOffsetFlagType flag)
-        {
-            if (flag == EnumOffsetFlagType.Open)
-            {
-                RemoveLockedOpenInstrument(instrumentId);
-            }
-
-            RemoveLockedInstrument(instrumentId);
-        }
-
         /// <summary>
         /// 读取止损参考价
         /// </summary>
@@ -1431,23 +1411,6 @@ namespace WrapperTest
         /// </summary>
         public static ConcurrentDictionary<string, StopLossPrices> InstrumentToStopLossPrices =
             new ConcurrentDictionary<string, StopLossPrices>();
-
-        /// <summary>
-        /// 还未收到报单响应的合约，暂时不能报单
-        /// </summary>
-        public static ConcurrentDictionary<string, string> LockedInstruments =
-            new ConcurrentDictionary<string, string>();
-
-        /// <summary>
-        /// 记录开仓在途的合约，防止开仓超过品种数量限制
-        /// </summary>
-        public static ConcurrentDictionary<string, string> LockedOpenInstruments =
-            new ConcurrentDictionary<string, string>();
-
-        /// <summary>
-        /// 合约的开仓次数记录，如果超过，不再开仓
-        /// </summary>
-        public static ConcurrentDictionary<string, int> InstrumentToOpenCount = new ConcurrentDictionary<string, int>();
 
         /// <summary>
         /// 合约的分时图数据，取每分钟最后一个行情数据
