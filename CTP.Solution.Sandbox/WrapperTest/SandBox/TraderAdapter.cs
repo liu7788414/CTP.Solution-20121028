@@ -148,7 +148,7 @@ namespace WrapperTest
                     {
                         var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 60))
+                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 60 * 5))
                         {
                             ordersToCancel.Add(order);
                         }
@@ -184,6 +184,24 @@ namespace WrapperTest
                     if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
                     {
                         ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
+                    }
+                }
+
+
+                //开仓锁
+                if (Utils.IsBuyOpenLocked)
+                {
+                    if (DateTime.Now - Utils.BuyOpenLockTime > new TimeSpan(0, 10, 0))
+                    {
+                        Utils.IsBuyOpenLocked = false;
+                    }
+                }
+
+                if (Utils.IsSellOpenLocked)
+                {
+                    if (DateTime.Now - Utils.SellOpenLockTime > new TimeSpan(0, 10, 0))
+                    {
+                        Utils.IsSellOpenLocked = false;
                     }
                 }
             }
@@ -406,6 +424,13 @@ namespace WrapperTest
             OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle, price);
         }
 
+        public bool ContainsPositionByInstrument(string instrumentId, EnumPosiDirectionType longOrShort)
+        {
+            var keyToday = Utils.GetPositionKey(instrumentId, longOrShort, EnumPositionDateType.Today);
+            var keyHistory = Utils.GetPositionKey(instrumentId, longOrShort, EnumPositionDateType.History);
+
+            return PositionFields.ContainsKey(keyToday) || PositionFields.ContainsKey(keyHistory);
+        }
         /// <summary>
         /// 平掉合约的仓位
         /// </summary>
@@ -569,10 +594,16 @@ namespace WrapperTest
                             if (pTrade.Direction == EnumDirectionType.Buy) //买入平仓对应卖出开仓
                             {
                                 buyOrSell = EnumDirectionType.Sell;
+                                Utils.IsSellOpenLocked = true;
+                                Utils.SellOpenLockTime = dtNow;
+                                Utils.WriteLine(string.Format("{0}开空锁定，时间起点为{1}", pTrade.InstrumentID, dtNow), true);
                             }
                             else //卖出平仓对应买入开仓
                             {
                                 buyOrSell = EnumDirectionType.Buy;
+                                Utils.IsBuyOpenLocked = true;
+                                Utils.BuyOpenLockTime = dtNow;
+                                Utils.WriteLine(string.Format("{0}开多锁定，时间起点为{1}", pTrade.InstrumentID, dtNow), true);
                             }
 
                             Utils.InstrumentToOpenAngle[Utils.GetOpenPositionKey(pTrade.InstrumentID, buyOrSell)] = 0;

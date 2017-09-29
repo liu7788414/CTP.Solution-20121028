@@ -189,9 +189,9 @@ namespace WrapperTest
 
 
                 //开仓锁
-                if(Utils.IsBuyOpenLocked)
+                if (Utils.IsBuyOpenLocked)
                 {
-                    if(DateTime.Now - Utils.BuyOpenLockTime > new TimeSpan(0, 10, 0))
+                    if (DateTime.Now - Utils.BuyOpenLockTime > new TimeSpan(0, 10, 0))
                     {
                         Utils.IsBuyOpenLocked = false;
                     }
@@ -424,6 +424,13 @@ namespace WrapperTest
             OpenPositionByInstrument(instrumentId, reason, EnumPosiDirectionType.Long, openTrendStartPoint, bConsiderOppositePosition, bForceOpen, openAngle, price);
         }
 
+        public bool ContainsPositionByInstrument(string instrumentId, EnumPosiDirectionType longOrShort)
+        {
+            var keyToday = Utils.GetPositionKey(instrumentId, longOrShort, EnumPositionDateType.Today);
+            var keyHistory = Utils.GetPositionKey(instrumentId, longOrShort, EnumPositionDateType.History);
+
+            return PositionFields.ContainsKey(keyToday) || PositionFields.ContainsKey(keyHistory);
+        }
         /// <summary>
         /// 平掉合约的仓位
         /// </summary>
@@ -1122,14 +1129,14 @@ namespace WrapperTest
                         else
                         {
                             stopLossPrices = new StopLossPrices
-                           {
-                               Instrument = pInvestorPosition.InstrumentID,
-                               ForLong = 0,
-                               ForShort = 0
-                           };
+                            {
+                                Instrument = pInvestorPosition.InstrumentID,
+                                ForLong = 0,
+                                ForShort = 0
+                            };
                         }
 
-                        if(pInvestorPosition.PosiDirection == EnumPosiDirectionType.Long)
+                        if (pInvestorPosition.PosiDirection == EnumPosiDirectionType.Long)
                         {
                             stopLossPrices.CostLong = Convert.ToInt32(pInvestorPosition.OpenCost / volumeMultiple / pInvestorPosition.Position);
                         }
@@ -1718,7 +1725,7 @@ namespace WrapperTest
                 //首先需要获取要平掉的非主力合约的行情
                 if (positionsToClose.Count > 0)
                 {
-                    
+
                     foreach (var position in positionsToClose)
                     {
                         var marketDataList = Utils.InstrumentToMarketData[position.InstrumentID];
@@ -1768,7 +1775,7 @@ namespace WrapperTest
         {
             try
             {
-                if(UnFinishedOrderFields.Count > 0)
+                if (UnFinishedOrderFields.Count > 0)
                 {
                     Utils.WriteLine("有未完成的报单，不报新单...", true);
                     return -1;

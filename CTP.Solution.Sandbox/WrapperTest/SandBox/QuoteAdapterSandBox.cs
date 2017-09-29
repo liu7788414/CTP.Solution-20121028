@@ -77,6 +77,8 @@ namespace WrapperTest
             set { _trader = value; }
         }
 
+        private bool bOpen = true;
+
         private Timer _timerOrder = new Timer(250); //报单回报有时候会有1-2秒的延迟
         //private Timer _timerSaveStopLossPrices = new Timer(1000); //每隔一段时间保存当前的止损参考价，供下次启动时读取
 
@@ -150,207 +152,79 @@ namespace WrapperTest
         {
             try
             {
-                if (Utils.InstrumentToStopLossPrices.ContainsKey(data.InstrumentID))
+                var instrumentId = data.InstrumentID;
+                var dateTime = Convert.ToDateTime(data.UpdateTime);
+
+                if (dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second > 50 && bOpen)
                 {
-                    var stopLossPrices = Utils.InstrumentToStopLossPrices[data.InstrumentID];
+                    bOpen = false;
+                    var bProcessed = false;
 
-                    var stopLossValue = Utils.绝对止损点数;
+                    Utils.WriteLine(string.Format("当前价:{0}，前收价:{1}，开盘价:{2}", data.LastPrice, data.PreClosePrice, data.OpenPrice), true);
 
-                    //多仓止损
-                    if (data.LastPrice < stopLossPrices.CostLong - stopLossValue)
+                    if (data.LastPrice < data.PreClosePrice && _trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Long))
                     {
-                        var reason = string.Format("{0}从多仓的成本价{1}跌到了绝对止损值{2}以下，即{3}，平掉多仓", data.InstrumentID,
-                            stopLossPrices.CostLong, stopLossValue, data.LastPrice);
-                        _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
+                        _trader.CloseLongPositionByInstrument(data.InstrumentID, "平多", false, 0);
+                        Thread.Sleep(2000);
                     }
 
-                    //空仓止损
-                    if (data.LastPrice > stopLossPrices.CostShort + stopLossValue)
+                    if (data.LastPrice > data.PreClosePrice && _trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Short))
                     {
-                        var reason = string.Format("{0}从空仓的成本价{1}涨到了绝对止损值{2}以上，即{3}，平掉空仓", data.InstrumentID,
-                            stopLossPrices.CostShort, stopLossValue, data.LastPrice);
-                        _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
+                        _trader.CloseShortPositionByInstrument(data.InstrumentID, "平空", false, 9999);
+                        Thread.Sleep(2000);
                     }
 
-                    var longDistance = stopLossPrices.ForLong - stopLossPrices.CostLong;
-                    var currentLongDistance = data.LastPrice - stopLossPrices.CostLong;
-                    var movingStopLossValueForLong = longDistance * 0.5;
-
-                    //检查持仓是否超时还未盈利
-                    var dtNow = DateTime.Now;
-                    var timeSpan = dtNow - Utils.PositionTime;
-
-                    if (timeSpan > Utils.timeSpan5)
+                    if (data.LastPrice / data.OpenPrice > 1.01)
                     {
-                        if (currentLongDistance < -5)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
+                        var reason = string.Format("{0}看多信号，开多", instrumentId);
+                        _trader.OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, data.UpperLimitPrice);
+                        bProcessed = true;
                     }
 
-                    if (timeSpan > Utils.timeSpan10)
+                    if (data.LastPrice / data.OpenPrice < 0.99)
                     {
-                        if (currentLongDistance < -3)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
+                        var reason = string.Format("{0}看空信号，开空", instrumentId);
+                        _trader.OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, data.LowerLimitPrice);
+                        bProcessed = true;
                     }
 
-                    if (timeSpan > Utils.timeSpan15)
+                    if (bProcessed)
                     {
-                        if (currentLongDistance < -1)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
+                        _timerOrder.Stop();
                     }
 
-                    if (timeSpan > Utils.timeSpan20)
-                    {
-                        if (currentLongDistance < 0)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
-                    }
+                }
 
-                    if (timeSpan > Utils.timeSpan30)
-                    {
-                        if (currentLongDistance < 10)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
-                    }
+                if (data.LastPrice / data.OpenPrice > 1.02)
+                {
+                    _trader.CloseShortPositionByInstrument(data.InstrumentID, "平空", false, 9999);
+                }
 
-                    if (timeSpan > Utils.timeSpan60)
-                    {
-                        if (currentLongDistance < 20)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
-                    }
+                if (data.LastPrice / data.OpenPrice < 0.98)
+                {
+                    _trader.CloseLongPositionByInstrument(data.InstrumentID, "平多", false, 0);
+                }
 
-                    if (timeSpan > Utils.timeSpan120)
-                    {
-                        if (currentLongDistance < 40)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
-                    }
+                if (data.LastPrice / data.OpenPrice > 1.02)
+                {
+                    var reason = string.Format("{0}看多信号，开多", instrumentId);
+                    _trader.OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, data.UpperLimitPrice);
+                }
 
-                    if (timeSpan > Utils.timeSpan180)
-                    {
-                        if (currentLongDistance < 60)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉多仓", data.InstrumentID);
-                            _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                        }
-                    }
+                if (data.LastPrice / data.OpenPrice < 0.98)
+                {
+                    var reason = string.Format("{0}看空信号，开空", instrumentId);
+                    _trader.OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, data.LowerLimitPrice);
+                }
 
-                    var shortDistance = stopLossPrices.CostShort - stopLossPrices.ForShort;
-                    var currentShortDistance = stopLossPrices.CostShort - data.LastPrice;
-                    var movingStopLossValueForShort = shortDistance * 0.5;
+                if (data.LastPrice / data.HighestPrice < 0.98)
+                {
+                    _trader.CloseLongPositionByInstrument(data.InstrumentID, "平多", false, 0);
+                }
 
-                    if (timeSpan > Utils.timeSpan5)
-                    {
-                        if (currentShortDistance < -5)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (timeSpan > Utils.timeSpan10)
-                    {
-                        if (currentShortDistance < -3)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (timeSpan > Utils.timeSpan15)
-                    {
-                        if (currentShortDistance < -1)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (timeSpan > Utils.timeSpan20)
-                    {
-                        if (currentShortDistance < 0)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (timeSpan > Utils.timeSpan30)
-                    {
-                        if (currentLongDistance < 10)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (timeSpan > Utils.timeSpan60)
-                    {
-                        if (currentLongDistance < 20)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (timeSpan > Utils.timeSpan120)
-                    {
-                        if (currentLongDistance < 40)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (timeSpan > Utils.timeSpan180)
-                    {
-                        if (currentLongDistance < 60)
-                        {
-                            var reason = string.Format("{0}超时未盈利，平掉空仓", data.InstrumentID);
-                            _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                        }
-                    }
-
-                    if (data.LastPrice >= (data.UpperLimitPrice * 0.995))
-                    {
-                        var reason = string.Format("{0}接近涨停，平掉空仓", data.InstrumentID);
-                        _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                    }
-
-                    if (data.LastPrice <= (data.LowerLimitPrice * 1.005))
-                    {
-                        var reason = string.Format("{0}接近跌停，平掉多仓", data.InstrumentID);
-                        _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                    }
-
-                    if (data.LastPrice.Equals(data.UpperLimitPrice))
-                    {
-                        var reason = string.Format("{0}涨停，平掉多仓", data.InstrumentID);
-                        _trader.CloseLongPositionByInstrument(data.InstrumentID, reason, false, 0);
-                    }
-
-                    if (data.LastPrice.Equals(data.LowerLimitPrice))
-                    {
-                        var reason = string.Format("{0}跌停，平掉空仓", data.InstrumentID);
-                        _trader.CloseShortPositionByInstrument(data.InstrumentID, reason, false, 99999);
-                    }
+                if (data.LastPrice / data.LowestPrice > 1.02)
+                {
+                    _trader.CloseShortPositionByInstrument(data.InstrumentID, "平空", false, 9999);
                 }
             }
             catch (Exception ex)

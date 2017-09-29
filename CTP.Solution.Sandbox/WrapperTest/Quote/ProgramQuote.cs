@@ -25,7 +25,7 @@ namespace WrapperTest
         {
             try
             {
-                var processes = Process.GetProcessesByName("WrapperTest");
+                var processes = Process.GetProcessesByName("WrapperTestQuote");
                 var currrentProcess = Process.GetCurrentProcess();
 
                 foreach (var process in processes)

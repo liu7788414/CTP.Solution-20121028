@@ -41,11 +41,11 @@ namespace RunStrategy
                     StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\WrapperTestRealTrading.exe", "true 5");
                 }
 
-                //if (!strategyProcesses.Contains("WrapperTestSandBox"))
-                //{
-                //    Console.WriteLine("启动WrapperTestSandBox");
-                //    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\WrapperTestSandBox.exe", "true 2");
-                //}
+                if (!strategyProcesses.Contains("WrapperTestSandBox"))
+                {
+                    Console.WriteLine("启动WrapperTestSandBox");
+                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugSandBox\WrapperTestSandBox.exe", "true 2");
+                }
 
                 //if (!strategyProcesses.Contains("WrapperTestSandBox2"))
                 //{

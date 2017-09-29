@@ -849,49 +849,6 @@ namespace WrapperTest
                     }
                 }
 
-
-                if (marketData.信号 == 信号.L)
-                {
-                    if (marketData.pDepthMarketData.LastPrice >= GetAveragePrice(marketData.pDepthMarketData))
-                    {
-                        if (Utils.IsBuyOpenLocked)
-                        {
-                            Utils.WriteLine(string.Format("{0}开多锁定中...", instrumentId), true);
-                        }
-                        else
-                        {
-                            var reason = string.Format("{0}看多信号，开多", instrumentId);
-                            ((TraderAdapter)Trader).OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, averagePrice);
-                            Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
-                        }
-                    }
-                    else
-                    {
-                        Utils.WriteLine(string.Format("{0}最新价{1}低于均价,不开多", instrumentId, marketData.pDepthMarketData.LastPrice), true);
-                    }
-                }
-
-                if (marketData.信号 == 信号.S)
-                {
-                    if (marketData.pDepthMarketData.LastPrice <= GetAveragePrice(marketData.pDepthMarketData))
-                    {
-                        if (Utils.IsSellOpenLocked)
-                        {
-                            Utils.WriteLine(string.Format("{0}开空锁定中...", instrumentId), true);
-                        }
-                        else
-                        {
-                            var reason = string.Format("{0}看空信号，开空", instrumentId);
-                            ((TraderAdapter)Trader).OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, averagePrice);
-                            Utils.WriteLine(string.Format("{0}以最近均价{1}为基准,计算序列{2}", instrumentId, averagePrice, sb), true);
-                        }
-                    }
-                    else
-                    {
-                        Utils.WriteLine(string.Format("{0}以最新价{1}高于均价,不开空", instrumentId, marketData.pDepthMarketData.LastPrice), true);
-                    }
-                }
-
                 var s = FormatQuote(marketData);
 
                 try
@@ -1340,7 +1297,7 @@ namespace WrapperTest
             {
                 if (trader != null)
                 {
-                    ((ITraderAdapter)trader).CloseAllPositions();
+                    //((ITraderAdapter)trader).CloseAllPositions();
                     SaveStopLossPrices();
                 }
 
