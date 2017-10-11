@@ -160,15 +160,15 @@ namespace WrapperTest
                     bOpen = false;
                     var bProcessed = false;
 
-                    Utils.WriteLine(string.Format("当前价:{0}，前收价:{1}，开盘价:{2}", data.LastPrice, data.PreClosePrice, data.OpenPrice), true);
+                    Utils.WriteLine(string.Format("当前价:{0}，前收价:{1}，开盘价:{2}，最高价:{3}，最低价:{4}", data.LastPrice, data.PreClosePrice, data.OpenPrice, data.HighestPrice, data.LowestPrice), true);
 
-                    if (data.LastPrice < data.PreClosePrice && _trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Long))
+                    if (data.LastPrice < data.PreClosePrice && data.LastPrice < data.OpenPrice && _trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Long) && data.LastPrice < data.LowestPrice * 1.01)
                     {
                         _trader.CloseLongPositionByInstrument(data.InstrumentID, "平多", false, 0);
                         Thread.Sleep(2000);
                     }
 
-                    if (data.LastPrice > data.PreClosePrice && _trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Short))
+                    if (data.LastPrice > data.PreClosePrice && data.LastPrice > data.OpenPrice && _trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Short) && data.LastPrice > data.HighestPrice * 0.99)
                     {
                         _trader.CloseShortPositionByInstrument(data.InstrumentID, "平空", false, 9999);
                         Thread.Sleep(2000);
