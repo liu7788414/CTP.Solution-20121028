@@ -77,9 +77,8 @@ namespace WrapperTest
             set { _trader = value; }
         }
 
-        private bool bOpen = true;
 
-        private Timer _timerOrder = new Timer(250); //报单回报有时候会有1-2秒的延迟
+        private Timer _timerOrder = new Timer(2000); //报单回报有时候会有1-2秒的延迟
         //private Timer _timerSaveStopLossPrices = new Timer(1000); //每隔一段时间保存当前的止损参考价，供下次启动时读取
 
         public QuoteAdapter(TraderAdapter trader)
@@ -148,16 +147,18 @@ namespace WrapperTest
             Join();
         }
 
+        public static bool noOpening = true;
+
         private void BuyOrSell(ThostFtdcDepthMarketDataField data)
         {
             try
             {
                 var instrumentId = data.InstrumentID;
                 var dateTime = Convert.ToDateTime(data.UpdateTime);
+                var currentSwing = (data.HighestPrice - data.LowestPrice) / data.PreClosePrice;
 
-                if (dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second > 50 && bOpen)
+                if (dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 50)
                 {
-                    bOpen = false;
                     var bProcessed = false;
 
                     Utils.WriteLine(string.Format("当前价:{0}，前收价:{1}，开盘价:{2}，最高价:{3}，最低价:{4}", data.LastPrice, data.PreClosePrice, data.OpenPrice, data.HighestPrice, data.LowestPrice), true);
@@ -174,18 +175,35 @@ namespace WrapperTest
                         Thread.Sleep(2000);
                     }
 
-                    if (data.LastPrice / data.OpenPrice > 1.01)
+                    if (data.LastPrice / data.OpenPrice > 1.0095 && data.LastPrice > data.HighestPrice * 0.99)
                     {
-                        var reason = string.Format("{0}看多信号，开多", instrumentId);
-                        _trader.OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, data.UpperLimitPrice);
-                        bProcessed = true;
+                        var reason = string.Format("{0}收盘看多信号，开多", instrumentId);
+                        if (noOpening)
+                        {
+                            noOpening = false;
+                            _trader.OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, data.UpperLimitPrice);
+                            bProcessed = true;
+                            noOpening = true;
+                        }
+                        else
+                        {
+                            Utils.WriteLine("正在开仓", true);
+                        }
                     }
 
-                    if (data.LastPrice / data.OpenPrice < 0.99)
+                    if (data.LastPrice / data.OpenPrice < 0.9905 && data.LastPrice < data.LowestPrice * 1.01)
                     {
-                        var reason = string.Format("{0}看空信号，开空", instrumentId);
-                        _trader.OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, data.LowerLimitPrice);
-                        bProcessed = true;
+                        var reason = string.Format("{0}收盘看空信号，开空", instrumentId);
+                        if (noOpening)
+                        {
+                            _trader.OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, data.LowerLimitPrice);
+                            bProcessed = true;
+                            noOpening = true;
+                        }
+                        else
+                        {
+                            Utils.WriteLine("正在开仓", true);
+                        }
                     }
 
                     if (bProcessed)
@@ -194,37 +212,137 @@ namespace WrapperTest
                     }
 
                 }
-
-                if (data.LastPrice / data.OpenPrice > 1.02)
+                else
                 {
-                    _trader.CloseShortPositionByInstrument(data.InstrumentID, "平空", false, 9999);
-                }
+                    var highestPriceFile = Utils.AssemblyPath + "highestPrice.ini";
+                    if (_trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Long))
+                    {
+                        //读取持仓高点
+                        var highestPrice = data.HighestPrice;
 
-                if (data.LastPrice / data.OpenPrice < 0.98)
-                {
-                    _trader.CloseLongPositionByInstrument(data.InstrumentID, "平多", false, 0);
-                }
+                        if (File.Exists(highestPriceFile))
+                        {
+                            bool store = false;
+                            var sr = new StreamReader(highestPriceFile, Encoding.UTF8);
+                            var line = sr.ReadLine();
+                            if (line != null)
+                            {
+                                var storedPrice = Convert.ToDouble(line);
+                                if (storedPrice < highestPrice)
+                                {
+                                    store = true;
+                                }
+                                else
+                                {
+                                    highestPrice = storedPrice;
+                                }
+                            }
+                            sr.Close();
 
-                if (data.LastPrice / data.OpenPrice > 1.02)
-                {
-                    var reason = string.Format("{0}看多信号，开多", instrumentId);
-                    _trader.OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, data.UpperLimitPrice);
-                }
+                            if (store)
+                            {
+                                Utils.StorePrice(highestPriceFile, highestPrice);
+                            }
+                        }
+                        else
+                        {
+                            Utils.StorePrice(highestPriceFile, data.HighestPrice);
+                        }
 
-                if (data.LastPrice / data.OpenPrice < 0.98)
-                {
-                    var reason = string.Format("{0}看空信号，开空", instrumentId);
-                    _trader.OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, data.LowerLimitPrice);
-                }
+                        if (data.LastPrice / highestPrice < 0.982 && currentSwing > 0.02)
+                        {
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, "最高价回落,平多", false, 0);
+                        }
 
-                if (data.LastPrice / data.HighestPrice < 0.98)
-                {
-                    _trader.CloseLongPositionByInstrument(data.InstrumentID, "平多", false, 0);
-                }
+                        if (data.LastPrice / data.OpenPrice < 0.982)
+                        {
+                            _trader.CloseLongPositionByInstrument(data.InstrumentID, "平多", false, 0);
+                        }
+                    }
+                    else
+                    {
+                        Utils.DeleteStorePrice(highestPriceFile);
+                    }
 
-                if (data.LastPrice / data.LowestPrice > 1.02)
-                {
-                    _trader.CloseShortPositionByInstrument(data.InstrumentID, "平空", false, 9999);
+                    var lowestPriceFile = Utils.AssemblyPath + "lowestPrice.ini";
+                    if (_trader.ContainsPositionByInstrument(instrumentId, EnumPosiDirectionType.Short))
+                    {
+                        //读取持仓低点
+                        var lowestPrice = data.LowestPrice;
+
+                        if (File.Exists(lowestPriceFile))
+                        {
+                            bool store = false;
+                            var sr = new StreamReader(lowestPriceFile, Encoding.UTF8);
+                            var line = sr.ReadLine();
+                            if (line != null)
+                            {
+                                var storedPrice = Convert.ToDouble(line);
+                                if (storedPrice > lowestPrice)
+                                {
+                                    store = true;
+                                }
+                                else
+                                {
+                                    lowestPrice = storedPrice;
+                                }
+                            }
+                            sr.Close();
+
+                            if (store)
+                            {
+                                Utils.StorePrice(lowestPriceFile, lowestPrice);
+                            }
+                        }
+                        else
+                        {
+                            Utils.StorePrice(lowestPriceFile, data.LowestPrice);
+                        }
+
+                        if (data.LastPrice / data.LowestPrice > 1.018 && currentSwing > 0.02)
+                        {
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, "最低价上涨,平空", false, 9999);
+                        }
+
+                        if (data.LastPrice / data.OpenPrice > 1.018)
+                        {
+                            _trader.CloseShortPositionByInstrument(data.InstrumentID, "平空", false, 9999);
+                        }
+                    }
+                    else
+                    {
+                        Utils.DeleteStorePrice(lowestPriceFile);
+                    }
+
+                    if (data.LastPrice / data.OpenPrice > 1.015 && data.LastPrice > data.HighestPrice * 0.99)
+                    {
+                        var reason = string.Format("{0}盘中看多信号，开多", instrumentId);
+                        if (noOpening)
+                        {
+                            noOpening = false;
+                            _trader.OpenLongPositionByInstrument(instrumentId, reason, 0, true, true, 0, data.UpperLimitPrice);
+                            noOpening = true;
+                        }
+                        else
+                        {
+                            Utils.WriteLine("正在开仓", true);
+                        }
+                    }
+
+                    if (data.LastPrice / data.OpenPrice < 0.985 && data.LastPrice < data.LowestPrice * 1.01)
+                    {
+                        var reason = string.Format("{0}盘中看空信号，开空", instrumentId);
+                        if (noOpening)
+                        {
+                            noOpening = false;
+                            _trader.OpenShortPositionByInstrument(instrumentId, reason, 9999, true, true, 0, data.LowerLimitPrice);
+                            noOpening = true;
+                        }
+                        else
+                        {
+                            Utils.WriteLine("正在开仓", true);
+                        }
+                    }
                 }
             }
             catch (Exception ex)

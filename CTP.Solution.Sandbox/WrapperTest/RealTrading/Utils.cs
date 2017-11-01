@@ -960,6 +960,35 @@ namespace WrapperTest
             return pRspInfo != null && pRspInfo.ErrorID == 0;
         }
 
+        public static void StorePrice(string fileName, double price)
+        {
+            try
+            {
+                var sw = new StreamWriter(fileName, false, Encoding.UTF8);
+                sw.WriteLine(price);
+                sw.Close();
+            }
+            catch (Exception ex)
+            {
+                WriteException(ex);
+            }
+        }
+
+        public static void DeleteStorePrice(string fileName)
+        {
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteException(ex);
+            }
+        }
+
         /// <summary>
         /// 读取程序的配置参数
         /// </summary>
