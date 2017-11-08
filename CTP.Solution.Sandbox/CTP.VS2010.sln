@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperTestQuote", "Wrapper
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperTestSandBoxNew", "WrapperTest\WrapperTestSandBoxNew.csproj", "{A324EDC0-C854-4D46-8369-9624A8D1DD9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperTestArbitrage", "WrapperTest\WrapperTestArbitrage.csproj", "{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,16 @@ Global
 		{A324EDC0-C854-4D46-8369-9624A8D1DD9C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A324EDC0-C854-4D46-8369-9624A8D1DD9C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A324EDC0-C854-4D46-8369-9624A8D1DD9C}.Release|Win32.ActiveCfg = Release|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EEB8B3A8-3CAC-4F14-BB20-E40602E89750}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -35,11 +35,11 @@ namespace RunStrategy
             if ((now.Hour == 8 && (now.Minute >= 50 && now.Minute < 59)) || (now.Hour == 20 && (now.Minute >= 50 && now.Minute < 59)) || (now.Hour == 13 && (now.Minute >= 20 && now.Minute < 29)))
             {
 
-                if (!strategyProcesses.Contains("WrapperTestRealTrading"))
-                {
-                    Console.WriteLine("启动WrapperTestRealTrading");
-                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\WrapperTestRealTrading.exe", "true 5");
-                }
+                //if (!strategyProcesses.Contains("WrapperTestRealTrading"))
+                //{
+                //    Console.WriteLine("启动WrapperTestRealTrading");
+                //    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugRealTrading\WrapperTestRealTrading.exe", "true 5");
+                //}
 
                 if (!strategyProcesses.Contains("WrapperTestSandBox"))
                 {
@@ -57,6 +57,12 @@ namespace RunStrategy
                 {
                     Console.WriteLine("启动WrapperTestQuote");
                     StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugQuote\WrapperTestQuote.exe", "true 3");
+                }
+
+                if (!strategyProcesses.Contains("WrapperTestArbitrage"))
+                {
+                    Console.WriteLine("启动WrapperTestArbitrage");
+                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugArbitrage\WrapperTestArbitrage.exe", "true 5");
                 }
             }
 
