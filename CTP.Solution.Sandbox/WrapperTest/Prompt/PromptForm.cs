@@ -16,6 +16,9 @@ namespace PromptForm
     {
         public TraderAdapter _trader;
         public System.Timers.Timer _timer;
+        private double stopProfit = 1000;
+        private double stopLoss = -1000;
+       
         public PromptForm()
         {
             InitializeComponent();
@@ -80,6 +83,19 @@ namespace PromptForm
 
                                     var profit = (dir == EnumPosiDirectionType.Long ? 1 : (-1)) * (lastTick.LastPrice - cost) * info.VolumeMultiple * volume;
                                     sub = item.SubItems.Add(profit.ToString("f0"));
+
+                                    if(cbEnable.Checked)
+                                    {
+                                        if(profit > stopProfit)
+                                        {
+                                            ClosePositionByItem(item, "多仓止盈", "空仓止盈");
+                                        }
+
+                                        if (profit < stopLoss)
+                                        {
+                                            ClosePositionByItem(item, "多仓止损", "空仓止损");
+                                        }
+                                    }
                                     if (profit >= 0)
                                     {
                                         sub.ForeColor = Color.Red;
@@ -149,26 +165,6 @@ namespace PromptForm
 
         private void PromptForm_Load(object sender, EventArgs e)
         {
-            //var list = new List<string>();
-            //list.Add("1");
-            //list.Add("2");
-            //list.Add("3");
-            //list.Add("4");
-            //list.Add("5");
-            //list.Add("6");
-
-            //var promptItem = new PromptItem
-            //{
-            //    MessageItems = list,
-            //    InstrumentId = "aaa",
-            //    OpenOrClose = "Close",
-            //    Direction = "Buy",
-            //    Price = 0.9,
-            //    Volume = 10,
-            //    Offset = 0.1
-            //};
-
-            //AddMessage(promptItem);
         }
 
         private Point p;
@@ -193,11 +189,25 @@ namespace PromptForm
 
                     if (li.SubItems[2].Text.Equals("涨"))
                     {
-                        _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
+                        if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Short))  //持有空仓不开多仓
+                        {
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
+                        }
+                        else
+                        {
+                            MessageBox.Show("持有空仓不开多仓");
+                        }
                     }
                     else
                     {
-                        _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
+                        if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Long)) //持有多仓不开空仓
+                        {
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
+                        }
+                        else
+                        {
+                            MessageBox.Show("持有多仓不开空仓");
+                        }
                     }
                 }               
             }
@@ -214,9 +224,13 @@ namespace PromptForm
             p2.Y = e.Y;
         }
 
-        private void listView2_MouseDoubleClick(object sender, MouseEventArgs e)
+        public void SetStatus(string message)
         {
-            var li = listView2.GetItemAt(p2.X, p2.Y);
+            toolStripStatusLabel1.Text = message;
+        }
+
+        private void ClosePositionByItem(ListViewItem li, string longReason, string shortReason)
+        {
             if (li != null)
             {
                 var ins = li.SubItems[1].Text;
@@ -227,14 +241,31 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     if (longOrShort.Equals("Long"))
                     {
-                        _trader.CloseLongPositionByInstrument(ins, "手工平多仓", true, lastTick.LowerLimitPrice);
+                        _trader.CloseLongPositionByInstrument(ins, longReason, true, lastTick.LowerLimitPrice);
                     }
                     else
                     {
-                        _trader.CloseShortPositionByInstrument(ins, "手工平空仓", true, lastTick.UpperLimitPrice);
+                        _trader.CloseShortPositionByInstrument(ins, shortReason, true, lastTick.UpperLimitPrice);
                     }
                 }
             }
+        }
+
+        private void listView2_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var li = listView2.GetItemAt(p2.X, p2.Y);
+            ClosePositionByItem(li, "手工平多仓", "手工平空仓");
+        }
+
+        private void btOK_Click(object sender, EventArgs e)
+        {
+            stopProfit = Convert.ToDouble(tbStopProfit.Text);
+            stopLoss = Convert.ToDouble(tbStopLoss.Text);
+        }
+
+        private void cbEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            tbStopLoss.Enabled = tbStopProfit.Enabled = btOK.Enabled = ((CheckBox)sender).Checked;
         }
     }
 

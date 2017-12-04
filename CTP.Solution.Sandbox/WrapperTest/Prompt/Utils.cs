@@ -376,6 +376,7 @@ namespace WrapperTest
         public static double StopProfitRatio = 0.02;
 
         public static List<string> AllowedCategories = new List<string>();
+        public static List<string> AllowedShortTradeCategories = new List<string>();
         public static ChannelType CurrentChannel = ChannelType.模拟交易所;
         public static int ExchangeTimeOffset = 0;
         public static bool IsOpenLocked = false;
@@ -639,6 +640,26 @@ namespace WrapperTest
                     marketData.时段结束 = string.Format("{0}.{1}", pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
                 }
 
+                //监控品种的涨跌幅提示
+                if (pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01 || pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 0.99)
+                {
+                    if (!AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
+                    {
+                        var b = pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01;
+
+                        var message = string.Format("{0}{1}超过监控幅度", instrumentId, b ? "上涨" : "下跌");
+
+                        if (promptForm.IsHandleCreated)
+                        {
+                            promptForm.Invoke(new Action(() =>
+                            {
+                                promptForm.SetStatus(message);
+                            }));
+                        }
+                    }
+                }
+
+
                 InstrumentToMarketData[instrumentId].Add(marketData);
 
                 var dataQueue = InstrumentToMarketData[instrumentId];
@@ -681,7 +702,7 @@ namespace WrapperTest
                 var minQuote = dataQueueSub.FindLast(d => d.pDepthMarketData.LastPrice.Equals(min));
                 var maxQuote = dataQueueSub.FindLast(d => d.pDepthMarketData.LastPrice.Equals(max));
 
-                if ((max - min) / min > 涨跌幅提示)
+                if ((max - min) / min > 涨跌幅提示 && AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                 {
                     var maxTime = Convert.ToDateTime(maxQuote.pDepthMarketData.UpdateTime);
                     var minTime = Convert.ToDateTime(minQuote.pDepthMarketData.UpdateTime);
@@ -863,9 +884,12 @@ namespace WrapperTest
                 var sr = new StreamReader(configFile, Encoding.UTF8);
 
                 var line = sr.ReadLine();
-
-                var s = GetLineData(line).Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+                var s = GetLineData(line).Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                 AllowedCategories.AddRange(s.Where(t => !string.IsNullOrWhiteSpace(t)));
+
+                line = sr.ReadLine();
+                s = GetLineData(line).Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+                AllowedShortTradeCategories.AddRange(s.Where(t => !string.IsNullOrWhiteSpace(t)));
 
                 line = sr.ReadLine();
 
