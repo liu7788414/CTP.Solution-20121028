@@ -1,5 +1,6 @@
 ﻿using CTP;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -44,6 +45,21 @@ namespace PromptForm
                         if (_trader != null && _trader.PositionFields != null)
                         {
                             listView2.Items.Clear();
+                            var listIns = new List<string>();
+                            foreach (var kv in Utils.PositionKeyToHighLowProfit)
+                            {
+                                if(!_trader.PositionFields.ContainsKey(kv.Key))
+                                {
+                                    listIns.Add(kv.Key);
+                                }
+                            }
+
+                            listIns.ForEach(l => 
+                            { 
+                                HighLowProfit highLowProfit; 
+                                Utils.PositionKeyToHighLowProfit.TryRemove(l, out highLowProfit);
+                                Utils.WriteLine(string.Format("去掉{0}的最高最低盈利...", l));
+                            });
 
                             var totalProfit = 0.0;
 
@@ -73,9 +89,15 @@ namespace PromptForm
                                 sub = item.SubItems.Add(volume.ToString());
                                 sub.ForeColor = color;
 
+                                if(!Utils.InstrumentToLastTick.ContainsKey(ins))
+                                {
+                                    var list = new List<string>();
+                                    list.Add(ins);
+                                    ((QuoteAdapter)Utils.QuoteMain).SubscribeMarketData(list.ToArray());
+                                }
 
                                 if (Utils.InstrumentToLastTick.ContainsKey(ins) && Utils.InstrumentToInstrumentInfo.ContainsKey(ins))
-                                {                                
+                                {
                                     var lastTick = Utils.InstrumentToLastTick[ins];
                                     var info = Utils.InstrumentToInstrumentInfo[ins];
                                     var cost = kv.Value.OpenCost / info.VolumeMultiple / volume;
@@ -84,9 +106,9 @@ namespace PromptForm
                                     var profit = (dir == EnumPosiDirectionType.Long ? 1 : (-1)) * (lastTick.LastPrice - cost) * info.VolumeMultiple * volume;
                                     sub = item.SubItems.Add(profit.ToString("f0"));
 
-                                    if(cbEnable.Checked)
+                                    if (cbEnable.Checked)
                                     {
-                                        if(profit > stopProfit)
+                                        if (profit > stopProfit)
                                         {
                                             ClosePositionByItem(item, "多仓止盈", "空仓止盈");
                                         }
@@ -105,9 +127,53 @@ namespace PromptForm
                                         sub.ForeColor = Color.Green;
                                     }
 
+                                    HighLowProfit highLowProfit;
+                                    if (Utils.PositionKeyToHighLowProfit.ContainsKey(kv.Key))
+                                    {
+                                        highLowProfit = Utils.PositionKeyToHighLowProfit[kv.Key];
+
+                                        if (profit > highLowProfit.High)
+                                        {
+                                            highLowProfit.High = profit;
+                                            Utils.WriteLine(string.Format("设置{0}最高为{1}", kv.Key, profit));
+                                        }
+                                        else
+                                        {
+                                            if (profit < highLowProfit.Low)
+                                            {
+                                                highLowProfit.Low = profit;
+                                                Utils.WriteLine(string.Format("设置{0}最低为{1}", kv.Key, profit));
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        highLowProfit = new HighLowProfit();
+                                        if(profit >= 0)
+                                        {
+                                            highLowProfit.High = profit;
+                                            highLowProfit.Low = 0;
+                                        }
+                                        else
+                                        {
+                                            highLowProfit.High = 0;
+                                            highLowProfit.Low = profit;
+                                        }
+
+                                        Utils.PositionKeyToHighLowProfit[kv.Key] = highLowProfit;
+                                        Utils.WriteLine(string.Format("创建{0}最高最低盈利...", kv.Key));
+                                    }
+
+                                    sub = item.SubItems.Add(Math.Round(highLowProfit.High).ToString());
+                                    sub.ForeColor = Color.Red;
+
+                                    sub = item.SubItems.Add(Math.Round(highLowProfit.Low).ToString());
+                                    sub.ForeColor = Color.Green;
+
+
                                     totalProfit += profit;
                                 }
-
+                                
                                 listView2.Items.Add(item);
                             }
 
@@ -224,9 +290,14 @@ namespace PromptForm
             p2.Y = e.Y;
         }
 
-        public void SetStatus(string message)
+        public void SetUpStatus(string message)
         {
             toolStripStatusLabel1.Text = message;
+        }
+
+        public void SetDownStatus(string message)
+        {
+            toolStripStatusLabel2.Text = message;
         }
 
         private void ClosePositionByItem(ListViewItem li, string longReason, string shortReason)

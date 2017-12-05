@@ -270,6 +270,12 @@ namespace WrapperTest
         void CloseAllPositions();
     }
 
+    public class HighLowProfit
+    {
+        public double High;
+        public double Low;
+    };
+
     public static class Utils
     {
         public static object Locker = new object();
@@ -294,6 +300,7 @@ namespace WrapperTest
         public static double LargeNumber = 999999;
         public static PromptForm.PromptForm promptForm = new PromptForm.PromptForm();
         public static bool IsPromptDisplaying = false;
+        public static ConcurrentDictionary<string, HighLowProfit> PositionKeyToHighLowProfit = new ConcurrentDictionary<string, HighLowProfit>();
         /// <summary>
         /// 开仓时沿均线的误差值
         /// </summary>
@@ -647,13 +654,21 @@ namespace WrapperTest
                     {
                         var b = pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01;
 
-                        var message = string.Format("{0}{1}超过监控幅度", instrumentId, b ? "上涨" : "下跌");
+                        var message = string.Format("{0}{1}{2:P}", instrumentId, b ? "上涨" : "下跌", (pDepthMarketData.LastPrice - pDepthMarketData.OpenPrice) / pDepthMarketData.OpenPrice);
 
-                        if (promptForm.IsHandleCreated)
+                        if (b && promptForm.IsHandleCreated)
                         {
                             promptForm.Invoke(new Action(() =>
                             {
-                                promptForm.SetStatus(message);
+                                promptForm.SetUpStatus(message);
+                            }));
+                        }
+
+                        if(!b && promptForm.IsHandleCreated)
+                        {
+                            promptForm.Invoke(new Action(() =>
+                            {
+                                promptForm.SetDownStatus(message);
                             }));
                         }
                     }
