@@ -58,8 +58,10 @@
             this.cbEnable = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,13 +76,14 @@
             this.Ratio,
             this.Last,
             this.Time});
-            this.listView1.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.listView1.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView1.Location = new System.Drawing.Point(3, 2);
+            this.listView1.Location = new System.Drawing.Point(4, 3);
+            this.listView1.Margin = new System.Windows.Forms.Padding(4);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(441, 151);
+            this.listView1.Size = new System.Drawing.Size(660, 224);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -137,13 +140,14 @@
             this.columnHeader8,
             this.columnHeader9,
             this.columnHeader10});
-            this.listView2.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.listView2.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listView2.FullRowSelect = true;
             this.listView2.GridLines = true;
             this.listView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView2.Location = new System.Drawing.Point(6, 159);
+            this.listView2.Location = new System.Drawing.Point(9, 238);
+            this.listView2.Margin = new System.Windows.Forms.Padding(4);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(441, 154);
+            this.listView2.Size = new System.Drawing.Size(660, 229);
             this.listView2.TabIndex = 1;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -195,27 +199,24 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 320);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(15, 480);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.Size = new System.Drawing.Size(62, 18);
             this.label1.TabIndex = 2;
             this.label1.Text = "总计：";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(55, 318);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox1.Location = new System.Drawing.Point(82, 477);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(75, 21);
+            this.textBox1.Size = new System.Drawing.Size(110, 28);
             this.textBox1.TabIndex = 3;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(140, 316);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
+            this.button1.Location = new System.Drawing.Point(210, 474);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(40, 20);
+            this.button1.Size = new System.Drawing.Size(60, 30);
             this.button1.TabIndex = 4;
             this.button1.Text = "全平";
             this.button1.UseVisualStyleBackColor = true;
@@ -224,47 +225,42 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(204, 320);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(306, 480);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.Size = new System.Drawing.Size(62, 18);
             this.label2.TabIndex = 5;
             this.label2.Text = "止盈：";
             // 
             // tbStopProfit
             // 
-            this.tbStopProfit.Location = new System.Drawing.Point(249, 318);
-            this.tbStopProfit.Margin = new System.Windows.Forms.Padding(2);
+            this.tbStopProfit.Location = new System.Drawing.Point(374, 477);
             this.tbStopProfit.Name = "tbStopProfit";
-            this.tbStopProfit.Size = new System.Drawing.Size(49, 21);
+            this.tbStopProfit.Size = new System.Drawing.Size(72, 28);
             this.tbStopProfit.TabIndex = 6;
             this.tbStopProfit.Text = "1000";
             // 
             // tbStopLoss
             // 
-            this.tbStopLoss.Location = new System.Drawing.Point(347, 318);
-            this.tbStopLoss.Margin = new System.Windows.Forms.Padding(2);
+            this.tbStopLoss.Location = new System.Drawing.Point(520, 477);
             this.tbStopLoss.Name = "tbStopLoss";
-            this.tbStopLoss.Size = new System.Drawing.Size(51, 21);
+            this.tbStopLoss.Size = new System.Drawing.Size(74, 28);
             this.tbStopLoss.TabIndex = 8;
             this.tbStopLoss.Text = "-1000";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(301, 320);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(452, 480);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 12);
+            this.label3.Size = new System.Drawing.Size(62, 18);
             this.label3.TabIndex = 7;
             this.label3.Text = "止损：";
             // 
             // btOK
             // 
-            this.btOK.Location = new System.Drawing.Point(401, 316);
-            this.btOK.Margin = new System.Windows.Forms.Padding(2);
+            this.btOK.Location = new System.Drawing.Point(602, 474);
             this.btOK.Name = "btOK";
-            this.btOK.Size = new System.Drawing.Size(40, 20);
+            this.btOK.Size = new System.Drawing.Size(60, 30);
             this.btOK.TabIndex = 9;
             this.btOK.Text = "确定";
             this.btOK.UseVisualStyleBackColor = true;
@@ -275,10 +271,9 @@
             this.cbEnable.AutoSize = true;
             this.cbEnable.Checked = true;
             this.cbEnable.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbEnable.Location = new System.Drawing.Point(184, 320);
-            this.cbEnable.Margin = new System.Windows.Forms.Padding(2);
+            this.cbEnable.Location = new System.Drawing.Point(276, 480);
             this.cbEnable.Name = "cbEnable";
-            this.cbEnable.Size = new System.Drawing.Size(15, 14);
+            this.cbEnable.Size = new System.Drawing.Size(22, 21);
             this.cbEnable.TabIndex = 10;
             this.cbEnable.UseVisualStyleBackColor = true;
             this.cbEnable.CheckedChanged += new System.EventHandler(this.cbEnable_CheckedChanged);
@@ -288,40 +283,69 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripStatusLabel3,
-            this.toolStripStatusLabel2});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 344);
+            this.toolStripStatusLabel2,
+            this.toolStripStatusLabel4});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 509);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(447, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(670, 29);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
             // 
             // toolStripStatusLabel1
             // 
-            this.toolStripStatusLabel1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel1.ForeColor = System.Drawing.Color.Red;
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(176, 17);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // toolStripStatusLabel3
-            // 
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(0, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(88, 24);
+            this.toolStripStatusLabel1.Text = "Label1";
+            this.toolStripStatusLabel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.toolStripStatusLabel1_MouseDown);
             // 
             // toolStripStatusLabel2
             // 
-            this.toolStripStatusLabel2.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripStatusLabel2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel2.ForeColor = System.Drawing.Color.Green;
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(176, 17);
-            this.toolStripStatusLabel2.Text = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(88, 24);
+            this.toolStripStatusLabel2.Text = "Label2";
+            this.toolStripStatusLabel2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.toolStripStatusLabel2_MouseDown);
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Font = new System.Drawing.Font("黑体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(88, 24);
+            this.toolStripStatusLabel4.Text = "Label4";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.ForeColor = System.Drawing.Color.Red;
+            this.richTextBox1.Location = new System.Drawing.Point(374, 50);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(280, 158);
+            this.richTextBox1.TabIndex = 12;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.Visible = false;
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.ForeColor = System.Drawing.Color.Green;
+            this.richTextBox2.Location = new System.Drawing.Point(374, 274);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.Size = new System.Drawing.Size(284, 177);
+            this.richTextBox2.TabIndex = 13;
+            this.richTextBox2.Text = "";
+            this.richTextBox2.Visible = false;
             // 
             // PromptForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(447, 366);
+            this.ClientSize = new System.Drawing.Size(670, 538);
+            this.Controls.Add(this.richTextBox2);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.cbEnable);
             this.Controls.Add(this.btOK);
@@ -335,6 +359,7 @@
             this.Controls.Add(this.listView2);
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "PromptForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -377,11 +402,13 @@
         private System.Windows.Forms.CheckBox cbEnable;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ColumnHeader columnHeader8;
         private System.Windows.Forms.ColumnHeader columnHeader9;
         private System.Windows.Forms.ColumnHeader columnHeader10;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox richTextBox2;
     }
 }
 

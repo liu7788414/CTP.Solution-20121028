@@ -41,6 +41,17 @@ namespace PromptForm
                         TopMost = false;
                         BringToFront();
                         TopMost = true;
+                    
+                        if(Utils.IsTraderReady)
+                        {
+                            toolStripStatusLabel4.Text = "已连接";
+                            toolStripStatusLabel4.ForeColor = Color.Blue;
+                        }
+                        else
+                        {
+                            toolStripStatusLabel4.Text = "已断开";
+                            toolStripStatusLabel4.ForeColor = Color.Red;
+                        }
 
                         if (_trader != null && _trader.PositionFields != null)
                         {
@@ -293,11 +304,21 @@ namespace PromptForm
         public void SetUpStatus(string message)
         {
             toolStripStatusLabel1.Text = message;
+
+            var insert = message + "\n";
+            richTextBox1.AppendText(insert);
+            richTextBox1.Focus();
+            Application.DoEvents();
         }
 
         public void SetDownStatus(string message)
         {
             toolStripStatusLabel2.Text = message;
+
+            var insert = message + "\n";
+            richTextBox2.AppendText(insert);
+            richTextBox2.Focus();
+            Application.DoEvents();
         }
 
         private void ClosePositionByItem(ListViewItem li, string longReason, string shortReason)
@@ -337,6 +358,22 @@ namespace PromptForm
         private void cbEnable_CheckedChanged(object sender, EventArgs e)
         {
             tbStopLoss.Enabled = tbStopProfit.Enabled = btOK.Enabled = ((CheckBox)sender).Checked;
+        }
+
+        private void toolStripStatusLabel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            richTextBox1.Show();
+        }
+
+        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            richTextBox1.Hide();
+            richTextBox2.Hide();
+        }
+
+        private void toolStripStatusLabel2_MouseDown(object sender, MouseEventArgs e)
+        {
+            richTextBox2.Show();
         }
     }
 

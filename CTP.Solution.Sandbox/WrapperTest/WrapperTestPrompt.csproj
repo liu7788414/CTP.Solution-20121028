@@ -51,6 +51,12 @@
   <ItemGroup>
     <Compile Include="Common\Email.cs" />
     <Compile Include="Common\InstrumentComparer.cs" />
+    <Compile Include="Prompt\PopForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Prompt\PopForm.Designer.cs">
+      <DependentUpon>PopForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Prompt\ProgramPrompt.cs" />
     <Compile Include="Prompt\PromptForm.cs">
       <SubType>Form</SubType>
@@ -76,6 +82,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Prompt\PopForm.resx">
+      <DependentUpon>PopForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Prompt\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
