@@ -267,7 +267,7 @@ namespace WrapperTest
 
     public interface ITraderAdapter
     {
-        void CloseAllPositions();
+        void CloseAllPositions(string a, string b);
     }
 
     public class HighLowProfit
@@ -648,28 +648,73 @@ namespace WrapperTest
                 }
 
                 //监控品种的涨跌幅提示
-                if (pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01 || pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 0.99)
+                if ((pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 1.0110 && pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.0090) || (pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 0.9910 && pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 0.9890)) //大窗口提示
                 {
+                    var up = pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 1.0110 && pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.0090;
+
                     if (!AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                     {
-                        var b = pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01;
-
-                        var message = string.Format("{0}{1}{2:P}", instrumentId, b ? "上涨" : "下跌", (pDepthMarketData.LastPrice - pDepthMarketData.OpenPrice) / pDepthMarketData.OpenPrice);
-
-                        if (b && promptForm.IsHandleCreated)
+                        if (!messages.ContainsKey(instrumentId))
                         {
-                            promptForm.Invoke(new Action(() =>
+                            var ratio = (pDepthMarketData.LastPrice - pDepthMarketData.OpenPrice) / pDepthMarketData.OpenPrice;
+                            var prompt = string.Format("信号：{0}{1},开盘:{2},当前:{3},幅度:{4:P},时间{5}", instrumentId, up ? "兴" : "衰", pDepthMarketData.OpenPrice, pDepthMarketData.LastPrice, ratio, DateTime.Now);
+                            WriteLine(prompt, true);
+                            var list = new List<string>();
+                            list.Add(instrumentId);
+                            list.Add(up ? "兴" : "衰");
+
+                            list.Add(pDepthMarketData.OpenPrice.ToString());
+                            list.Add(pDepthMarketData.LastPrice.ToString());
+                            list.Add(ratio.ToString("P"));
+
+                            list.Add(marketData.pDepthMarketData.LastPrice.ToString());
+                            list.Add(DateTime.Now.ToString("mm:ss"));
+
+                            var promptItem = new PromptForm.PromptItem();
+                            promptItem.MessageItems = list;
+                            promptItem.InstrumentId = instrumentId;
+                            promptItem.Direction = up ? "Buy" : "Sell";
+                            promptItem.Price = marketData.pDepthMarketData.LastPrice;
+                            promptItem.Volume = 1;
+                            promptItem.Offset = 5;
+
+                            if (promptForm.IsHandleCreated)
                             {
-                                promptForm.SetUpStatus(message);
-                            }));
+                                promptForm.Invoke(new Action(() =>
+                                {
+                                    promptForm.AddMessage(promptItem);
+                                }));
+                            }
+
+                            messages[instrumentId] = prompt;
                         }
-
-                        if(!b && promptForm.IsHandleCreated)
+                    }
+                }
+                else
+                {
+                    if (pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01 || pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 0.99) //状态栏提示
+                    {
+                        if (!AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                         {
-                            promptForm.Invoke(new Action(() =>
+                            var b = pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01;
+
+                            var message = string.Format("{0}{1}{2:P}", instrumentId, b ? "上涨" : "下跌", (pDepthMarketData.LastPrice - pDepthMarketData.OpenPrice) / pDepthMarketData.OpenPrice);
+
+                            if (b && promptForm.IsHandleCreated)
                             {
-                                promptForm.SetDownStatus(message);
-                            }));
+                                promptForm.Invoke(new Action(() =>
+                                {
+                                    promptForm.SetUpStatus(message);
+                                }));
+                            }
+
+                            if (!b && promptForm.IsHandleCreated)
+                            {
+                                promptForm.Invoke(new Action(() =>
+                                {
+                                    promptForm.SetDownStatus(message);
+                                }));
+                            }
                         }
                     }
                 }
@@ -733,9 +778,19 @@ namespace WrapperTest
                     }
 
                     if (!messages.ContainsKey(instrumentId))
-                    {                   
-                        var prompt = string.Format("信号：{0}{1},最低{2},最高{3},当前{4},时间{5}", instrumentId, up ? "上涨" : "下跌", min, max, marketData.pDepthMarketData.LastPrice, DateTime.Now);
-                        WriteLine(prompt);
+                    {
+                        double ratio;
+                        if (up)
+                        {
+                            ratio = (max - min) / min;
+                        }
+                        else
+                        {
+                            ratio = (max - min) / max;
+                        }
+                        
+                        var prompt = string.Format("信号：{0}{1},最低:{2},最高:{3},当前:{4},幅度:{5},时间:{6}", instrumentId, up ? "上涨" : "下跌", min, max, marketData.pDepthMarketData.LastPrice, ratio, DateTime.Now);
+                        WriteLine(prompt, true);
                         var list = new List<string>();
                         list.Add(instrumentId);
                         list.Add(up ? "涨" : "跌");
@@ -1325,12 +1380,6 @@ namespace WrapperTest
         {
             try
             {
-                if (trader != null)
-                {
-                    ((ITraderAdapter)trader).CloseAllPositions();
-                    SaveStopLossPrices();
-                }
-
                 Environment.Exit(0);
             }
             catch (Exception ex)

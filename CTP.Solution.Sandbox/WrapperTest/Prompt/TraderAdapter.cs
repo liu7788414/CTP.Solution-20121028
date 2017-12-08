@@ -1671,7 +1671,7 @@ namespace WrapperTest
             return -1;
         }
 
-        public void CloseAllPositions()
+        public void CloseAllPositions(string longReason, string shortReason)
         {
             try
             {
@@ -1690,12 +1690,12 @@ namespace WrapperTest
                     {
                         if (position.PosiDirection == EnumPosiDirectionType.Long)
                         {
-                            CloseLongPositionByInstrument(position.InstrumentID, "收盘平多仓", true, 0);
+                            CloseLongPositionByInstrument(position.InstrumentID, longReason, true, 0);
                         }
 
                         if (position.PosiDirection == EnumPosiDirectionType.Short)
                         {
-                            CloseShortPositionByInstrument(position.InstrumentID, "收盘平空仓", true, 99999);
+                            CloseShortPositionByInstrument(position.InstrumentID, shortReason, true, 99999);
                         }
                     }
                 }

@@ -19,11 +19,13 @@ namespace PromptForm
         public System.Timers.Timer _timer;
         private double stopProfit = 1000;
         private double stopLoss = -1000;
-       
+        private double stopProfitTotal = 2000;
+        private double stopLossTotal = -2000;
+
         public PromptForm()
         {
             InitializeComponent();
-            _timer = new System.Timers.Timer(500);
+            _timer = new System.Timers.Timer(250);
             _timer.Elapsed += _timer_Tick;
             _timer.Start();
         }
@@ -93,7 +95,7 @@ namespace PromptForm
                                 var sub = item.SubItems.Add(ins);
                                 sub.ForeColor = color;
                                 
-                                sub = item.SubItems.Add(dir.ToString());
+                                sub = item.SubItems.Add(dir == EnumPosiDirectionType.Long ? "多" : "空");
                                 sub.ForeColor = color;
 
                                 var volume = kv.Value.Position;
@@ -128,14 +130,39 @@ namespace PromptForm
                                         {
                                             ClosePositionByItem(item, "多仓止损", "空仓止损");
                                         }
+
+                                        if(profit > 0.9 * stopProfit)
+                                        {
+                                            tbStopProfit.BackColor = Color.Red;
+                                        }
+                                        else
+                                        {
+                                            tbStopProfit.BackColor = Color.White;
+                                        }
+
+                                        if(profit < 0.9 * stopLoss)
+                                        {
+                                            tbStopLoss.BackColor = Color.Green;
+                                        }
+                                        else
+                                        {
+                                            tbStopLoss.BackColor = Color.White;
+                                        }
                                     }
-                                    if (profit >= 0)
+                                    if (profit > 0)
                                     {
                                         sub.ForeColor = Color.Red;
                                     }
                                     else
                                     {
-                                        sub.ForeColor = Color.Green;
+                                        if (profit < 0)
+                                        {
+                                            sub.ForeColor = Color.Green;
+                                        }
+                                        else
+                                        {
+                                            sub.ForeColor = Color.Black;
+                                        }
                                     }
 
                                     HighLowProfit highLowProfit;
@@ -192,16 +219,33 @@ namespace PromptForm
                             if(totalProfit > 0)
                             {
                                 textBox1.ForeColor = Color.Red;
+                                if(totalProfit > Convert.ToDouble(lbHighTotal.Text))
+                                {
+                                    lbHighTotal.Text = totalProfit.ToString("f2");
+                                }
                             }
                             else
                             {
                                 if(totalProfit < 0)
                                 {
                                     textBox1.ForeColor = Color.Green;
+
+                                    if (totalProfit < Convert.ToDouble(lbLowTotal.Text))
+                                    {
+                                        lbLowTotal.Text = totalProfit.ToString("f2");
+                                    }
                                 }
                                 else
                                 {
                                     textBox1.ForeColor = Color.Black;
+                                }
+                            }
+
+                            if(cbEnableTotal.Checked)
+                            {
+                                if(totalProfit > stopProfitTotal || totalProfit < stopLossTotal)
+                                {
+                                    _trader.CloseAllPositions("总盈利平仓", "总盈利平仓");
                                 }
                             }
                         }
@@ -228,7 +272,26 @@ namespace PromptForm
             }
             else
             {
-                item.ForeColor = Color.Green;
+                if (promptItem.MessageItems[1].Equals("跌"))
+                {
+                    item.ForeColor = Color.Green;
+                }
+                else
+                {
+                    if (promptItem.MessageItems[1].Equals("兴"))
+                    {
+                        item.ForeColor = Color.Brown;
+                    }
+                    else
+                    {
+                        if (promptItem.MessageItems[1].Equals("衰"))
+                        {
+                            item.ForeColor = Color.Blue;
+                        }
+                        else
+                        { }
+                    }
+                }
             }
 
             listView1.Items.Add(item);
@@ -264,7 +327,7 @@ namespace PromptForm
                 {
                     var lastTick = Utils.InstrumentToLastTick[ins];
 
-                    if (li.SubItems[2].Text.Equals("涨"))
+                    if (li.SubItems[2].Text.Equals("涨") || li.SubItems[2].Text.Equals("兴"))
                     {
                         if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Short))  //持有空仓不开多仓
                         {
@@ -290,9 +353,9 @@ namespace PromptForm
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btCloseAll_Click(object sender, EventArgs e)
         {
-            _trader.CloseAllPositions();
+            _trader.CloseAllPositions("手动全平", "手动全平");
         }
 
         private void listView2_MouseDown(object sender, MouseEventArgs e)
@@ -331,7 +394,7 @@ namespace PromptForm
                 if (Utils.InstrumentToLastTick.ContainsKey(ins))
                 {
                     var lastTick = Utils.InstrumentToLastTick[ins];
-                    if (longOrShort.Equals("Long"))
+                    if (longOrShort.Equals("多"))
                     {
                         _trader.CloseLongPositionByInstrument(ins, longReason, true, lastTick.LowerLimitPrice);
                     }
@@ -374,6 +437,27 @@ namespace PromptForm
         private void toolStripStatusLabel2_MouseDown(object sender, MouseEventArgs e)
         {
             richTextBox2.Show();
+        }
+
+        private void btOKTotal_Click(object sender, EventArgs e)
+        {
+            stopProfitTotal = Convert.ToDouble(tbStopProfitTotal.Text);
+            stopLossTotal = Convert.ToDouble(tbStopLossTotal.Text);
+        }
+
+        private void cbEnableTotal_CheckedChanged(object sender, EventArgs e)
+        {
+            tbStopLossTotal.Enabled = tbStopProfitTotal.Enabled = btOKTotal.Enabled = ((CheckBox)sender).Checked;
+        }
+
+        private void lbHighTotal_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            lbHighTotal.Text = lbLowTotal.Text = "0";
+        }
+
+        private void lbLowTotal_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            lbHighTotal.Text = lbLowTotal.Text = "0";
         }
     }
 

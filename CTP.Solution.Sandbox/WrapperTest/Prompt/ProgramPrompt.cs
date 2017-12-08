@@ -63,10 +63,6 @@ namespace WrapperTest
                 timerExit.Elapsed += timerExit_Elapsed;
                 timerExit.Start();
 
-                var timerCloseAllPositions = new System.Timers.Timer(10000);
-                timerCloseAllPositions.Elapsed += timerCloseAllPosition_Elapsed;
-                timerCloseAllPositions.Start();
-
                 string line;
                 if (Utils.IsMailingEnabled) //命令行方式
                 {
@@ -418,35 +414,6 @@ namespace WrapperTest
                 ((QuoteAdapter)Utils.QuoteMain).StartTimer();
 
                 Thread.Sleep(100000000);
-            }
-            catch (Exception ex)
-            {
-                Utils.WriteException(ex);
-            }
-        }
-
-        private static void timerCloseAllPosition_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            try
-            {
-                var dateTime = DateTime.Now;
-                Utils.WriteLine(string.Format("检查是否全部平仓{0}", dateTime));
-
-                //收盘前10分钟就禁止再开仓
-                if ((dateTime.Hour == 14 && dateTime.Minute == 58) ||
-                    (dateTime.Hour == 22 && dateTime.Minute == 58))
-                {
-                    Utils.WriteLine(string.Format("到达禁止开仓时间{0}", dateTime));
-                    Utils.IsOpenLocked = true;
-                }
-
-                if ((dateTime.Hour == 14 && dateTime.Minute == 59 && dateTime.Second >= 30) ||
-                    (dateTime.Hour == 22 && dateTime.Minute == 59 && dateTime.Second >= 30))
-                {
-                    Utils.WriteLine(string.Format("临近收盘，平掉所有持仓{0}", dateTime), true);
-                    ((TraderAdapter)Utils.Trader).CloseAllPositions();
-                    ((System.Timers.Timer)sender).Stop();
-                }
             }
             catch (Exception ex)
             {
