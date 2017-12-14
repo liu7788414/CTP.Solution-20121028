@@ -383,6 +383,8 @@ namespace WrapperTest
         public static List<double> MinuteLongXData;
         public static List<double> MinuteMiddleXData;
         public static bool IsOpenLocked = false;
+        public static bool IsCloseLocked = false;
+        public static bool IsCancelLocked = false;
         public static DateTime PositionTime = DateTime.Now;
         public static DateTime BuyOpenLockTime = DateTime.Now;
         public static DateTime SellOpenLockTime = DateTime.Now;

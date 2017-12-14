@@ -314,7 +314,7 @@ namespace WrapperTest
                         Utils.DeleteStorePrice(lowestPriceFile);
                     }
 
-                    if (data.LastPrice / data.OpenPrice > 1.015 && data.LastPrice > data.HighestPrice * 0.99)
+                    if (data.LastPrice / data.OpenPrice > 1.014 && data.LastPrice > data.HighestPrice * 0.99)
                     {
                         var reason = string.Format("{0}盘中看多信号，开多", instrumentId);
                         if (noOpening)
@@ -329,7 +329,7 @@ namespace WrapperTest
                         }
                     }
 
-                    if (data.LastPrice / data.OpenPrice < 0.985 && data.LastPrice < data.LowestPrice * 1.01)
+                    if (data.LastPrice / data.OpenPrice < 0.986 && data.LastPrice < data.LowestPrice * 1.01)
                     {
                         var reason = string.Format("{0}盘中看空信号，开空", instrumentId);
                         if (noOpening)

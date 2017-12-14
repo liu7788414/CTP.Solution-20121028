@@ -611,7 +611,7 @@ namespace WrapperTest
 
                                     positionToday.Position += pTrade.Volume;
                                     positionToday.TodayPosition += pTrade.Volume;
-                                    
+                                    positionToday.TradingDay = DateTime.Now.ToString("HH:mm:ss");
                                 }
                                 else
                                 {
@@ -623,7 +623,8 @@ namespace WrapperTest
                                         TodayPosition = pTrade.Volume,
                                         YdPosition = 0,
                                         PositionDate = EnumPositionDateType.Today,
-                                        OpenCost = pTrade.Price * Utils.InstrumentToInstrumentInfo[pTrade.InstrumentID].VolumeMultiple * pTrade.Volume
+                                        OpenCost = pTrade.Price * Utils.InstrumentToInstrumentInfo[pTrade.InstrumentID].VolumeMultiple * pTrade.Volume,
+                                        TradingDay = DateTime.Now.ToString("HH:mm:ss")
                                     };
                                 }
 
@@ -1118,7 +1119,8 @@ namespace WrapperTest
                                     TodayPosition = pInvestorPosition.TodayPosition,
                                     YdPosition = 0,
                                     PositionDate = EnumPositionDateType.Today,
-                                    OpenCost = pInvestorPosition.OpenCost
+                                    OpenCost = pInvestorPosition.OpenCost,
+                                    TradingDay = DateTime.Now.ToString("HH:mm:ss")
                                 };
                             }
 
@@ -1133,7 +1135,8 @@ namespace WrapperTest
                                     TodayPosition = 0,
                                     YdPosition = pInvestorPosition.Position - pInvestorPosition.TodayPosition,
                                     PositionDate = EnumPositionDateType.History,
-                                    OpenCost = pInvestorPosition.OpenCost
+                                    OpenCost = pInvestorPosition.OpenCost,
+                                    TradingDay = DateTime.Now.ToString("HH:mm:ss")
                                 };
                             }
                         }
@@ -1149,7 +1152,8 @@ namespace WrapperTest
                                     TodayPosition = pInvestorPosition.TodayPosition,
                                     YdPosition = 0,
                                     PositionDate = EnumPositionDateType.Today,
-                                    OpenCost = pInvestorPosition.OpenCost
+                                    OpenCost = pInvestorPosition.OpenCost,
+                                    TradingDay = DateTime.Now.ToString("HH:mm:ss")
                                 };
                             }
 
@@ -1163,7 +1167,8 @@ namespace WrapperTest
                                     TodayPosition = pInvestorPosition.TodayPosition,
                                     YdPosition = pInvestorPosition.Position - pInvestorPosition.TodayPosition,
                                     PositionDate = EnumPositionDateType.History,
-                                    OpenCost = pInvestorPosition.OpenCost
+                                    OpenCost = pInvestorPosition.OpenCost,
+                                    TradingDay = DateTime.Now.ToString("HH:mm:ss")
                                 };
                             }
                         }
@@ -1260,55 +1265,56 @@ namespace WrapperTest
                             pTradingAccount.Reserve, pTradingAccount.SettlementID, pTradingAccount.Withdraw,
                             pTradingAccount.WithdrawQuota);
 
-                    var moneyFile = Utils.AssemblyPath + "money.csv";
-                    try
-                    {
-                        var dicMoney = new Dictionary<string, string>();
+                    Utils.availableMoney = pTradingAccount.Available;
+                    //var moneyFile = Utils.AssemblyPath + "money.csv";
+                    //try
+                    //{
+                    //    var dicMoney = new Dictionary<string, string>();
 
-                        if (File.Exists(moneyFile))
-                        {
-                            var sr = new StreamReader(moneyFile, Encoding.UTF8);
-                            string line;
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                dicMoney[line] = line;
-                            }
-                            sr.Close();
+                    //    if (File.Exists(moneyFile))
+                    //    {
+                    //        var sr = new StreamReader(moneyFile, Encoding.UTF8);
+                    //        string line;
+                    //        while ((line = sr.ReadLine()) != null)
+                    //        {
+                    //            dicMoney[line] = line;
+                    //        }
+                    //        sr.Close();
 
-                            dicMoney[temp] = temp;
+                    //        dicMoney[temp] = temp;
 
-                            File.Delete(moneyFile);
+                    //        File.Delete(moneyFile);
 
-                            var sw = new StreamWriter(moneyFile, true, Encoding.UTF8);
-                            foreach (var s in dicMoney)
-                            {
-                                sw.WriteLine(s.Value);
-                            }
+                    //        var sw = new StreamWriter(moneyFile, true, Encoding.UTF8);
+                    //        foreach (var s in dicMoney)
+                    //        {
+                    //            sw.WriteLine(s.Value);
+                    //        }
 
-                            sw.Close();
-                        }
-                        else
-                        {
-                            const string title =
-                                "交易日,投资者帐号,可用资金,期货结算准备金,经纪公司代码,资金差额,平仓盈亏,手续费,信用额度,当前保证金总额,投资者交割保证金,入金金额,交易所交割保证金,交易所保证金,冻结的资金,冻结的手续费,冻结的保证金,利息收入,利息基数,质押金额,持仓盈亏,上次结算准备金,上次信用额度,上次存款额,上次占用的保证金,上次质押金额,基本准备金,结算编号,出金金额,可取资金";
+                    //        sw.Close();
+                    //    }
+                    //    else
+                    //    {
+                    //        const string title =
+                    //            "交易日,投资者帐号,可用资金,期货结算准备金,经纪公司代码,资金差额,平仓盈亏,手续费,信用额度,当前保证金总额,投资者交割保证金,入金金额,交易所交割保证金,交易所保证金,冻结的资金,冻结的手续费,冻结的保证金,利息收入,利息基数,质押金额,持仓盈亏,上次结算准备金,上次信用额度,上次存款额,上次占用的保证金,上次质押金额,基本准备金,结算编号,出金金额,可取资金";
 
-                            var sw = new StreamWriter(moneyFile, true, Encoding.UTF8);
-                            sw.WriteLine(title);
-                            sw.WriteLine(temp);
-                            sw.Close();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var errorMsg = ex.Message + ex.Source + ex.StackTrace;
-                        Utils.WriteLine(errorMsg, true);
-                        Email.SendMail(string.Format("错误:处理{0}出现异常", moneyFile), errorMsg, Utils.IsMailingEnabled);
-                    }
+                    //        var sw = new StreamWriter(moneyFile, true, Encoding.UTF8);
+                    //        sw.WriteLine(title);
+                    //        sw.WriteLine(temp);
+                    //        sw.Close();
+                    //    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    var errorMsg = ex.Message + ex.Source + ex.StackTrace;
+                    //    Utils.WriteLine(errorMsg, true);
+                    //    Email.SendMail(string.Format("错误:处理{0}出现异常", moneyFile), errorMsg, Utils.IsMailingEnabled);
+                    //}
 
                     Utils.OutputField(pTradingAccount);
                 }
 
-                if (bIsLast)
+                if (bIsLast && !Utils.IsTraderReady)
                 {
                     Thread.Sleep(1000);
                     ReqQryInvestorPositionDetail();
@@ -1400,7 +1406,7 @@ namespace WrapperTest
             }
         }
 
-        private void ReqQryTradingAccount()
+        public void ReqQryTradingAccount()
         {
             var req = new ThostFtdcQryTradingAccountField
             {

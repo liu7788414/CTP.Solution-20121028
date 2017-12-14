@@ -139,6 +139,12 @@ namespace WrapperTest
         {
             try
             {
+                if(Utils.IsCancelLocked)
+                {
+                    Utils.WriteLine("目前禁止程序撤单！",true);
+                    return;
+                }
+
                 var ordersToCancel = new List<ThostFtdcOrderField>();
 
                 foreach (var order in UnFinishedOrderFields.Values)
@@ -443,6 +449,12 @@ namespace WrapperTest
         {
             try
             {
+                if (Utils.IsCloseLocked)
+                {
+                    Utils.WriteLine("目前禁止程序平仓！",true);
+                    return;
+                }
+
                 var keyToday = Utils.GetPositionKey(instrumentId, longOrShort, EnumPositionDateType.Today);
                 var keyHistory = Utils.GetPositionKey(instrumentId, longOrShort, EnumPositionDateType.History);
 
@@ -999,6 +1011,14 @@ namespace WrapperTest
 
                     Utils.WriteLine(temp, true);
 
+                    if (Convert.ToInt32(pOrder.OrderRef) < OrderRefStart)
+                    {
+                        Utils.WriteLine("收到手动报单,禁止程序开仓、平仓、撤单！", true);
+                        Utils.IsOpenLocked = true;
+                        Utils.IsCloseLocked = true;
+                        Utils.IsCancelLocked = true;
+                    }
+
                     UnFinishedOrderFields[GetOrderKey(pOrder)] = pOrder;
 
                     if (pOrder.OrderStatus == EnumOrderStatusType.Canceled) //报单被撤单
@@ -1494,6 +1514,9 @@ namespace WrapperTest
                 newTrader.Connect();
             });
         }
+
+        private const int OrderRefStart = 10000000;
+
         private void TraderAdapter_OnRspUserLogin(ThostFtdcRspUserLoginField pRspUserLogin,
             ThostFtdcRspInfoField pRspInfo, int nRequestId, bool bIsLast)
         {
@@ -1521,7 +1544,7 @@ namespace WrapperTest
 
                     if (string.IsNullOrEmpty(pRspUserLogin.MaxOrderRef))
                     {
-                        CurrentOrderRef = 0;
+                        CurrentOrderRef = OrderRefStart;
                     }
                     else
                     {
