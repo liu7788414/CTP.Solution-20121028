@@ -55,16 +55,14 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btCloseAll = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbStopProfit = new System.Windows.Forms.TextBox();
-            this.tbStopLoss = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.btOK = new System.Windows.Forms.Button();
             this.cbEnable = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.cbEnableTotal = new System.Windows.Forms.CheckBox();
@@ -75,12 +73,41 @@
             this.label5 = new System.Windows.Forms.Label();
             this.lbHighTotal = new System.Windows.Forms.Label();
             this.lbLowTotal = new System.Windows.Forms.Label();
-            this.tbWarning = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.nudCloseRatio = new System.Windows.Forms.NumericUpDown();
             this.cbWarning = new System.Windows.Forms.CheckBox();
+            this.cbAutoOpen = new System.Windows.Forms.CheckBox();
+            this.nudWarningPoint = new System.Windows.Forms.NumericUpDown();
+            this.nudProfitPoint = new System.Windows.Forms.NumericUpDown();
+            this.nudLossPoint = new System.Windows.Forms.NumericUpDown();
+            this.cbOverTime = new System.Windows.Forms.CheckBox();
+            this.nudOverTimePoint = new System.Windows.Forms.NumericUpDown();
+            this.tbUpDownRatio = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btUpDownRatio = new System.Windows.Forms.Button();
+            this.lvOrder = new System.Windows.Forms.ListView();
+            this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btCancel = new System.Windows.Forms.Button();
+            this.btBuy1 = new System.Windows.Forms.Button();
+            this.tbIns = new System.Windows.Forms.TextBox();
+            this.btSell1 = new System.Windows.Forms.Button();
+            this.btBuy3 = new System.Windows.Forms.Button();
+            this.btBuy5 = new System.Windows.Forms.Button();
+            this.btBuy7 = new System.Windows.Forms.Button();
+            this.btBuy9 = new System.Windows.Forms.Button();
+            this.btSell3 = new System.Windows.Forms.Button();
+            this.btSell5 = new System.Windows.Forms.Button();
+            this.btSell7 = new System.Windows.Forms.Button();
+            this.btSell9 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudProfitPoint)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).BeginInit();
             this.SuspendLayout();
             // 
             // listView1
@@ -99,12 +126,14 @@
             this.listView1.GridLines = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView1.Location = new System.Drawing.Point(4, 3);
-            this.listView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.listView1.Margin = new System.Windows.Forms.Padding(4);
+            this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(878, 216);
+            this.listView1.Size = new System.Drawing.Size(640, 216);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             this.listView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDown);
             // 
@@ -167,7 +196,7 @@
             this.listView2.GridLines = true;
             this.listView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView2.Location = new System.Drawing.Point(4, 230);
-            this.listView2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.listView2.Margin = new System.Windows.Forms.Padding(4);
             this.listView2.Name = "listView2";
             this.listView2.Size = new System.Drawing.Size(878, 109);
             this.listView2.TabIndex = 1;
@@ -244,7 +273,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(365, 386);
+            this.label1.Location = new System.Drawing.Point(364, 386);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 30);
             this.label1.TabIndex = 2;
@@ -255,13 +284,13 @@
             this.textBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox1.Location = new System.Drawing.Point(417, 382);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 35);
+            this.textBox1.Size = new System.Drawing.Size(148, 35);
             this.textBox1.TabIndex = 3;
             // 
             // btCloseAll
             // 
             this.btCloseAll.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btCloseAll.Location = new System.Drawing.Point(541, 381);
+            this.btCloseAll.Location = new System.Drawing.Point(573, 382);
             this.btCloseAll.Name = "btCloseAll";
             this.btCloseAll.Size = new System.Drawing.Size(40, 40);
             this.btCloseAll.TabIndex = 4;
@@ -272,54 +301,27 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(35, 356);
+            this.label2.Location = new System.Drawing.Point(34, 356);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(62, 18);
             this.label2.TabIndex = 5;
             this.label2.Text = "盈点：";
             // 
-            // tbStopProfit
-            // 
-            this.tbStopProfit.Location = new System.Drawing.Point(85, 346);
-            this.tbStopProfit.Name = "tbStopProfit";
-            this.tbStopProfit.Size = new System.Drawing.Size(67, 28);
-            this.tbStopProfit.TabIndex = 6;
-            this.tbStopProfit.Text = "20";
-            // 
-            // tbStopLoss
-            // 
-            this.tbStopLoss.BackColor = System.Drawing.SystemColors.Window;
-            this.tbStopLoss.Location = new System.Drawing.Point(209, 346);
-            this.tbStopLoss.Name = "tbStopLoss";
-            this.tbStopLoss.Size = new System.Drawing.Size(74, 28);
-            this.tbStopLoss.TabIndex = 8;
-            this.tbStopLoss.Text = "-20";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(161, 356);
+            this.label3.Location = new System.Drawing.Point(160, 356);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 18);
             this.label3.TabIndex = 7;
             this.label3.Text = "损点：";
-            // 
-            // btOK
-            // 
-            this.btOK.Location = new System.Drawing.Point(293, 345);
-            this.btOK.Name = "btOK";
-            this.btOK.Size = new System.Drawing.Size(60, 30);
-            this.btOK.TabIndex = 9;
-            this.btOK.Text = "确定";
-            this.btOK.UseVisualStyleBackColor = true;
-            this.btOK.Click += new System.EventHandler(this.btOK_Click);
             // 
             // cbEnable
             // 
             this.cbEnable.AutoSize = true;
             this.cbEnable.Checked = true;
             this.cbEnable.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbEnable.Location = new System.Drawing.Point(5, 356);
+            this.cbEnable.Location = new System.Drawing.Point(4, 356);
             this.cbEnable.Name = "cbEnable";
             this.cbEnable.Size = new System.Drawing.Size(22, 21);
             this.cbEnable.TabIndex = 10;
@@ -333,11 +335,12 @@
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3,
-            this.toolStripStatusLabel4});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 427);
+            this.toolStripStatusLabel4,
+            this.timeLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 426);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(885, 29);
+            this.statusStrip1.Size = new System.Drawing.Size(894, 30);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
@@ -347,7 +350,7 @@
             this.toolStripStatusLabel1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel1.ForeColor = System.Drawing.Color.Red;
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(88, 24);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(88, 25);
             this.toolStripStatusLabel1.Text = "Label1";
             this.toolStripStatusLabel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.toolStripStatusLabel1_MouseDown);
             // 
@@ -357,7 +360,7 @@
             this.toolStripStatusLabel2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel2.ForeColor = System.Drawing.Color.Green;
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(88, 24);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(88, 25);
             this.toolStripStatusLabel2.Text = "Label2";
             this.toolStripStatusLabel2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.toolStripStatusLabel2_MouseDown);
             // 
@@ -365,21 +368,28 @@
             // 
             this.toolStripStatusLabel3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(88, 24);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(88, 25);
             this.toolStripStatusLabel3.Text = "Label3";
             // 
             // toolStripStatusLabel4
             // 
             this.toolStripStatusLabel4.Font = new System.Drawing.Font("黑体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(88, 24);
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(88, 25);
             this.toolStripStatusLabel4.Text = "Label4";
+            // 
+            // timeLabel
+            // 
+            this.timeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(56, 25);
+            this.timeLabel.Text = "time";
             // 
             // richTextBox1
             // 
             this.richTextBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.richTextBox1.ForeColor = System.Drawing.Color.Red;
-            this.richTextBox1.Location = new System.Drawing.Point(37, 45);
+            this.richTextBox1.Location = new System.Drawing.Point(38, 45);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(286, 158);
             this.richTextBox1.TabIndex = 12;
@@ -390,7 +400,7 @@
             // 
             this.richTextBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.richTextBox2.ForeColor = System.Drawing.Color.Green;
-            this.richTextBox2.Location = new System.Drawing.Point(349, 45);
+            this.richTextBox2.Location = new System.Drawing.Point(350, 45);
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.Size = new System.Drawing.Size(284, 158);
             this.richTextBox2.TabIndex = 13;
@@ -400,7 +410,7 @@
             // cbEnableTotal
             // 
             this.cbEnableTotal.AutoSize = true;
-            this.cbEnableTotal.Location = new System.Drawing.Point(5, 394);
+            this.cbEnableTotal.Location = new System.Drawing.Point(4, 394);
             this.cbEnableTotal.Name = "cbEnableTotal";
             this.cbEnableTotal.Size = new System.Drawing.Size(22, 21);
             this.cbEnableTotal.TabIndex = 19;
@@ -410,7 +420,7 @@
             // btOKTotal
             // 
             this.btOKTotal.Enabled = false;
-            this.btOKTotal.Location = new System.Drawing.Point(293, 386);
+            this.btOKTotal.Location = new System.Drawing.Point(292, 386);
             this.btOKTotal.Name = "btOKTotal";
             this.btOKTotal.Size = new System.Drawing.Size(60, 30);
             this.btOKTotal.TabIndex = 18;
@@ -421,16 +431,16 @@
             // tbStopLossTotal
             // 
             this.tbStopLossTotal.Enabled = false;
-            this.tbStopLossTotal.Location = new System.Drawing.Point(209, 387);
+            this.tbStopLossTotal.Location = new System.Drawing.Point(208, 387);
             this.tbStopLossTotal.Name = "tbStopLossTotal";
-            this.tbStopLossTotal.Size = new System.Drawing.Size(74, 28);
+            this.tbStopLossTotal.Size = new System.Drawing.Size(67, 28);
             this.tbStopLossTotal.TabIndex = 17;
             this.tbStopLossTotal.Text = "-1500";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(161, 394);
+            this.label4.Location = new System.Drawing.Point(160, 394);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(62, 18);
             this.label4.TabIndex = 16;
@@ -439,7 +449,7 @@
             // tbStopProfitTotal
             // 
             this.tbStopProfitTotal.Enabled = false;
-            this.tbStopProfitTotal.Location = new System.Drawing.Point(85, 387);
+            this.tbStopProfitTotal.Location = new System.Drawing.Point(86, 387);
             this.tbStopProfitTotal.Name = "tbStopProfitTotal";
             this.tbStopProfitTotal.Size = new System.Drawing.Size(67, 28);
             this.tbStopProfitTotal.TabIndex = 15;
@@ -448,7 +458,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(35, 394);
+            this.label5.Location = new System.Drawing.Point(34, 394);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(62, 18);
             this.label5.TabIndex = 14;
@@ -459,7 +469,7 @@
             this.lbHighTotal.AutoSize = true;
             this.lbHighTotal.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lbHighTotal.ForeColor = System.Drawing.Color.Red;
-            this.lbHighTotal.Location = new System.Drawing.Point(593, 381);
+            this.lbHighTotal.Location = new System.Drawing.Point(618, 382);
             this.lbHighTotal.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbHighTotal.Name = "lbHighTotal";
             this.lbHighTotal.Size = new System.Drawing.Size(18, 18);
@@ -472,7 +482,7 @@
             this.lbLowTotal.AutoSize = true;
             this.lbLowTotal.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lbLowTotal.ForeColor = System.Drawing.Color.Green;
-            this.lbLowTotal.Location = new System.Drawing.Point(593, 404);
+            this.lbLowTotal.Location = new System.Drawing.Point(618, 404);
             this.lbLowTotal.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbLowTotal.Name = "lbLowTotal";
             this.lbLowTotal.Size = new System.Drawing.Size(18, 18);
@@ -480,27 +490,14 @@
             this.lbLowTotal.Text = "0";
             this.lbLowTotal.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lbLowTotal_MouseDoubleClick);
             // 
-            // tbWarning
-            // 
-            this.tbWarning.Enabled = false;
-            this.tbWarning.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.tbWarning.ForeColor = System.Drawing.Color.Red;
-            this.tbWarning.Location = new System.Drawing.Point(417, 346);
-            this.tbWarning.Name = "tbWarning";
-            this.tbWarning.Size = new System.Drawing.Size(48, 28);
-            this.tbWarning.TabIndex = 22;
-            this.tbWarning.Text = "10";
-            this.tbWarning.MouseLeave += new System.EventHandler(this.tbWarning_MouseLeave);
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(367, 351);
+            this.label6.Location = new System.Drawing.Point(368, 351);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(62, 18);
             this.label6.TabIndex = 23;
             this.label6.Text = "警戒：";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // nudCloseRatio
             // 
@@ -513,9 +510,9 @@
             0,
             0,
             65536});
-            this.nudCloseRatio.Location = new System.Drawing.Point(471, 346);
+            this.nudCloseRatio.Location = new System.Drawing.Point(495, 348);
             this.nudCloseRatio.Name = "nudCloseRatio";
-            this.nudCloseRatio.Size = new System.Drawing.Size(70, 28);
+            this.nudCloseRatio.Size = new System.Drawing.Size(74, 28);
             this.nudCloseRatio.TabIndex = 24;
             this.nudCloseRatio.Value = new decimal(new int[] {
             5,
@@ -527,21 +524,317 @@
             // cbWarning
             // 
             this.cbWarning.AutoSize = true;
-            this.cbWarning.Location = new System.Drawing.Point(543, 356);
+            this.cbWarning.Location = new System.Drawing.Point(573, 356);
             this.cbWarning.Name = "cbWarning";
             this.cbWarning.Size = new System.Drawing.Size(22, 21);
             this.cbWarning.TabIndex = 25;
             this.cbWarning.UseVisualStyleBackColor = true;
             this.cbWarning.CheckedChanged += new System.EventHandler(this.cbWarning_CheckedChanged);
             // 
+            // cbAutoOpen
+            // 
+            this.cbAutoOpen.AutoSize = true;
+            this.cbAutoOpen.Location = new System.Drawing.Point(700, 394);
+            this.cbAutoOpen.Name = "cbAutoOpen";
+            this.cbAutoOpen.Size = new System.Drawing.Size(106, 22);
+            this.cbAutoOpen.TabIndex = 26;
+            this.cbAutoOpen.Text = "自动开仓";
+            this.cbAutoOpen.UseVisualStyleBackColor = true;
+            // 
+            // nudWarningPoint
+            // 
+            this.nudWarningPoint.Enabled = false;
+            this.nudWarningPoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudWarningPoint.ForeColor = System.Drawing.Color.Red;
+            this.nudWarningPoint.Location = new System.Drawing.Point(417, 348);
+            this.nudWarningPoint.Name = "nudWarningPoint";
+            this.nudWarningPoint.Size = new System.Drawing.Size(74, 28);
+            this.nudWarningPoint.TabIndex = 28;
+            this.nudWarningPoint.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudWarningPoint.ValueChanged += new System.EventHandler(this.nudWarningPoint_ValueChanged);
+            // 
+            // nudProfitPoint
+            // 
+            this.nudProfitPoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudProfitPoint.ForeColor = System.Drawing.Color.Red;
+            this.nudProfitPoint.Location = new System.Drawing.Point(86, 348);
+            this.nudProfitPoint.Name = "nudProfitPoint";
+            this.nudProfitPoint.Size = new System.Drawing.Size(70, 28);
+            this.nudProfitPoint.TabIndex = 29;
+            this.nudProfitPoint.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudProfitPoint.ValueChanged += new System.EventHandler(this.nudProfitPoint_ValueChanged);
+            // 
+            // nudLossPoint
+            // 
+            this.nudLossPoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudLossPoint.ForeColor = System.Drawing.Color.Red;
+            this.nudLossPoint.Location = new System.Drawing.Point(208, 348);
+            this.nudLossPoint.Name = "nudLossPoint";
+            this.nudLossPoint.Size = new System.Drawing.Size(70, 28);
+            this.nudLossPoint.TabIndex = 30;
+            this.nudLossPoint.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudLossPoint.ValueChanged += new System.EventHandler(this.nudLossPoint_ValueChanged);
+            // 
+            // cbOverTime
+            // 
+            this.cbOverTime.AutoSize = true;
+            this.cbOverTime.Location = new System.Drawing.Point(700, 356);
+            this.cbOverTime.Name = "cbOverTime";
+            this.cbOverTime.Size = new System.Drawing.Size(106, 22);
+            this.cbOverTime.TabIndex = 31;
+            this.cbOverTime.Text = "超时止损";
+            this.cbOverTime.UseVisualStyleBackColor = true;
+            this.cbOverTime.CheckedChanged += new System.EventHandler(this.cbOverTime_CheckedChanged);
+            // 
+            // nudOverTimePoint
+            // 
+            this.nudOverTimePoint.Enabled = false;
+            this.nudOverTimePoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudOverTimePoint.ForeColor = System.Drawing.Color.Red;
+            this.nudOverTimePoint.Location = new System.Drawing.Point(813, 354);
+            this.nudOverTimePoint.Name = "nudOverTimePoint";
+            this.nudOverTimePoint.Size = new System.Drawing.Size(74, 28);
+            this.nudOverTimePoint.TabIndex = 32;
+            this.nudOverTimePoint.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudOverTimePoint.ValueChanged += new System.EventHandler(this.nudOverTimePoint_ValueChanged);
+            // 
+            // tbUpDownRatio
+            // 
+            this.tbUpDownRatio.Location = new System.Drawing.Point(770, 194);
+            this.tbUpDownRatio.Name = "tbUpDownRatio";
+            this.tbUpDownRatio.Size = new System.Drawing.Size(76, 28);
+            this.tbUpDownRatio.TabIndex = 33;
+            this.tbUpDownRatio.Text = "0.01";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(658, 196);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(116, 18);
+            this.label7.TabIndex = 34;
+            this.label7.Text = "涨跌幅提示：";
+            // 
+            // btUpDownRatio
+            // 
+            this.btUpDownRatio.Location = new System.Drawing.Point(852, 194);
+            this.btUpDownRatio.Name = "btUpDownRatio";
+            this.btUpDownRatio.Size = new System.Drawing.Size(30, 30);
+            this.btUpDownRatio.TabIndex = 35;
+            this.btUpDownRatio.Text = "√";
+            this.btUpDownRatio.UseVisualStyleBackColor = true;
+            this.btUpDownRatio.Click += new System.EventHandler(this.btUpDownRatio_Click);
+            // 
+            // lvOrder
+            // 
+            this.lvOrder.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader18,
+            this.columnHeader15,
+            this.columnHeader16,
+            this.columnHeader17});
+            this.lvOrder.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lvOrder.GridLines = true;
+            this.lvOrder.Location = new System.Drawing.Point(651, 3);
+            this.lvOrder.Name = "lvOrder";
+            this.lvOrder.Size = new System.Drawing.Size(230, 121);
+            this.lvOrder.TabIndex = 36;
+            this.lvOrder.UseCompatibleStateImageBehavior = false;
+            this.lvOrder.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader18
+            // 
+            this.columnHeader18.Width = 1;
+            // 
+            // columnHeader15
+            // 
+            this.columnHeader15.Text = "合约";
+            this.columnHeader15.Width = 50;
+            // 
+            // columnHeader16
+            // 
+            this.columnHeader16.Text = "报价";
+            this.columnHeader16.Width = 50;
+            // 
+            // columnHeader17
+            // 
+            this.columnHeader17.Text = "距离";
+            this.columnHeader17.Width = 50;
+            // 
+            // btCancel
+            // 
+            this.btCancel.Font = new System.Drawing.Font("宋体", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btCancel.Location = new System.Drawing.Point(651, 134);
+            this.btCancel.Name = "btCancel";
+            this.btCancel.Size = new System.Drawing.Size(85, 23);
+            this.btCancel.TabIndex = 37;
+            this.btCancel.Text = "撤单";
+            this.btCancel.UseVisualStyleBackColor = true;
+            this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
+            // 
+            // btBuy1
+            // 
+            this.btBuy1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy1.Location = new System.Drawing.Point(742, 130);
+            this.btBuy1.Name = "btBuy1";
+            this.btBuy1.Size = new System.Drawing.Size(30, 30);
+            this.btBuy1.TabIndex = 39;
+            this.btBuy1.Text = "1";
+            this.btBuy1.UseVisualStyleBackColor = false;
+            this.btBuy1.Click += new System.EventHandler(this.btBuy1_Click);
+            // 
+            // tbIns
+            // 
+            this.tbIns.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.tbIns.Location = new System.Drawing.Point(651, 160);
+            this.tbIns.Name = "tbIns";
+            this.tbIns.Size = new System.Drawing.Size(85, 31);
+            this.tbIns.TabIndex = 40;
+            this.tbIns.Text = "ru1805";
+            // 
+            // btSell1
+            // 
+            this.btSell1.BackColor = System.Drawing.Color.Lime;
+            this.btSell1.Location = new System.Drawing.Point(742, 160);
+            this.btSell1.Name = "btSell1";
+            this.btSell1.Size = new System.Drawing.Size(30, 30);
+            this.btSell1.TabIndex = 41;
+            this.btSell1.Text = "1";
+            this.btSell1.UseVisualStyleBackColor = false;
+            this.btSell1.Click += new System.EventHandler(this.btSell1_Click);
+            // 
+            // btBuy3
+            // 
+            this.btBuy3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy3.Location = new System.Drawing.Point(771, 130);
+            this.btBuy3.Name = "btBuy3";
+            this.btBuy3.Size = new System.Drawing.Size(30, 30);
+            this.btBuy3.TabIndex = 42;
+            this.btBuy3.Text = "3";
+            this.btBuy3.UseVisualStyleBackColor = false;
+            this.btBuy3.Click += new System.EventHandler(this.btBuy3_Click);
+            // 
+            // btBuy5
+            // 
+            this.btBuy5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy5.Location = new System.Drawing.Point(800, 130);
+            this.btBuy5.Name = "btBuy5";
+            this.btBuy5.Size = new System.Drawing.Size(30, 30);
+            this.btBuy5.TabIndex = 43;
+            this.btBuy5.Text = "5";
+            this.btBuy5.UseVisualStyleBackColor = false;
+            this.btBuy5.Click += new System.EventHandler(this.btBuy5_Click);
+            // 
+            // btBuy7
+            // 
+            this.btBuy7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy7.Location = new System.Drawing.Point(828, 130);
+            this.btBuy7.Name = "btBuy7";
+            this.btBuy7.Size = new System.Drawing.Size(30, 30);
+            this.btBuy7.TabIndex = 44;
+            this.btBuy7.Text = "7";
+            this.btBuy7.UseVisualStyleBackColor = false;
+            this.btBuy7.Click += new System.EventHandler(this.btBuy7_Click);
+            // 
+            // btBuy9
+            // 
+            this.btBuy9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy9.Location = new System.Drawing.Point(856, 130);
+            this.btBuy9.Name = "btBuy9";
+            this.btBuy9.Size = new System.Drawing.Size(30, 30);
+            this.btBuy9.TabIndex = 45;
+            this.btBuy9.Text = "9";
+            this.btBuy9.UseVisualStyleBackColor = false;
+            this.btBuy9.Click += new System.EventHandler(this.btBuy9_Click);
+            // 
+            // btSell3
+            // 
+            this.btSell3.BackColor = System.Drawing.Color.Lime;
+            this.btSell3.Location = new System.Drawing.Point(771, 160);
+            this.btSell3.Name = "btSell3";
+            this.btSell3.Size = new System.Drawing.Size(30, 30);
+            this.btSell3.TabIndex = 46;
+            this.btSell3.Text = "3";
+            this.btSell3.UseVisualStyleBackColor = false;
+            this.btSell3.Click += new System.EventHandler(this.btSell3_Click);
+            // 
+            // btSell5
+            // 
+            this.btSell5.BackColor = System.Drawing.Color.Lime;
+            this.btSell5.Location = new System.Drawing.Point(800, 160);
+            this.btSell5.Name = "btSell5";
+            this.btSell5.Size = new System.Drawing.Size(30, 30);
+            this.btSell5.TabIndex = 47;
+            this.btSell5.Text = "5";
+            this.btSell5.UseVisualStyleBackColor = false;
+            this.btSell5.Click += new System.EventHandler(this.btSell5_Click);
+            // 
+            // btSell7
+            // 
+            this.btSell7.BackColor = System.Drawing.Color.Lime;
+            this.btSell7.Location = new System.Drawing.Point(828, 160);
+            this.btSell7.Name = "btSell7";
+            this.btSell7.Size = new System.Drawing.Size(30, 30);
+            this.btSell7.TabIndex = 48;
+            this.btSell7.Text = "7";
+            this.btSell7.UseVisualStyleBackColor = false;
+            this.btSell7.Click += new System.EventHandler(this.btSell7_Click);
+            // 
+            // btSell9
+            // 
+            this.btSell9.BackColor = System.Drawing.Color.Lime;
+            this.btSell9.Location = new System.Drawing.Point(856, 160);
+            this.btSell9.Name = "btSell9";
+            this.btSell9.Size = new System.Drawing.Size(30, 30);
+            this.btSell9.TabIndex = 49;
+            this.btSell9.Text = "9";
+            this.btSell9.UseVisualStyleBackColor = false;
+            this.btSell9.Click += new System.EventHandler(this.btSell9_Click);
+            // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(885, 456);
+            this.ClientSize = new System.Drawing.Size(894, 456);
+            this.Controls.Add(this.btSell9);
+            this.Controls.Add(this.btSell7);
+            this.Controls.Add(this.btSell5);
+            this.Controls.Add(this.btSell3);
+            this.Controls.Add(this.btBuy9);
+            this.Controls.Add(this.btBuy7);
+            this.Controls.Add(this.btBuy5);
+            this.Controls.Add(this.btBuy3);
+            this.Controls.Add(this.btSell1);
+            this.Controls.Add(this.tbIns);
+            this.Controls.Add(this.btBuy1);
+            this.Controls.Add(this.btCancel);
+            this.Controls.Add(this.lvOrder);
+            this.Controls.Add(this.btUpDownRatio);
+            this.Controls.Add(this.tbUpDownRatio);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.nudOverTimePoint);
+            this.Controls.Add(this.cbOverTime);
+            this.Controls.Add(this.nudLossPoint);
+            this.Controls.Add(this.nudProfitPoint);
+            this.Controls.Add(this.nudWarningPoint);
+            this.Controls.Add(this.cbAutoOpen);
             this.Controls.Add(this.cbWarning);
             this.Controls.Add(this.nudCloseRatio);
-            this.Controls.Add(this.tbWarning);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.lbLowTotal);
             this.Controls.Add(this.lbHighTotal);
@@ -555,10 +848,7 @@
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.cbEnable);
-            this.Controls.Add(this.btOK);
-            this.Controls.Add(this.tbStopLoss);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbStopProfit);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btCloseAll);
             this.Controls.Add(this.textBox1);
@@ -566,7 +856,7 @@
             this.Controls.Add(this.listView2);
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "PromptForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -576,6 +866,10 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudProfitPoint)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -603,10 +897,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button btCloseAll;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbStopProfit;
-        private System.Windows.Forms.TextBox tbStopLoss;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btOK;
         private System.Windows.Forms.CheckBox cbEnable;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
@@ -625,7 +916,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lbHighTotal;
         private System.Windows.Forms.Label lbLowTotal;
-        private System.Windows.Forms.TextBox tbWarning;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown nudCloseRatio;
         private System.Windows.Forms.CheckBox cbWarning;
@@ -634,6 +924,33 @@
         private System.Windows.Forms.ColumnHeader columnHeader12;
         private System.Windows.Forms.ColumnHeader columnHeader13;
         private System.Windows.Forms.ColumnHeader columnHeader14;
+        private System.Windows.Forms.CheckBox cbAutoOpen;
+        private System.Windows.Forms.NumericUpDown nudWarningPoint;
+        private System.Windows.Forms.NumericUpDown nudProfitPoint;
+        private System.Windows.Forms.NumericUpDown nudLossPoint;
+        private System.Windows.Forms.CheckBox cbOverTime;
+        private System.Windows.Forms.NumericUpDown nudOverTimePoint;
+        private System.Windows.Forms.ToolStripStatusLabel timeLabel;
+        private System.Windows.Forms.TextBox tbUpDownRatio;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btUpDownRatio;
+        private System.Windows.Forms.ListView lvOrder;
+        private System.Windows.Forms.Button btCancel;
+        private System.Windows.Forms.ColumnHeader columnHeader15;
+        private System.Windows.Forms.ColumnHeader columnHeader16;
+        private System.Windows.Forms.ColumnHeader columnHeader17;
+        private System.Windows.Forms.ColumnHeader columnHeader18;
+        private System.Windows.Forms.Button btBuy1;
+        private System.Windows.Forms.TextBox tbIns;
+        private System.Windows.Forms.Button btSell1;
+        private System.Windows.Forms.Button btBuy3;
+        private System.Windows.Forms.Button btBuy5;
+        private System.Windows.Forms.Button btBuy7;
+        private System.Windows.Forms.Button btBuy9;
+        private System.Windows.Forms.Button btSell3;
+        private System.Windows.Forms.Button btSell5;
+        private System.Windows.Forms.Button btSell7;
+        private System.Windows.Forms.Button btSell9;
     }
 }
 

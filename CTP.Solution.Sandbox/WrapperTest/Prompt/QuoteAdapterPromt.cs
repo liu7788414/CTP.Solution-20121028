@@ -102,10 +102,13 @@ namespace WrapperTest
         void _timerClearMessage_Elapsed(object sender, ElapsedEventArgs e)
         {
             Utils.messages.Clear();
-            Utils.promptForm.Invoke(new Action(() =>
+            if (Utils.promptForm.IsHandleCreated)
             {
-                Utils.promptForm.ListViewObj.Items.Clear();
-            }));
+                Utils.promptForm.Invoke(new Action(() =>
+                {
+                    Utils.promptForm.ListViewObj.Items.Clear();
+                }));
+            }
         }
 
         public void StartTimer()
