@@ -775,20 +775,7 @@ namespace PromptForm
 
         private void btCancel_Click(object sender, EventArgs e)
         {
-            var ordersToCancel = new List<ThostFtdcOrderField>();
-
-            foreach (var order in _trader.UnFinishedOrderFields.Values)
-            {
-                ordersToCancel.Add(order);
-            }
-
-            foreach (var order in ordersToCancel)
-            {
-                if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
-                {
-                    _trader.ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
-                }
-            }
+            CancelAllOrders();
         }
 
         private void OpenByButtonSell(Button button)
@@ -877,6 +864,84 @@ namespace PromptForm
             {
                 tbIns.Text = listView1.SelectedItems[0].SubItems[1].Text;
             }
+        }
+
+        private void btBuy11_Click(object sender, EventArgs e)
+        {
+            OpenByButtonBuy((Button)sender);
+        }
+
+        private void btBuy13_Click(object sender, EventArgs e)
+        {
+            OpenByButtonBuy((Button)sender);
+        }
+
+        private void btBuy15_Click(object sender, EventArgs e)
+        {
+            OpenByButtonBuy((Button)sender);
+        }
+
+        private void btBuy17_Click(object sender, EventArgs e)
+        {
+            OpenByButtonBuy((Button)sender);
+        }
+
+        private void btBuy19_Click(object sender, EventArgs e)
+        {
+            OpenByButtonBuy((Button)sender);
+        }
+
+        private void btSell11_Click(object sender, EventArgs e)
+        {
+            OpenByButtonSell((Button)sender);
+        }
+
+        private void btSell13_Click(object sender, EventArgs e)
+        {
+            OpenByButtonSell((Button)sender);
+        }
+
+        private void btSell15_Click(object sender, EventArgs e)
+        {
+            OpenByButtonSell((Button)sender);
+        }
+
+        private void btSell17_Click(object sender, EventArgs e)
+        {
+            OpenByButtonSell((Button)sender);
+        }
+
+        private void btSell19_Click(object sender, EventArgs e)
+        {
+            OpenByButtonSell((Button)sender);
+        }
+
+        private void CancelAllOrders()
+        {
+            var ordersToCancel = new List<ThostFtdcOrderField>();
+
+            foreach (var order in _trader.UnFinishedOrderFields.Values)
+            {
+                ordersToCancel.Add(order);
+            }
+
+            foreach (var order in ordersToCancel)
+            {
+                if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
+                {
+                    _trader.ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
+                }
+            }
+        }
+
+        private void lvOrder_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            CancelAllOrders();
+        }
+
+        private void lvOrder_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            CancelAllOrders();
         }
     }
 
