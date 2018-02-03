@@ -15,7 +15,7 @@ using SendMail;
 using System.Timers;
 using System.Windows.Forms;
 
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestPrompt.exe.config", Watch = true)]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestPromptTest.exe.config", Watch = true)]
 
 namespace WrapperTest
 {
@@ -25,7 +25,7 @@ namespace WrapperTest
         {
             try
             {
-                var processes = Process.GetProcessesByName("WrapperTestPrompt");
+                var processes = Process.GetProcessesByName("WrapperTestPromptTest");
                 var currrentProcess = Process.GetCurrentProcess();
 
                 foreach (var process in processes)
@@ -388,7 +388,7 @@ namespace WrapperTest
                     sw.Close();
                 }
 
-                Utils.WriteLine("主力合约处理完毕");
+
 
                 //Email.SendMail(((TraderAdapter)Utils.Trader).InvestorId + "今日主力合约列表",
                 //    DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled,
@@ -437,30 +437,30 @@ namespace WrapperTest
                     Utils.Exit(Utils.Trader);
                 }
 
-                if (dateTime.Hour == 8 &&
-                    (dateTime.Minute == 45 || dateTime.Minute == 46 || dateTime.Minute == 47 || dateTime.Minute == 48 ||
-                     dateTime.Minute == 49) && !Utils.IsTraderReady)
-                //上午开盘时通道没有准备好，每隔一分钟尝试重新连接
-                {
-                    Utils.WriteLine(string.Format("通道没有准备好，重新连接，{0}", dateTime));
-                    Email.SendMail("通道没有准备好，重新连接", DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                        Utils.IsMailingEnabled);
+                //if (dateTime.Hour == 8 &&
+                //    (dateTime.Minute == 45 || dateTime.Minute == 46 || dateTime.Minute == 47 || dateTime.Minute == 48 ||
+                //     dateTime.Minute == 49) && !Utils.IsTraderReady)
+                ////上午开盘时通道没有准备好，每隔一分钟尝试重新连接
+                //{
+                //    Utils.WriteLine(string.Format("通道没有准备好，重新连接，{0}", dateTime));
+                //    Email.SendMail("通道没有准备好，重新连接", DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                //        Utils.IsMailingEnabled);
 
-                    ((TraderAdapter)Utils.Trader).CreateNewTrader();
-                }
+                //    ((TraderAdapter)Utils.Trader).CreateNewTrader();
+                //}
 
-                if (dateTime.Hour == 8 && dateTime.Minute == 44) //早盘开盘前，主动重新登录一次
-                {
-                    var t = new ThostFtdcUserLogoutField
-                    {
-                        BrokerID = ((TraderAdapter)Utils.Trader).BrokerId,
-                        UserID = ((TraderAdapter)Utils.Trader).InvestorId
-                    };
-                    ((TraderAdapter)Utils.Trader).ReqUserLogout(t, TraderAdapter.RequestId++);
-                    Utils.WriteLine(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId), true);
-                    Email.SendMail(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId),
-                        DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
-                }
+                //if (dateTime.Hour == 8 && dateTime.Minute == 44) //早盘开盘前，主动重新登录一次
+                //{
+                //    var t = new ThostFtdcUserLogoutField
+                //    {
+                //        BrokerID = ((TraderAdapter)Utils.Trader).BrokerId,
+                //        UserID = ((TraderAdapter)Utils.Trader).InvestorId
+                //    };
+                //    ((TraderAdapter)Utils.Trader).ReqUserLogout(t, TraderAdapter.RequestId++);
+                //    Utils.WriteLine(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId), true);
+                //    Email.SendMail(string.Format("登出{0}", ((TraderAdapter)Utils.Trader).InvestorId),
+                //        DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
+                //}
             }
             catch (Exception ex)
             {

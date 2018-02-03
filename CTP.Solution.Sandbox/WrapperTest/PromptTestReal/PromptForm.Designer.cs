@@ -533,7 +533,6 @@
             // nudCloseRatio
             // 
             this.nudCloseRatio.DecimalPlaces = 1;
-            this.nudCloseRatio.Enabled = false;
             this.nudCloseRatio.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudCloseRatio.ForeColor = System.Drawing.Color.Red;
             this.nudCloseRatio.Increment = new decimal(new int[] {
@@ -547,10 +546,10 @@
             this.nudCloseRatio.Size = new System.Drawing.Size(51, 21);
             this.nudCloseRatio.TabIndex = 24;
             this.nudCloseRatio.Value = new decimal(new int[] {
-            5,
+            1,
             0,
             0,
-            65536});
+            0});
             this.nudCloseRatio.ValueChanged += new System.EventHandler(this.nudCloseRatio_ValueChanged);
             // 
             // cbWarning
@@ -577,7 +576,6 @@
             // 
             // nudWarningPoint
             // 
-            this.nudWarningPoint.Enabled = false;
             this.nudWarningPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudWarningPoint.ForeColor = System.Drawing.Color.Red;
             this.nudWarningPoint.Location = new System.Drawing.Point(278, 239);
@@ -586,7 +584,7 @@
             this.nudWarningPoint.Size = new System.Drawing.Size(51, 21);
             this.nudWarningPoint.TabIndex = 28;
             this.nudWarningPoint.Value = new decimal(new int[] {
-            10,
+            14,
             0,
             0,
             0});
@@ -602,7 +600,7 @@
             this.nudProfitPoint.Size = new System.Drawing.Size(48, 21);
             this.nudProfitPoint.TabIndex = 29;
             this.nudProfitPoint.Value = new decimal(new int[] {
-            50,
+            30,
             0,
             0,
             0});
@@ -618,7 +616,7 @@
             this.nudLossPoint.Size = new System.Drawing.Size(48, 21);
             this.nudLossPoint.TabIndex = 30;
             this.nudLossPoint.Value = new decimal(new int[] {
-            50,
+            30,
             0,
             0,
             0});

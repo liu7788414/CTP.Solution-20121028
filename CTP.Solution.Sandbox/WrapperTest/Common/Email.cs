@@ -16,26 +16,26 @@ namespace SendMail
         {
             try
             {
-                if (isMailingEnabled)
-                {
-                    const string senderServerIp = "smtp.163.com";
+                //if (isMailingEnabled)
+                //{
+                //    const string senderServerIp = "smtp.163.com";
 
-                    string toMailAddress = "liuning.1982@qq.com";
-                    string fromMailAddress = "liu7788414@163.com";
-                    string mailUsername = "liu7788414";
-                    string mailPassword = "guang1982***"; //发送邮箱的密码（）
-                    string mailPort = "25";
+                //    string toMailAddress = "liuning.1982@qq.com";
+                //    string fromMailAddress = "liu7788414@163.com";
+                //    string mailUsername = "liu7788414";
+                //    string mailPassword = "guang1982***"; //发送邮箱的密码（）
+                //    string mailPort = "25";
 
-                    var email = new MyEmail(senderServerIp, toMailAddress, fromMailAddress, subjectInfo, bodyInfo,
-                        mailUsername, mailPassword, mailPort, false, false);
+                //    var email = new MyEmail(senderServerIp, toMailAddress, fromMailAddress, subjectInfo, bodyInfo,
+                //        mailUsername, mailPassword, mailPort, false, false);
 
-                    if (!string.IsNullOrEmpty(attachedFiles))
-                    {
-                        email.AddAttachments(attachedFiles);
-                    }
+                //    if (!string.IsNullOrEmpty(attachedFiles))
+                //    {
+                //        email.AddAttachments(attachedFiles);
+                //    }
 
-                    email.Send();
-                }
+                //    email.Send();
+                //}
 
             }
             catch (Exception ex)
