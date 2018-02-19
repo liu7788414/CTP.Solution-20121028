@@ -5,6 +5,7 @@ using System.Net.Mime;
 using System.IO;
 using System.Threading;
 using WrapperTest;
+using System.Net;
 
 namespace SendMail
 {
@@ -43,7 +44,56 @@ namespace SendMail
                 Utils.WriteException(ex);
             }
         }
+
+        private static string url = "http://utf8.sms.webchinese.cn/?";
+        private static string strUid = "Uid=";
+        private static string strKey = "&key=71504c7f46f1233b3776"; //这里*代表秘钥，由于从长有点麻烦，就不在窗口上输入了
+        private static string strMob = "&smsMob=";
+        private static string strContent = "&smsText=";
+
+        public static string SendMessage(bool isMailingEnabled = true, string userName = "liu7788414", string txtAttnNum = "15800377605", string txtContent = "触发交易信号")
+        {
+            if (isMailingEnabled)
+            {
+                if (userName.Trim() != "" && txtAttnNum.Trim() != "" && txtContent.Trim() != null)
+                {
+                    var fullUrl = url + strUid + userName + strKey + strMob + txtAttnNum + strContent + txtContent + DateTime.Now.ToString("HH:mm:ss.fff");
+                    string Result = GetHtmlFromUrl(fullUrl);
+
+                    return Result;
+                }
+            }
+
+            return "";
+        }       
+
+        public static string GetHtmlFromUrl(string url)
+        {
+            string strRet = null;
+            if (url == null || url.Trim().ToString() == "")
+            {
+                return strRet;
+            }
+            string targeturl = url.Trim().ToString();
+            try
+            {
+                HttpWebRequest hr = (HttpWebRequest)WebRequest.Create(targeturl);
+                hr.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)";
+                hr.Method = "GET";
+                hr.Timeout = 30 * 60 * 1000;
+                WebResponse hs = hr.GetResponse();
+                Stream sr = hs.GetResponseStream();
+                StreamReader ser = new StreamReader(sr, Encoding.Default);
+                strRet = ser.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                strRet = null;
+            }
+            return strRet;
+        }
     }
+
     public class MyEmail
     {
         private MailMessage mMailMessage; //主要处理发送邮件的内容（如：收发人地址、标题、主体、图片等等）

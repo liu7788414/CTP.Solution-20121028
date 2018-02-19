@@ -332,6 +332,8 @@
             // cbEnable
             // 
             this.cbEnable.AutoSize = true;
+            this.cbEnable.Checked = true;
+            this.cbEnable.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbEnable.Location = new System.Drawing.Point(3, 244);
             this.cbEnable.Margin = new System.Windows.Forms.Padding(2);
             this.cbEnable.Name = "cbEnable";
@@ -555,6 +557,8 @@
             // cbWarning
             // 
             this.cbWarning.AutoSize = true;
+            this.cbWarning.Checked = true;
+            this.cbWarning.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbWarning.Location = new System.Drawing.Point(382, 244);
             this.cbWarning.Margin = new System.Windows.Forms.Padding(2);
             this.cbWarning.Name = "cbWarning";
@@ -566,6 +570,8 @@
             // cbAutoOpen
             // 
             this.cbAutoOpen.AutoSize = true;
+            this.cbAutoOpen.Checked = true;
+            this.cbAutoOpen.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbAutoOpen.Location = new System.Drawing.Point(467, 270);
             this.cbAutoOpen.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoOpen.Name = "cbAutoOpen";
@@ -584,7 +590,7 @@
             this.nudWarningPoint.Size = new System.Drawing.Size(51, 21);
             this.nudWarningPoint.TabIndex = 28;
             this.nudWarningPoint.Value = new decimal(new int[] {
-            14,
+            20,
             0,
             0,
             0});

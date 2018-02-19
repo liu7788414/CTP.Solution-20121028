@@ -308,6 +308,7 @@ namespace WrapperTest
         public static PromptForm.PromptForm promptForm = new PromptForm.PromptForm();
         public static bool IsPromptDisplaying = false;
         public static ConcurrentDictionary<string, HighLowProfit> PositionKeyToHighLowProfit = new ConcurrentDictionary<string, HighLowProfit>();
+
         /// <summary>
         /// 开仓时沿均线的误差值
         /// </summary>
@@ -691,6 +692,7 @@ namespace WrapperTest
                             list.Add(DateTime.Now.ToString("mm:ss"));
 
                             var promptItem = new PromptForm.PromptItem();
+                            promptItem.Time = DateTime.Now;
                             promptItem.MessageItems = list;
                             promptItem.InstrumentId = instrumentId;
                             promptItem.Direction = up ? "Buy" : "Sell";
@@ -701,9 +703,9 @@ namespace WrapperTest
                             if (promptForm.IsHandleCreated)
                             {
                                 promptForm.Invoke(new Action(() =>
-                                {
-                                    promptForm.AddMessage(promptItem);
-                                }));
+                                    {
+                                        promptForm.AddMessage(promptItem);
+                                    }));
                             }
 
                             messages[instrumentId] = prompt;
@@ -830,6 +832,7 @@ namespace WrapperTest
                         list.Add(DateTime.Now.ToString("mm:ss"));
 
                         var promptItem = new PromptForm.PromptItem();
+                        promptItem.Time = DateTime.Now;
                         promptItem.MessageItems = list;
                         promptItem.InstrumentId = instrumentId;
                         promptItem.Direction = up ? "Buy" : "Sell";
@@ -840,9 +843,9 @@ namespace WrapperTest
                         if (promptForm.IsHandleCreated)
                         {
                             promptForm.Invoke(new Action(() =>
-                                             {
-                                                 promptForm.AddMessage(promptItem);
-                                             }));
+                                {
+                                    promptForm.SaveMessage(promptItem);
+                                }));
                         }
 
                         messages[instrumentId] = prompt;

@@ -15,7 +15,7 @@ using SendMail;
 using System.Timers;
 using System.Windows.Forms;
 
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestPromptTest.exe.config", Watch = true)]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestPromptTest2.exe.config", Watch = true)]
 
 namespace WrapperTest
 {
@@ -25,7 +25,7 @@ namespace WrapperTest
         {
             try
             {
-                var processes = Process.GetProcessesByName("WrapperTestPromptTestReal");
+                var processes = Process.GetProcessesByName("WrapperTestPromptTest2");
                 var currrentProcess = Process.GetCurrentProcess();
 
                 foreach (var process in processes)
