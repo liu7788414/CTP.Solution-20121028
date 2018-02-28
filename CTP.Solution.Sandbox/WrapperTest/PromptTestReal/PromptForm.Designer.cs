@@ -622,7 +622,7 @@
             this.nudLossPoint.Size = new System.Drawing.Size(48, 21);
             this.nudLossPoint.TabIndex = 30;
             this.nudLossPoint.Value = new decimal(new int[] {
-            30,
+            25,
             0,
             0,
             0});

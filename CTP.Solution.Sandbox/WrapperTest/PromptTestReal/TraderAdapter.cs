@@ -1022,13 +1022,13 @@ namespace WrapperTest
         {
             try
             {
-                //if (instrumentId.StartsWith("au"))
-                //{
-                //    var temp1 = string.Format("收到{0}合约报单回报,解释为强制退出...", instrumentId);
-                //    Utils.WriteLine(temp1, true);
-                //    Email.SendMail(temp1, DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
-                //    Utils.Exit(this);
-                //}
+                if (instrumentId.StartsWith("au"))
+                {
+                    var temp1 = string.Format("收到{0}合约报单回报,解释为强制退出...", instrumentId);
+                    Utils.WriteLine(temp1, true);
+                    Email.SendMail(temp1, DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
+                    Utils.Exit(this);
+                }
             }
             catch (Exception ex)
             {

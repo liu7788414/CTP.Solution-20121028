@@ -656,12 +656,12 @@ namespace PromptForm
                             lastTick = Utils.InstrumentToLastTick[ins];
 
                             _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
-							_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - 20 * info.PriceTick, Utils.OpenVolumePerTime * 2, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
+							//_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - 20 * info.PriceTick, Utils.OpenVolumePerTime * 2, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - 40 * info.PriceTick, Utils.OpenVolumePerTime * 3, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
                             bBuyOpen = false;
                             dtBuyOpen = DateTime.Now;
 
-                            Email.SendMessage(Utils.IsMailingEnabled);
+                            Email.SendMessage(true);
                         }
                         else
                         {
@@ -676,12 +676,12 @@ namespace PromptForm
                             lastTick = Utils.InstrumentToLastTick[ins];
 
                             _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
-                            _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + 20 * info.PriceTick, Utils.OpenVolumePerTime * 2, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
+                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + 20 * info.PriceTick, Utils.OpenVolumePerTime * 2, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + 40 * info.PriceTick, Utils.OpenVolumePerTime * 3, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
                             bSellOpen = false;
                             dtSellOpen = DateTime.Now;
 
-                            Email.SendMessage(Utils.IsMailingEnabled);
+                            Email.SendMessage(true);
                         }
                         else
                         {

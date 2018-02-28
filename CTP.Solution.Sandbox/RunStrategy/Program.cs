@@ -69,7 +69,7 @@ namespace RunStrategy
                 if (!strategyProcesses.Contains("WrapperTestPromptTest"))
                 {
                     Console.WriteLine("启动WrapperTestPromptTest");
-                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugPromptTest\WrapperTestPromptTest.exe", "false 2");
+                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugPromptTest\WrapperTestPromptTest.exe", "true 2");
                 }
 
                 if (!strategyProcesses.Contains("WrapperTestPromptTestReal"))
@@ -81,7 +81,7 @@ namespace RunStrategy
                 if (!strategyProcesses.Contains("WrapperTestPromptTest2"))
                 {
                     Console.WriteLine("启动WrapperTestPromptTest2");
-                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugPromptTest2\WrapperTestPromptTest2.exe", "false 2");
+                    StartProcess(@"C:\CTP.Solution-20121028\CTP.Solution.Sandbox\WrapperTest\bin\DebugPromptTest2\WrapperTestPromptTest2.exe", "true 2");
                 }
             }
 

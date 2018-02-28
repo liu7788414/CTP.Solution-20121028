@@ -299,7 +299,7 @@ namespace PromptForm
 
                                         if (profitPoint < stopLossPoint)
                                         {
-                                            ClosePositionByItem(item, "多仓止损", "空仓止损");
+                                            ClosePositionByItem(item, "多仓止损", "空仓止损", -1);
                                         }
 
                                         if (profitPoint > 0.9 * stopProfitPoint)
@@ -405,7 +405,7 @@ namespace PromptForm
 
                                         if (profitPoint <= highLowProfit.HighTick * closeRatio)
                                         {
-                                            ClosePositionByItem(item, "警戒线止盈", "警戒线止盈");
+                                            ClosePositionByItem(item, "警戒线止盈", "警戒线止盈", 1);
                                         }
                                     }
 
@@ -661,7 +661,7 @@ namespace PromptForm
                             bBuyOpen = false;
                             dtBuyOpen = DateTime.Now;
 
-                            Email.SendMessage(Utils.IsMailingEnabled);
+                            Email.SendMessage(false);
                         }
                         else
                         {
@@ -681,7 +681,7 @@ namespace PromptForm
                             bSellOpen = false;
                             dtSellOpen = DateTime.Now;
 
-                            Email.SendMessage(Utils.IsMailingEnabled);
+                            Email.SendMessage(false);
                         }
                         else
                         {
@@ -737,27 +737,60 @@ namespace PromptForm
             Application.DoEvents();
         }
 
-        private void ClosePositionByItem(ListViewItem li, string longReason, string shortReason)
+        private void ClosePositionByItem(ListViewItem li, string longReason, string shortReason, int price = 0)
         {
             if (li != null)
             {
                 var ins = li.SubItems[1].Text;
                 var longOrShort = li.SubItems[2].Text;
                 var vol = Convert.ToInt32(li.SubItems[3].Text);
+                var cost = Convert.ToDouble(li.SubItems[4].Text);
 
                 if (Utils.InstrumentToLastTick.ContainsKey(ins))
                 {
                     var lastTick = Utils.InstrumentToLastTick[ins];
+                    var info = Utils.InstrumentToInstrumentInfo[ins];
+                    
                     if (longOrShort.Equals("多"))
                     {
-                        _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                        if (price.Equals(0)) //
+                        {
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                        }
+                        else
+                        {
+                            if (price.Equals(1)) //多仓止盈
+                            {
+                                _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, info.PriceTick * ((int)(cost / info.PriceTick) + (int)nudWarningPoint.Value), vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                            }
+                            else  //多仓止损
+                            {
+                                _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, info.PriceTick * ((int)(cost / info.PriceTick) - (int)nudLossPoint.Value), vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                            }
+                        }
+
                         bBuyOpen = false;
                         dtBuyOpen = DateTime.Now;
                         cbAutoOpen.Checked = true;
                     }
                     else
                     {
-                        _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                        if (price.Equals(0))
+                        {
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                        }
+                        else
+                        {
+                            if (price.Equals(1)) //空仓止盈
+                            {
+                                _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, info.PriceTick * ((int)(cost / info.PriceTick) - (int)nudWarningPoint.Value), vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                            }
+                            else  //空仓止损
+                            {
+                                _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, info.PriceTick * ((int)(cost / info.PriceTick) + (int)nudLossPoint.Value), vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                            }
+                        }
+
                         bSellOpen = false;
                         dtSellOpen = DateTime.Now;
                         cbAutoOpen.Checked = true;
@@ -1020,7 +1053,10 @@ namespace PromptForm
 
             foreach (var order in _trader.UnFinishedOrderFields.Values)
             {
-                ordersToCancel.Add(order);
+                if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
+                {
+                    ordersToCancel.Add(order);
+                }
             }
 
             foreach (var order in ordersToCancel)

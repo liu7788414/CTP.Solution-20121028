@@ -15,7 +15,7 @@ using SendMail;
 using System.Timers;
 using System.Windows.Forms;
 
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestPromptTest.exe.config", Watch = true)]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "WrapperTestPromptTestReal.exe.config", Watch = true)]
 
 namespace WrapperTest
 {
@@ -116,20 +116,19 @@ namespace WrapperTest
                                 //模拟交易所时间
                             };
 
-                            //华泰期货的行情
+                            ////宏源期货的行情
                             Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
                             {
-                                BrokerId = "9999",
-                                InvestorId = "20051875",
-                                Password = "91418",
+                                BrokerId = "1080",
+                                InvestorId = "901200953",
+                                Password = "091418",
                                 Front =
                                     new[]
-                                {
-                                    "tcp://180.168.212.228:41213", "tcp://180.168.212.229:41213",
-                                    "tcp://180.168.212.230:41213",
-                                    "tcp://180.168.212.231:41213", "tcp://180.168.212.232:41213",
-                                    "tcp://180.168.212.233:41213", "tcp://180.168.212.234:41213"
-                                } //模拟交易所时间
+                                    {
+                                        "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
+                                        "tcp://180.169.112.54:41213",
+                                        "tcp://180.169.112.55:41213"
+                                    }
                             };
 
                             Utils.CurrentChannel = ChannelType.模拟交易所;

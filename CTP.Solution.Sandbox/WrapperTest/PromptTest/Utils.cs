@@ -785,8 +785,10 @@ namespace WrapperTest
 
                 if ((max - min) / min > 涨跌幅提示 && AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                 {
-                    var maxTime = Convert.ToDateTime(maxQuote.pDepthMarketData.UpdateTime);
-                    var minTime = Convert.ToDateTime(minQuote.pDepthMarketData.UpdateTime);
+                    var maxTime = Convert.ToDateTime(maxQuote.更新日期.ToString("yyyy/MM/dd") + " " + maxQuote.pDepthMarketData.UpdateTime);
+                    var minTime = Convert.ToDateTime(minQuote.更新日期.ToString("yyyy/MM/dd") + " " + minQuote.pDepthMarketData.UpdateTime);
+
+                    WriteLine(string.Format("maxTime:{0},minTime:{1}", maxTime, minTime), true);
 
                     bool up = true;
                     if (maxTime > minTime)

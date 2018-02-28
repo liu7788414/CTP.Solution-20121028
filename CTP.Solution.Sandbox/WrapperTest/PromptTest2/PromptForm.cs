@@ -661,7 +661,7 @@ namespace PromptForm
                             bBuyOpen = false;
                             dtBuyOpen = DateTime.Now;
 
-                            Email.SendMessage(Utils.IsMailingEnabled);
+                            Email.SendMessage(false);
                         }
                         else
                         {
@@ -681,7 +681,7 @@ namespace PromptForm
                             bSellOpen = false;
                             dtSellOpen = DateTime.Now;
 
-                            Email.SendMessage(Utils.IsMailingEnabled);
+                            Email.SendMessage(false);
                         }
                         else
                         {
