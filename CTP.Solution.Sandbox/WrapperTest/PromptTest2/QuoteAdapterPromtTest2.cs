@@ -182,12 +182,14 @@ namespace WrapperTest
 
                     var dtNow = DateTime.Now;
 
-                    //if (Utils.CurrentChannel != ChannelType.模拟24X7 &&
-                    //    ((dtNow.Hour >= 0 && dtNow.Hour <= 8) || (dtNow.Hour >= 16 && dtNow.Hour <= 20) ||
-                    //     dtNow.DayOfWeek == DayOfWeek.Saturday || dtNow.DayOfWeek == DayOfWeek.Sunday)) //排除无效时段的行情
-                    //{
-                    //    return;
-                    //}
+                    if (Utils.CurrentChannel != ChannelType.模拟24X7)
+                    {
+                        //排除登录时推送的过期行情
+                        if ((dtNow.Hour == 6 && dtNow.Minute >= 45 && dtNow.Minute <= 55) || (dtNow.Hour == 18 && dtNow.Minute >= 45 && dtNow.Minute <= 55))
+                        {
+                            return;
+                        }
+                    }
 
                     Utils.WriteQuote(pDepthMarketData);
                 }

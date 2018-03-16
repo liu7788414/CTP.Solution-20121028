@@ -49,6 +49,11 @@ namespace PromptForm
             _timerOpen.Start();
         }
 
+        public void SetInstrument(string ins)
+        {
+            tbIns.Text = ins;
+        }
+
         void _timerOpen_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             var dtNow = DateTime.Now;
@@ -110,7 +115,7 @@ namespace PromptForm
             }
             else
             {
-                cbAutoOpen.Checked = true;
+                //cbAutoOpen.Checked = true;
                 timeLabel.ForeColor = Color.Black;
             }
         }
@@ -517,6 +522,21 @@ namespace PromptForm
             _savedItem = savedItem;
         }
 
+        public void ShowWave(double max, double min, double wave)
+        {
+            var s = string.Format("高:{0},低:{1},幅:{2}", (int)max, (int)min, (int)wave);
+            toolStripStatusLabel5.Text = s;
+
+            if(wave > 300)
+            {            
+                toolStripStatusLabel5.ForeColor = Color.Red;
+            }
+            else
+            {
+                toolStripStatusLabel5.ForeColor = Color.Black;
+            }
+        }
+
         public void AddMessage(PromptItem promptItem)
         {
             var item = new ListViewItem();
@@ -753,14 +773,14 @@ namespace PromptForm
                         _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
                         bBuyOpen = false;
                         dtBuyOpen = DateTime.Now;
-                        cbAutoOpen.Checked = true;
+                        //cbAutoOpen.Checked = true;
                     }
                     else
                     {
                         _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
                         bSellOpen = false;
                         dtSellOpen = DateTime.Now;
-                        cbAutoOpen.Checked = true;
+                        //cbAutoOpen.Checked = true;
                     }
 
                     CancelAllOrders();
@@ -886,7 +906,7 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
                 }
             }
         }
@@ -906,7 +926,7 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
                 }
             }
         }

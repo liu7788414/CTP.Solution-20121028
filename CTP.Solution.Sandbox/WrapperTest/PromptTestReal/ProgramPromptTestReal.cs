@@ -409,6 +409,16 @@ namespace WrapperTest
                 Thread.Sleep(1000);
 
                 Task.Run(() => { Utils.promptForm.ShowDialog(); });
+
+                Thread.Sleep(1000);
+
+                if (Utils.promptForm.IsHandleCreated)
+                {
+                    Utils.promptForm.Invoke(new Action(() =>
+                    {
+                        Utils.promptForm.SetInstrument(Utils.CategoryToMainInstrument.First().Value);
+                    }));
+                }
                 //准备完毕后才进入开平仓检查，防止在查询过程中进入
                 ((QuoteAdapter)Utils.QuoteMain).StartTimer();
 

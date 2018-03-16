@@ -55,7 +55,7 @@ namespace PromptForm
 
             if(!bBuyOpen)
             {
-                if(dtNow - dtBuyOpen > ts10)
+                if(dtNow - dtBuyOpen > ts5)
                 {
                     bBuyOpen = true;
                 }            
@@ -63,7 +63,7 @@ namespace PromptForm
 
             if (!bSellOpen)
             {
-                if (dtNow - dtSellOpen > ts10)
+                if (dtNow - dtSellOpen > ts5)
                 {
                     bSellOpen = true;
                 }
@@ -87,32 +87,32 @@ namespace PromptForm
         private DateTime dt2100 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 21, 0, 0);
         private DateTime dt2300 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 0, 0);
         private DateTime dt0100 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 1, 0, 0);
-        private TimeSpan ts10 = new TimeSpan(0, 10, 0);
+        private TimeSpan ts1 = new TimeSpan(0, 1, 0);
         private TimeSpan ts0 = new TimeSpan(0, 0, 0);
         private TimeSpan ts2 = new TimeSpan(0, 2, 0);
         private TimeSpan ts5 = new TimeSpan(0, 5, 0);
 
         public void SetTime(DateTime dt)
         {
-            timeLabel.Text = dt.ToString("HH:mm:ss");
+            //timeLabel.Text = dt.ToString("HH:mm:ss");
 
-            if ((dt - dt9 > ts0 && dt - dt9 < ts2) ||   //9:00
-                //(dt1015 - dt > ts0 && dt1015 - dt < ts10)||  //10:15
-                //(dt - dt1030 > ts0 && dt - dt1030 < ts10) || //10:30
-                (dt1130 - dt > ts0 && dt1130 - dt < ts10) || //11:30
-                (dt - dt1330 > ts0 && dt - dt1330 < ts2) || //13:30
-                (dt1500 - dt > ts0 && dt1500 - dt < ts10) || //15:00
-                (dt - dt2100 > ts0 && dt - dt2100 < ts2) || //21:00
-                (dt0100 - dt > ts0 && dt0100 - dt < ts10))   //01:00
-            {
-                cbAutoOpen.Checked = false;
-                timeLabel.ForeColor = Color.Red;
-            }
-            else
-            {
-                cbAutoOpen.Checked = true;
-                timeLabel.ForeColor = Color.Black;
-            }
+            //if ((dt - dt9 > ts0 && dt - dt9 < ts2) ||   //9:00
+            //    //(dt1015 - dt > ts0 && dt1015 - dt < ts10)||  //10:15
+            //    //(dt - dt1030 > ts0 && dt - dt1030 < ts10) || //10:30
+            //    (dt1130 - dt > ts0 && dt1130 - dt < ts1) || //11:30
+            //    (dt - dt1330 > ts0 && dt - dt1330 < ts2) || //13:30
+            //    (dt1500 - dt > ts0 && dt1500 - dt < ts1) || //15:00
+            //    (dt - dt2100 > ts0 && dt - dt2100 < ts2) || //21:00
+            //    (dt0100 - dt > ts0 && dt0100 - dt < ts1))   //01:00
+            //{
+            //    cbAutoOpen.Checked = false;
+            //    timeLabel.ForeColor = Color.Red;
+            //}
+            //else
+            //{
+            //    cbAutoOpen.Checked = true;
+            //    timeLabel.ForeColor = Color.Black;
+            //}
         }
 
         private object _locker = new object();
@@ -131,7 +131,7 @@ namespace PromptForm
 
                         if (_savedItem != null)
                         {
-                            if (DateTime.Now - _savedItem.Time > new TimeSpan(0, 0, 3))
+                            if (DateTime.Now - _savedItem.Time > new TimeSpan(0, 0, 0, 0, 0))
                             {
                                 AddMessage(_savedItem);
                                 _savedItem = null;

@@ -783,6 +783,14 @@ namespace WrapperTest
                 var minQuote = dataQueueSub.FindLast(d => d.pDepthMarketData.LastPrice.Equals(min));
                 var maxQuote = dataQueueSub.FindLast(d => d.pDepthMarketData.LastPrice.Equals(max));
 
+                if (promptForm.IsHandleCreated)
+                {
+                    promptForm.Invoke(new Action(() =>
+                    {
+                        promptForm.ShowWave(max, min, max - min);
+                    }));
+                }
+
                 if ((max - min) / min > 涨跌幅提示 && AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                 {
                     var maxTime = Convert.ToDateTime(maxQuote.更新日期.ToString("yyyy/MM/dd") + " " + maxQuote.pDepthMarketData.UpdateTime);

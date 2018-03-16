@@ -590,7 +590,7 @@
             this.nudWarningPoint.Size = new System.Drawing.Size(51, 21);
             this.nudWarningPoint.TabIndex = 28;
             this.nudWarningPoint.Value = new decimal(new int[] {
-            20,
+            5,
             0,
             0,
             0});
@@ -622,7 +622,7 @@
             this.nudLossPoint.Size = new System.Drawing.Size(48, 21);
             this.nudLossPoint.TabIndex = 30;
             this.nudLossPoint.Value = new decimal(new int[] {
-            25,
+            10,
             0,
             0,
             0});
