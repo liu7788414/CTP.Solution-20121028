@@ -385,6 +385,7 @@ namespace WrapperTest
         public static double 开仓偏移量 = 1;
         public static double 涨跌幅提示 = 0.0045;
         public static int 分钟数 = 5;
+        public static double 范围 = 0.00015;
 
         public static double availableMoney = 0;
         /// <summary>
@@ -675,7 +676,7 @@ namespace WrapperTest
                         var up = pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 1.0110 && pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.0090;
 
 
-                        if (!messages.ContainsKey(instrumentId))
+                        if (!messages.ContainsKey(instrumentId + (up ? "兴" : "衰")))
                         {
                             var ratio = (pDepthMarketData.LastPrice - pDepthMarketData.OpenPrice) / pDepthMarketData.OpenPrice;
                             var prompt = string.Format("信号：{0}{1},开盘:{2},当前:{3},幅度:{4:P},时间{5}", instrumentId, up ? "兴" : "衰", pDepthMarketData.OpenPrice, pDepthMarketData.LastPrice, ratio, DateTime.Now);
@@ -708,7 +709,12 @@ namespace WrapperTest
                                     }));
                             }
 
-                            messages[instrumentId] = prompt;
+                            var key = instrumentId + (up ? "兴" : "衰");
+                            if (!messages.ContainsKey(key))
+                            {
+                                messages[key] = prompt;
+                            }
+
                         }
                     }
                 }
@@ -783,6 +789,14 @@ namespace WrapperTest
                 var minQuote = dataQueueSub.FindLast(d => d.pDepthMarketData.LastPrice.Equals(min));
                 var maxQuote = dataQueueSub.FindLast(d => d.pDepthMarketData.LastPrice.Equals(max));
 
+                if (promptForm.IsHandleCreated)
+                {
+                    promptForm.Invoke(new Action(() =>
+                    {
+                        promptForm.ShowWave(max, min, max - min);
+                    }));
+                }
+
                 if ((max - min) / min > 涨跌幅提示 && AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                 {
                     var maxTime = Convert.ToDateTime(maxQuote.更新日期.ToString("yyyy/MM/dd") + " " + maxQuote.pDepthMarketData.UpdateTime);
@@ -800,7 +814,7 @@ namespace WrapperTest
                         up = false;
                     }
 
-                    if (!messages.ContainsKey(instrumentId))
+                    if (!messages.ContainsKey(instrumentId + (up ? "涨" : "跌")))
                     {
                         double ratio;
                         if (up)
@@ -850,7 +864,12 @@ namespace WrapperTest
                                 }));
                         }
 
-                        messages[instrumentId] = prompt;
+                        var key = instrumentId + (up ? "涨" : "跌");
+                        if (!messages.ContainsKey(key))
+                        {
+                            messages[key] = prompt;
+                        }
+                        
                     }
                 }
 
@@ -1089,6 +1108,9 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 分钟数 = Convert.ToInt32(GetLineData(line));
+
+                line = sr.ReadLine();
+                范围 = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }

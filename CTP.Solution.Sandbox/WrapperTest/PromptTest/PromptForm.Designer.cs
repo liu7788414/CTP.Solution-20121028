@@ -332,8 +332,6 @@
             // cbEnable
             // 
             this.cbEnable.AutoSize = true;
-            this.cbEnable.Checked = true;
-            this.cbEnable.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbEnable.Location = new System.Drawing.Point(3, 244);
             this.cbEnable.Margin = new System.Windows.Forms.Padding(2);
             this.cbEnable.Name = "cbEnable";
@@ -606,7 +604,7 @@
             this.nudProfitPoint.Size = new System.Drawing.Size(48, 21);
             this.nudProfitPoint.TabIndex = 29;
             this.nudProfitPoint.Value = new decimal(new int[] {
-            100,
+            30,
             0,
             0,
             0});
@@ -622,7 +620,7 @@
             this.nudLossPoint.Size = new System.Drawing.Size(48, 21);
             this.nudLossPoint.TabIndex = 30;
             this.nudLossPoint.Value = new decimal(new int[] {
-            20,
+            15,
             0,
             0,
             0});

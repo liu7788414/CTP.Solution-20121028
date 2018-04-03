@@ -98,6 +98,7 @@
             this.btBuy5 = new System.Windows.Forms.Button();
             this.btSell3 = new System.Windows.Forms.Button();
             this.btSell5 = new System.Windows.Forms.Button();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
@@ -338,7 +339,7 @@
             this.toolStripStatusLabel4,
             this.timeLabel,
             this.toolStripStatusLabel5});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 295);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 381);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(596, 22);
             this.statusStrip1.TabIndex = 11;
@@ -545,6 +546,7 @@
             this.cbWarning.AutoSize = true;
             this.cbWarning.Checked = true;
             this.cbWarning.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbWarning.Enabled = false;
             this.cbWarning.Location = new System.Drawing.Point(382, 244);
             this.cbWarning.Margin = new System.Windows.Forms.Padding(2);
             this.cbWarning.Name = "cbWarning";
@@ -595,7 +597,7 @@
             this.nudProfitPoint.Size = new System.Drawing.Size(48, 21);
             this.nudProfitPoint.TabIndex = 29;
             this.nudProfitPoint.Value = new decimal(new int[] {
-            50,
+            20,
             0,
             0,
             0});
@@ -611,7 +613,7 @@
             this.nudLossPoint.Size = new System.Drawing.Size(48, 21);
             this.nudLossPoint.TabIndex = 30;
             this.nudLossPoint.Value = new decimal(new int[] {
-            20,
+            15,
             0,
             0,
             0});
@@ -797,11 +799,20 @@
             this.btSell5.UseVisualStyleBackColor = false;
             this.btSell5.Click += new System.EventHandler(this.btSell5_Click);
             // 
+            // richTextBox3
+            // 
+            this.richTextBox3.Location = new System.Drawing.Point(3, 291);
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.Size = new System.Drawing.Size(590, 87);
+            this.richTextBox3.TabIndex = 48;
+            this.richTextBox3.Text = "";
+            // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(596, 317);
+            this.ClientSize = new System.Drawing.Size(596, 403);
+            this.Controls.Add(this.richTextBox3);
             this.Controls.Add(this.btSell5);
             this.Controls.Add(this.btSell3);
             this.Controls.Add(this.btBuy5);
@@ -932,6 +943,7 @@
         private System.Windows.Forms.Button btSell3;
         private System.Windows.Forms.Button btSell5;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
+        private System.Windows.Forms.RichTextBox richTextBox3;
     }
 }
 

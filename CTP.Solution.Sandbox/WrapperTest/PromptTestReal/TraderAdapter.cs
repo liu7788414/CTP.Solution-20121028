@@ -153,9 +153,9 @@ namespace WrapperTest
                     {
                         var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                        if (DateTime.Now + new TimeSpan(2, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 10))
+                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 10))
                         {
-                            ordersToCancel.Add(order);
+                            //ordersToCancel.Add(order);
                         }
                     }
                 }

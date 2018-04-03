@@ -235,6 +235,7 @@ namespace PromptForm
                             if (_trader.PositionFields.Count <= 0)
                             {
                                 lbHighTotal.Text = lbLowTotal.Text = "0";
+                                richTextBox3.Text = "";
                             }
 
                             foreach (var kv in _trader.PositionFields)
@@ -289,6 +290,37 @@ namespace PromptForm
                                     {
                                         profitPoint = (-1) * (lastTick.AskPrice1 - cost) / info.PriceTick;
                                     }
+
+                                    var temp = "";
+
+                                    if (profitPoint > 0)
+                                    {
+                                        temp = string.Format("{0}", Math.Round(profitPoint, 1));
+                                    }
+                                    else
+                                    {
+                                        temp = string.Format("{0}", Math.Round(profitPoint, 1));
+                                    }
+
+                                    //if(label8.Text.Length > 100)
+                                    //{
+                                    //    label8.Text = "";
+                                    //}
+
+                                    if (richTextBox3.Text.Contains(","))
+                                    {
+                                        var s = richTextBox3.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                        var last = Convert.ToDouble(s[s.Length - 1]);
+
+                                        if (!last.Equals(profitPoint))
+                                        {
+                                            richTextBox3.Text = richTextBox3.Text + "," + temp;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        richTextBox3.Text = "," + temp;
+                                    }                              
 
                                     var profit = profitPoint * info.PriceTick * info.VolumeMultiple * volume;
                                     var subProfit = item.SubItems.Add(profit.ToString("f0"));
@@ -527,7 +559,7 @@ namespace PromptForm
             var s = string.Format("高:{0},低:{1},幅:{2}", (int)max, (int)min, (int)wave);
             toolStripStatusLabel5.Text = s;
 
-            if(wave > 300)
+            if(wave > 250)
             {            
                 toolStripStatusLabel5.ForeColor = Color.Red;
             }
@@ -906,7 +938,9 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    var point = Convert.ToDouble(button.Text);
+                    _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + point * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + (point + 10) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
                 }
             }
         }
@@ -926,7 +960,9 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    var point = Convert.ToDouble(button.Text);
+                    _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - point * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - (point + 10) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
                 }
             }
         }
