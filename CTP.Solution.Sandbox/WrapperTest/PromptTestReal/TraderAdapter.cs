@@ -155,7 +155,7 @@ namespace WrapperTest
 
                         if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 10))
                         {
-                            //ordersToCancel.Add(order);
+                            ordersToCancel.Add(order);
                         }
                     }
                 }
@@ -985,31 +985,31 @@ namespace WrapperTest
                     }
 
 
-                    if (pOrder.InstrumentID.StartsWith("au"))
-                    {
-                        //立即撤掉代表命令的单
-                        var field = new ThostFtdcInputOrderActionField
-                        {
-                            ActionFlag = EnumActionFlagType.Delete,
-                            BrokerID = pOrder.BrokerID,
-                            ExchangeID = pOrder.ExchangeID,
-                            FrontID = pOrder.FrontID,
-                            InstrumentID = pOrder.InstrumentID,
-                            InvestorID = pOrder.InvestorID,
-                            OrderRef = pOrder.OrderRef,
-                            OrderSysID = pOrder.OrderSysID,
-                            SessionID = pOrder.SessionID
-                        };
-                        ReqOrderAction(field, RequestId++);
+                    //if (pOrder.InstrumentID.StartsWith("au"))
+                    //{
+                    //    //立即撤掉代表命令的单
+                    //    var field = new ThostFtdcInputOrderActionField
+                    //    {
+                    //        ActionFlag = EnumActionFlagType.Delete,
+                    //        BrokerID = pOrder.BrokerID,
+                    //        ExchangeID = pOrder.ExchangeID,
+                    //        FrontID = pOrder.FrontID,
+                    //        InstrumentID = pOrder.InstrumentID,
+                    //        InvestorID = pOrder.InvestorID,
+                    //        OrderRef = pOrder.OrderRef,
+                    //        OrderSysID = pOrder.OrderSysID,
+                    //        SessionID = pOrder.SessionID
+                    //    };
+                    //    ReqOrderAction(field, RequestId++);
 
-                        var temp1 = string.Format("收到{0}合约报单回报,FrontID:{1},SessionID:{2},解释为强制退出...",
-                            pOrder.InstrumentID,
-                            pOrder.FrontID, pOrder.SessionID);
-                        Utils.WriteLine(temp1, true);
-                        Email.SendMail(temp1, DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                            Utils.IsMailingEnabled);
-                        Utils.Exit(this);
-                    }
+                    //    var temp1 = string.Format("收到{0}合约报单回报,FrontID:{1},SessionID:{2},解释为强制退出...",
+                    //        pOrder.InstrumentID,
+                    //        pOrder.FrontID, pOrder.SessionID);
+                    //    Utils.WriteLine(temp1, true);
+                    //    Email.SendMail(temp1, DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                    //        Utils.IsMailingEnabled);
+                    //    Utils.Exit(this);
+                    //}
                 }
             }
             catch (Exception ex)
@@ -1022,13 +1022,13 @@ namespace WrapperTest
         {
             try
             {
-                if (instrumentId.StartsWith("au"))
-                {
-                    var temp1 = string.Format("收到{0}合约报单回报,解释为强制退出...", instrumentId);
-                    Utils.WriteLine(temp1, true);
-                    Email.SendMail(temp1, DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
-                    Utils.Exit(this);
-                }
+                //if (instrumentId.StartsWith("au"))
+                //{
+                //    var temp1 = string.Format("收到{0}合约报单回报,解释为强制退出...", instrumentId);
+                //    Utils.WriteLine(temp1, true);
+                //    Email.SendMail(temp1, DateTime.Now.ToString(CultureInfo.InvariantCulture), Utils.IsMailingEnabled);
+                //    Utils.Exit(this);
+                //}
             }
             catch (Exception ex)
             {

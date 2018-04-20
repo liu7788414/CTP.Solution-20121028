@@ -721,6 +721,7 @@
             // btBuy1
             // 
             this.btBuy1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy1.Enabled = false;
             this.btBuy1.Location = new System.Drawing.Point(501, 76);
             this.btBuy1.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy1.Name = "btBuy1";
@@ -743,6 +744,7 @@
             // btSell1
             // 
             this.btSell1.BackColor = System.Drawing.Color.Lime;
+            this.btSell1.Enabled = false;
             this.btSell1.Location = new System.Drawing.Point(501, 115);
             this.btSell1.Margin = new System.Windows.Forms.Padding(2);
             this.btSell1.Name = "btSell1";
@@ -755,6 +757,7 @@
             // btBuy3
             // 
             this.btBuy3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy3.Enabled = false;
             this.btBuy3.Location = new System.Drawing.Point(520, 76);
             this.btBuy3.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy3.Name = "btBuy3";
@@ -767,6 +770,7 @@
             // btBuy5
             // 
             this.btBuy5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy5.Enabled = false;
             this.btBuy5.Location = new System.Drawing.Point(539, 76);
             this.btBuy5.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy5.Name = "btBuy5";
@@ -779,6 +783,7 @@
             // btBuy7
             // 
             this.btBuy7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy7.Enabled = false;
             this.btBuy7.Location = new System.Drawing.Point(558, 76);
             this.btBuy7.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy7.Name = "btBuy7";
@@ -791,6 +796,7 @@
             // btBuy9
             // 
             this.btBuy9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy9.Enabled = false;
             this.btBuy9.Location = new System.Drawing.Point(577, 76);
             this.btBuy9.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy9.Name = "btBuy9";
@@ -803,6 +809,7 @@
             // btSell3
             // 
             this.btSell3.BackColor = System.Drawing.Color.Lime;
+            this.btSell3.Enabled = false;
             this.btSell3.Location = new System.Drawing.Point(520, 115);
             this.btSell3.Margin = new System.Windows.Forms.Padding(2);
             this.btSell3.Name = "btSell3";
@@ -815,6 +822,7 @@
             // btSell5
             // 
             this.btSell5.BackColor = System.Drawing.Color.Lime;
+            this.btSell5.Enabled = false;
             this.btSell5.Location = new System.Drawing.Point(539, 115);
             this.btSell5.Margin = new System.Windows.Forms.Padding(2);
             this.btSell5.Name = "btSell5";
@@ -827,6 +835,7 @@
             // btSell7
             // 
             this.btSell7.BackColor = System.Drawing.Color.Lime;
+            this.btSell7.Enabled = false;
             this.btSell7.Location = new System.Drawing.Point(558, 115);
             this.btSell7.Margin = new System.Windows.Forms.Padding(2);
             this.btSell7.Name = "btSell7";
@@ -839,6 +848,7 @@
             // btSell9
             // 
             this.btSell9.BackColor = System.Drawing.Color.Lime;
+            this.btSell9.Enabled = false;
             this.btSell9.Location = new System.Drawing.Point(577, 115);
             this.btSell9.Margin = new System.Windows.Forms.Padding(2);
             this.btSell9.Name = "btSell9";
@@ -851,6 +861,7 @@
             // btBuy19
             // 
             this.btBuy19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy19.Enabled = false;
             this.btBuy19.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btBuy19.Location = new System.Drawing.Point(577, 95);
             this.btBuy19.Margin = new System.Windows.Forms.Padding(2);
@@ -864,6 +875,7 @@
             // btBuy17
             // 
             this.btBuy17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy17.Enabled = false;
             this.btBuy17.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btBuy17.Location = new System.Drawing.Point(558, 95);
             this.btBuy17.Margin = new System.Windows.Forms.Padding(2);
@@ -877,6 +889,7 @@
             // btBuy15
             // 
             this.btBuy15.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy15.Enabled = false;
             this.btBuy15.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btBuy15.Location = new System.Drawing.Point(539, 95);
             this.btBuy15.Margin = new System.Windows.Forms.Padding(2);
@@ -890,6 +903,7 @@
             // btBuy13
             // 
             this.btBuy13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy13.Enabled = false;
             this.btBuy13.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btBuy13.Location = new System.Drawing.Point(520, 95);
             this.btBuy13.Margin = new System.Windows.Forms.Padding(2);
@@ -903,6 +917,7 @@
             // btBuy11
             // 
             this.btBuy11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy11.Enabled = false;
             this.btBuy11.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btBuy11.Location = new System.Drawing.Point(501, 95);
             this.btBuy11.Margin = new System.Windows.Forms.Padding(2);
@@ -916,6 +931,7 @@
             // btSell19
             // 
             this.btSell19.BackColor = System.Drawing.Color.Lime;
+            this.btSell19.Enabled = false;
             this.btSell19.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btSell19.Location = new System.Drawing.Point(577, 134);
             this.btSell19.Margin = new System.Windows.Forms.Padding(2);
@@ -929,6 +945,7 @@
             // btSell17
             // 
             this.btSell17.BackColor = System.Drawing.Color.Lime;
+            this.btSell17.Enabled = false;
             this.btSell17.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btSell17.Location = new System.Drawing.Point(558, 134);
             this.btSell17.Margin = new System.Windows.Forms.Padding(2);
@@ -942,6 +959,7 @@
             // btSell15
             // 
             this.btSell15.BackColor = System.Drawing.Color.Lime;
+            this.btSell15.Enabled = false;
             this.btSell15.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btSell15.Location = new System.Drawing.Point(539, 134);
             this.btSell15.Margin = new System.Windows.Forms.Padding(2);
@@ -955,6 +973,7 @@
             // btSell13
             // 
             this.btSell13.BackColor = System.Drawing.Color.Lime;
+            this.btSell13.Enabled = false;
             this.btSell13.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btSell13.Location = new System.Drawing.Point(520, 134);
             this.btSell13.Margin = new System.Windows.Forms.Padding(2);
@@ -968,6 +987,7 @@
             // btSell11
             // 
             this.btSell11.BackColor = System.Drawing.Color.Lime;
+            this.btSell11.Enabled = false;
             this.btSell11.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btSell11.Location = new System.Drawing.Point(501, 134);
             this.btSell11.Margin = new System.Windows.Forms.Padding(2);

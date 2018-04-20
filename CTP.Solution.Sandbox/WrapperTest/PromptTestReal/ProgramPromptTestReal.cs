@@ -419,6 +419,7 @@ namespace WrapperTest
                         Utils.promptForm.SetInstrument(Utils.CategoryToMainInstrument.First().Value);
                     }));
                 }
+
                 //准备完毕后才进入开平仓检查，防止在查询过程中进入
                 ((QuoteAdapter)Utils.QuoteMain).StartTimer();
 

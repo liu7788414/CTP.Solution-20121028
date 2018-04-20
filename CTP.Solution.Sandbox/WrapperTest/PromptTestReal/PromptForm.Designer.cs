@@ -96,9 +96,22 @@
             this.btSell1 = new System.Windows.Forms.Button();
             this.btBuy3 = new System.Windows.Forms.Button();
             this.btBuy5 = new System.Windows.Forms.Button();
+            this.btBuy7 = new System.Windows.Forms.Button();
+            this.btBuy9 = new System.Windows.Forms.Button();
             this.btSell3 = new System.Windows.Forms.Button();
             this.btSell5 = new System.Windows.Forms.Button();
-            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+            this.btSell7 = new System.Windows.Forms.Button();
+            this.btSell9 = new System.Windows.Forms.Button();
+            this.btBuy19 = new System.Windows.Forms.Button();
+            this.btBuy17 = new System.Windows.Forms.Button();
+            this.btBuy15 = new System.Windows.Forms.Button();
+            this.btBuy13 = new System.Windows.Forms.Button();
+            this.btBuy11 = new System.Windows.Forms.Button();
+            this.btSell19 = new System.Windows.Forms.Button();
+            this.btSell17 = new System.Windows.Forms.Button();
+            this.btSell15 = new System.Windows.Forms.Button();
+            this.btSell13 = new System.Windows.Forms.Button();
+            this.btSell11 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
@@ -286,7 +299,7 @@
             // 
             // btCloseAll
             // 
-            this.btCloseAll.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold);
+            this.btCloseAll.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btCloseAll.Location = new System.Drawing.Point(382, 262);
             this.btCloseAll.Margin = new System.Windows.Forms.Padding(2);
             this.btCloseAll.Name = "btCloseAll";
@@ -319,8 +332,6 @@
             // cbEnable
             // 
             this.cbEnable.AutoSize = true;
-            this.cbEnable.Checked = true;
-            this.cbEnable.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbEnable.Location = new System.Drawing.Point(3, 244);
             this.cbEnable.Margin = new System.Windows.Forms.Padding(2);
             this.cbEnable.Name = "cbEnable";
@@ -339,7 +350,7 @@
             this.toolStripStatusLabel4,
             this.timeLabel,
             this.toolStripStatusLabel5});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 381);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 295);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(596, 22);
             this.statusStrip1.TabIndex = 11;
@@ -389,7 +400,7 @@
             // toolStripStatusLabel5
             // 
             this.toolStripStatusLabel5.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.toolStripStatusLabel5.ForeColor = System.Drawing.Color.Black;
+            this.toolStripStatusLabel5.ForeColor = System.Drawing.Color.Blue;
             this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
             this.toolStripStatusLabel5.Size = new System.Drawing.Size(165, 17);
             this.toolStripStatusLabel5.Text = "等机会、调K线、少品种";
@@ -546,7 +557,6 @@
             this.cbWarning.AutoSize = true;
             this.cbWarning.Checked = true;
             this.cbWarning.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbWarning.Enabled = false;
             this.cbWarning.Location = new System.Drawing.Point(382, 244);
             this.cbWarning.Margin = new System.Windows.Forms.Padding(2);
             this.cbWarning.Name = "cbWarning";
@@ -558,6 +568,8 @@
             // cbAutoOpen
             // 
             this.cbAutoOpen.AutoSize = true;
+            this.cbAutoOpen.Checked = true;
+            this.cbAutoOpen.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbAutoOpen.Location = new System.Drawing.Point(467, 270);
             this.cbAutoOpen.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoOpen.Name = "cbAutoOpen";
@@ -570,18 +582,13 @@
             // 
             this.nudWarningPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudWarningPoint.ForeColor = System.Drawing.Color.Red;
-            this.nudWarningPoint.Increment = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
             this.nudWarningPoint.Location = new System.Drawing.Point(278, 239);
             this.nudWarningPoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudWarningPoint.Name = "nudWarningPoint";
             this.nudWarningPoint.Size = new System.Drawing.Size(51, 21);
             this.nudWarningPoint.TabIndex = 28;
             this.nudWarningPoint.Value = new decimal(new int[] {
-            3,
+            10,
             0,
             0,
             0});
@@ -597,7 +604,7 @@
             this.nudProfitPoint.Size = new System.Drawing.Size(48, 21);
             this.nudProfitPoint.TabIndex = 29;
             this.nudProfitPoint.Value = new decimal(new int[] {
-            20,
+            30,
             0,
             0,
             0});
@@ -714,11 +721,11 @@
             // btBuy1
             // 
             this.btBuy1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btBuy1.Enabled = false;
             this.btBuy1.Location = new System.Drawing.Point(501, 76);
             this.btBuy1.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy1.Name = "btBuy1";
-            this.btBuy1.Size = new System.Drawing.Size(30, 30);
+            this.btBuy1.Size = new System.Drawing.Size(20, 20);
             this.btBuy1.TabIndex = 39;
             this.btBuy1.Text = "1";
             this.btBuy1.UseVisualStyleBackColor = false;
@@ -737,11 +744,11 @@
             // btSell1
             // 
             this.btSell1.BackColor = System.Drawing.Color.Lime;
-            this.btSell1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold);
+            this.btSell1.Enabled = false;
             this.btSell1.Location = new System.Drawing.Point(501, 115);
             this.btSell1.Margin = new System.Windows.Forms.Padding(2);
             this.btSell1.Name = "btSell1";
-            this.btSell1.Size = new System.Drawing.Size(30, 30);
+            this.btSell1.Size = new System.Drawing.Size(20, 20);
             this.btSell1.TabIndex = 41;
             this.btSell1.Text = "1";
             this.btSell1.UseVisualStyleBackColor = false;
@@ -750,11 +757,11 @@
             // btBuy3
             // 
             this.btBuy3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy3.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold);
-            this.btBuy3.Location = new System.Drawing.Point(530, 76);
+            this.btBuy3.Enabled = false;
+            this.btBuy3.Location = new System.Drawing.Point(520, 76);
             this.btBuy3.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy3.Name = "btBuy3";
-            this.btBuy3.Size = new System.Drawing.Size(30, 30);
+            this.btBuy3.Size = new System.Drawing.Size(20, 20);
             this.btBuy3.TabIndex = 42;
             this.btBuy3.Text = "3";
             this.btBuy3.UseVisualStyleBackColor = false;
@@ -763,24 +770,50 @@
             // btBuy5
             // 
             this.btBuy5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy5.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold);
-            this.btBuy5.Location = new System.Drawing.Point(559, 76);
+            this.btBuy5.Enabled = false;
+            this.btBuy5.Location = new System.Drawing.Point(539, 76);
             this.btBuy5.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy5.Name = "btBuy5";
-            this.btBuy5.Size = new System.Drawing.Size(30, 30);
+            this.btBuy5.Size = new System.Drawing.Size(20, 20);
             this.btBuy5.TabIndex = 43;
             this.btBuy5.Text = "5";
             this.btBuy5.UseVisualStyleBackColor = false;
             this.btBuy5.Click += new System.EventHandler(this.btBuy5_Click);
             // 
+            // btBuy7
+            // 
+            this.btBuy7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy7.Enabled = false;
+            this.btBuy7.Location = new System.Drawing.Point(558, 76);
+            this.btBuy7.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy7.Name = "btBuy7";
+            this.btBuy7.Size = new System.Drawing.Size(20, 20);
+            this.btBuy7.TabIndex = 44;
+            this.btBuy7.Text = "7";
+            this.btBuy7.UseVisualStyleBackColor = false;
+            this.btBuy7.Click += new System.EventHandler(this.btBuy7_Click);
+            // 
+            // btBuy9
+            // 
+            this.btBuy9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy9.Enabled = false;
+            this.btBuy9.Location = new System.Drawing.Point(577, 76);
+            this.btBuy9.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy9.Name = "btBuy9";
+            this.btBuy9.Size = new System.Drawing.Size(20, 20);
+            this.btBuy9.TabIndex = 45;
+            this.btBuy9.Text = "9";
+            this.btBuy9.UseVisualStyleBackColor = false;
+            this.btBuy9.Click += new System.EventHandler(this.btBuy9_Click);
+            // 
             // btSell3
             // 
             this.btSell3.BackColor = System.Drawing.Color.Lime;
-            this.btSell3.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold);
-            this.btSell3.Location = new System.Drawing.Point(530, 115);
+            this.btSell3.Enabled = false;
+            this.btSell3.Location = new System.Drawing.Point(520, 115);
             this.btSell3.Margin = new System.Windows.Forms.Padding(2);
             this.btSell3.Name = "btSell3";
-            this.btSell3.Size = new System.Drawing.Size(30, 30);
+            this.btSell3.Size = new System.Drawing.Size(20, 20);
             this.btSell3.TabIndex = 46;
             this.btSell3.Text = "3";
             this.btSell3.UseVisualStyleBackColor = false;
@@ -789,32 +822,203 @@
             // btSell5
             // 
             this.btSell5.BackColor = System.Drawing.Color.Lime;
-            this.btSell5.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold);
-            this.btSell5.Location = new System.Drawing.Point(559, 115);
+            this.btSell5.Enabled = false;
+            this.btSell5.Location = new System.Drawing.Point(539, 115);
             this.btSell5.Margin = new System.Windows.Forms.Padding(2);
             this.btSell5.Name = "btSell5";
-            this.btSell5.Size = new System.Drawing.Size(30, 30);
+            this.btSell5.Size = new System.Drawing.Size(20, 20);
             this.btSell5.TabIndex = 47;
             this.btSell5.Text = "5";
             this.btSell5.UseVisualStyleBackColor = false;
             this.btSell5.Click += new System.EventHandler(this.btSell5_Click);
             // 
-            // richTextBox3
+            // btSell7
             // 
-            this.richTextBox3.Location = new System.Drawing.Point(3, 291);
-            this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.Size = new System.Drawing.Size(590, 87);
-            this.richTextBox3.TabIndex = 48;
-            this.richTextBox3.Text = "";
+            this.btSell7.BackColor = System.Drawing.Color.Lime;
+            this.btSell7.Enabled = false;
+            this.btSell7.Location = new System.Drawing.Point(558, 115);
+            this.btSell7.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell7.Name = "btSell7";
+            this.btSell7.Size = new System.Drawing.Size(20, 20);
+            this.btSell7.TabIndex = 48;
+            this.btSell7.Text = "7";
+            this.btSell7.UseVisualStyleBackColor = false;
+            this.btSell7.Click += new System.EventHandler(this.btSell7_Click);
+            // 
+            // btSell9
+            // 
+            this.btSell9.BackColor = System.Drawing.Color.Lime;
+            this.btSell9.Enabled = false;
+            this.btSell9.Location = new System.Drawing.Point(577, 115);
+            this.btSell9.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell9.Name = "btSell9";
+            this.btSell9.Size = new System.Drawing.Size(20, 20);
+            this.btSell9.TabIndex = 49;
+            this.btSell9.Text = "9";
+            this.btSell9.UseVisualStyleBackColor = false;
+            this.btSell9.Click += new System.EventHandler(this.btSell9_Click);
+            // 
+            // btBuy19
+            // 
+            this.btBuy19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy19.Enabled = false;
+            this.btBuy19.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btBuy19.Location = new System.Drawing.Point(577, 95);
+            this.btBuy19.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy19.Name = "btBuy19";
+            this.btBuy19.Size = new System.Drawing.Size(20, 20);
+            this.btBuy19.TabIndex = 54;
+            this.btBuy19.Text = "19";
+            this.btBuy19.UseVisualStyleBackColor = false;
+            this.btBuy19.Click += new System.EventHandler(this.btBuy19_Click);
+            // 
+            // btBuy17
+            // 
+            this.btBuy17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy17.Enabled = false;
+            this.btBuy17.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btBuy17.Location = new System.Drawing.Point(558, 95);
+            this.btBuy17.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy17.Name = "btBuy17";
+            this.btBuy17.Size = new System.Drawing.Size(20, 20);
+            this.btBuy17.TabIndex = 53;
+            this.btBuy17.Text = "17";
+            this.btBuy17.UseVisualStyleBackColor = false;
+            this.btBuy17.Click += new System.EventHandler(this.btBuy17_Click);
+            // 
+            // btBuy15
+            // 
+            this.btBuy15.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy15.Enabled = false;
+            this.btBuy15.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btBuy15.Location = new System.Drawing.Point(539, 95);
+            this.btBuy15.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy15.Name = "btBuy15";
+            this.btBuy15.Size = new System.Drawing.Size(20, 20);
+            this.btBuy15.TabIndex = 52;
+            this.btBuy15.Text = "15";
+            this.btBuy15.UseVisualStyleBackColor = false;
+            this.btBuy15.Click += new System.EventHandler(this.btBuy15_Click);
+            // 
+            // btBuy13
+            // 
+            this.btBuy13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy13.Enabled = false;
+            this.btBuy13.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btBuy13.Location = new System.Drawing.Point(520, 95);
+            this.btBuy13.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy13.Name = "btBuy13";
+            this.btBuy13.Size = new System.Drawing.Size(20, 20);
+            this.btBuy13.TabIndex = 51;
+            this.btBuy13.Text = "13";
+            this.btBuy13.UseVisualStyleBackColor = false;
+            this.btBuy13.Click += new System.EventHandler(this.btBuy13_Click);
+            // 
+            // btBuy11
+            // 
+            this.btBuy11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy11.Enabled = false;
+            this.btBuy11.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btBuy11.Location = new System.Drawing.Point(501, 95);
+            this.btBuy11.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy11.Name = "btBuy11";
+            this.btBuy11.Size = new System.Drawing.Size(20, 20);
+            this.btBuy11.TabIndex = 50;
+            this.btBuy11.Text = "11";
+            this.btBuy11.UseVisualStyleBackColor = false;
+            this.btBuy11.Click += new System.EventHandler(this.btBuy11_Click);
+            // 
+            // btSell19
+            // 
+            this.btSell19.BackColor = System.Drawing.Color.Lime;
+            this.btSell19.Enabled = false;
+            this.btSell19.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btSell19.Location = new System.Drawing.Point(577, 134);
+            this.btSell19.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell19.Name = "btSell19";
+            this.btSell19.Size = new System.Drawing.Size(20, 20);
+            this.btSell19.TabIndex = 59;
+            this.btSell19.Text = "19";
+            this.btSell19.UseVisualStyleBackColor = false;
+            this.btSell19.Click += new System.EventHandler(this.btSell19_Click);
+            // 
+            // btSell17
+            // 
+            this.btSell17.BackColor = System.Drawing.Color.Lime;
+            this.btSell17.Enabled = false;
+            this.btSell17.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btSell17.Location = new System.Drawing.Point(558, 134);
+            this.btSell17.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell17.Name = "btSell17";
+            this.btSell17.Size = new System.Drawing.Size(20, 20);
+            this.btSell17.TabIndex = 58;
+            this.btSell17.Text = "17";
+            this.btSell17.UseVisualStyleBackColor = false;
+            this.btSell17.Click += new System.EventHandler(this.btSell17_Click);
+            // 
+            // btSell15
+            // 
+            this.btSell15.BackColor = System.Drawing.Color.Lime;
+            this.btSell15.Enabled = false;
+            this.btSell15.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btSell15.Location = new System.Drawing.Point(539, 134);
+            this.btSell15.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell15.Name = "btSell15";
+            this.btSell15.Size = new System.Drawing.Size(20, 20);
+            this.btSell15.TabIndex = 57;
+            this.btSell15.Text = "15";
+            this.btSell15.UseVisualStyleBackColor = false;
+            this.btSell15.Click += new System.EventHandler(this.btSell15_Click);
+            // 
+            // btSell13
+            // 
+            this.btSell13.BackColor = System.Drawing.Color.Lime;
+            this.btSell13.Enabled = false;
+            this.btSell13.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btSell13.Location = new System.Drawing.Point(520, 134);
+            this.btSell13.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell13.Name = "btSell13";
+            this.btSell13.Size = new System.Drawing.Size(20, 20);
+            this.btSell13.TabIndex = 56;
+            this.btSell13.Text = "13";
+            this.btSell13.UseVisualStyleBackColor = false;
+            this.btSell13.Click += new System.EventHandler(this.btSell13_Click);
+            // 
+            // btSell11
+            // 
+            this.btSell11.BackColor = System.Drawing.Color.Lime;
+            this.btSell11.Enabled = false;
+            this.btSell11.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btSell11.Location = new System.Drawing.Point(501, 134);
+            this.btSell11.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell11.Name = "btSell11";
+            this.btSell11.Size = new System.Drawing.Size(20, 20);
+            this.btSell11.TabIndex = 55;
+            this.btSell11.Text = "11";
+            this.btSell11.UseVisualStyleBackColor = false;
+            this.btSell11.Click += new System.EventHandler(this.btSell11_Click);
             // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(596, 403);
-            this.Controls.Add(this.richTextBox3);
+            this.ClientSize = new System.Drawing.Size(596, 317);
+            this.Controls.Add(this.btSell19);
+            this.Controls.Add(this.btSell17);
+            this.Controls.Add(this.btSell15);
+            this.Controls.Add(this.btSell13);
+            this.Controls.Add(this.btSell11);
+            this.Controls.Add(this.btBuy19);
+            this.Controls.Add(this.btBuy17);
+            this.Controls.Add(this.btBuy15);
+            this.Controls.Add(this.btBuy13);
+            this.Controls.Add(this.btBuy11);
+            this.Controls.Add(this.btSell9);
+            this.Controls.Add(this.btSell7);
             this.Controls.Add(this.btSell5);
             this.Controls.Add(this.btSell3);
+            this.Controls.Add(this.btBuy9);
+            this.Controls.Add(this.btBuy7);
             this.Controls.Add(this.btBuy5);
             this.Controls.Add(this.btBuy3);
             this.Controls.Add(this.btSell1);
@@ -940,10 +1144,23 @@
         private System.Windows.Forms.Button btSell1;
         private System.Windows.Forms.Button btBuy3;
         private System.Windows.Forms.Button btBuy5;
+        private System.Windows.Forms.Button btBuy7;
+        private System.Windows.Forms.Button btBuy9;
         private System.Windows.Forms.Button btSell3;
         private System.Windows.Forms.Button btSell5;
+        private System.Windows.Forms.Button btSell7;
+        private System.Windows.Forms.Button btSell9;
+        private System.Windows.Forms.Button btBuy19;
+        private System.Windows.Forms.Button btBuy17;
+        private System.Windows.Forms.Button btBuy15;
+        private System.Windows.Forms.Button btBuy13;
+        private System.Windows.Forms.Button btBuy11;
+        private System.Windows.Forms.Button btSell19;
+        private System.Windows.Forms.Button btSell17;
+        private System.Windows.Forms.Button btSell15;
+        private System.Windows.Forms.Button btSell13;
+        private System.Windows.Forms.Button btSell11;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
-        private System.Windows.Forms.RichTextBox richTextBox3;
     }
 }
 

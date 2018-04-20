@@ -700,6 +700,7 @@ namespace WrapperTest
                             promptItem.Price = marketData.pDepthMarketData.LastPrice;
                             promptItem.Volume = 1;
                             promptItem.Offset = 5;
+                            promptItem.Ratio = ratio;
 
                             if (promptForm.IsHandleCreated)
                             {
@@ -855,6 +856,7 @@ namespace WrapperTest
                         promptItem.Price = marketData.pDepthMarketData.LastPrice;
                         promptItem.Volume = 1;
                         promptItem.Offset = 5;
+                        promptItem.Ratio = ratio;
 
                         if (promptForm.IsHandleCreated)
                         {
