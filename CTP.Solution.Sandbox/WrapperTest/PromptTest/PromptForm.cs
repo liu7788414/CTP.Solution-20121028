@@ -750,7 +750,7 @@ namespace PromptForm
 
                             for (int i = 0; i < 20; i++)
                             {
-                                _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - (i * 3 + offset) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
+                                _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - (i * 3 + offset + rangepoint * (i > 0 ? 1 : 0)) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
                             }
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
@@ -777,7 +777,7 @@ namespace PromptForm
 
                             for (int i = 0; i < 20; i++)
                             {
-                                _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + (i * 3 + offset) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
+                                _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + (i * 3 + offset + rangepoint * (i > 0 ? 1 : 0)) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
                             }
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");

@@ -258,7 +258,7 @@ namespace PromptForm
 
                             if (_trader.UnFinishedOrderFields.Count == 0)
                             {
-                                cbEnable.Checked = true;
+                                //cbEnable.Checked = true;
                             }
                             else
                             {
@@ -324,7 +324,7 @@ namespace PromptForm
 
                                     Utils.WriteLine(string.Format("{0}:当前持仓倍数:{1},当前点数:{2}", ins, volume / Utils.OpenVolumePerTime, profitPoint), true);
 
-                                    if (kv.Value.Position > Utils.OpenVolumePerTime)  //已经触发多个委托，争取保本平仓
+                                    if (cbOneClose.Checked && (kv.Value.Position > Utils.OpenVolumePerTime))  //已经触发多个委托，争取保本平仓
                                     {
                                         if (profitPoint >= 1)
                                         {
@@ -451,10 +451,15 @@ namespace PromptForm
                                         subLow.BackColor = Color.Yellow;
                                     }
 
-                                    if (highLowProfit.HighTick >= 10 && profitPoint <= 2)
+                                    if (highLowProfit.HighTick >= rangepoint * 2 && profitPoint <= highLowProfit.HighTick / 2)
                                     {
-                                        ClosePositionByItem(item, "大回撤保本离场", "大回撤保本离场");
+                                        ClosePositionByItem(item, "大回撤止盈离场", "大回撤止盈离场");
                                     }
+
+                                    //if (highLowProfit.HighTick >= 10 && profitPoint <= 2)
+                                    //{
+                                    //    ClosePositionByItem(item, "大回撤保本离场", "大回撤保本离场");
+                                    //}
 
                                     if (cbWarning.Checked && highLowProfit.HighTick >= warningTick)
                                     {

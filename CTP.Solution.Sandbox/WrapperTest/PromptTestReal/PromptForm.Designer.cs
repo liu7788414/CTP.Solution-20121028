@@ -112,6 +112,7 @@
             this.btSell15 = new System.Windows.Forms.Button();
             this.btSell13 = new System.Windows.Forms.Button();
             this.btSell11 = new System.Windows.Forms.Button();
+            this.cbOneClose = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
@@ -555,8 +556,6 @@
             // cbWarning
             // 
             this.cbWarning.AutoSize = true;
-            this.cbWarning.Checked = true;
-            this.cbWarning.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbWarning.Location = new System.Drawing.Point(382, 244);
             this.cbWarning.Margin = new System.Windows.Forms.Padding(2);
             this.cbWarning.Name = "cbWarning";
@@ -584,6 +583,11 @@
             this.nudWarningPoint.ForeColor = System.Drawing.Color.Red;
             this.nudWarningPoint.Location = new System.Drawing.Point(278, 239);
             this.nudWarningPoint.Margin = new System.Windows.Forms.Padding(2);
+            this.nudWarningPoint.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
             this.nudWarningPoint.Name = "nudWarningPoint";
             this.nudWarningPoint.Size = new System.Drawing.Size(51, 21);
             this.nudWarningPoint.TabIndex = 28;
@@ -721,7 +725,6 @@
             // btBuy1
             // 
             this.btBuy1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy1.Enabled = false;
             this.btBuy1.Location = new System.Drawing.Point(501, 76);
             this.btBuy1.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy1.Name = "btBuy1";
@@ -744,7 +747,6 @@
             // btSell1
             // 
             this.btSell1.BackColor = System.Drawing.Color.Lime;
-            this.btSell1.Enabled = false;
             this.btSell1.Location = new System.Drawing.Point(501, 115);
             this.btSell1.Margin = new System.Windows.Forms.Padding(2);
             this.btSell1.Name = "btSell1";
@@ -998,11 +1000,25 @@
             this.btSell11.UseVisualStyleBackColor = false;
             this.btSell11.Click += new System.EventHandler(this.btSell11_Click);
             // 
+            // cbOneClose
+            // 
+            this.cbOneClose.AutoSize = true;
+            this.cbOneClose.Checked = true;
+            this.cbOneClose.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbOneClose.Location = new System.Drawing.Point(542, 269);
+            this.cbOneClose.Margin = new System.Windows.Forms.Padding(2);
+            this.cbOneClose.Name = "cbOneClose";
+            this.cbOneClose.Size = new System.Drawing.Size(42, 16);
+            this.cbOneClose.TabIndex = 60;
+            this.cbOneClose.Text = "1平";
+            this.cbOneClose.UseVisualStyleBackColor = true;
+            // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(596, 317);
+            this.Controls.Add(this.cbOneClose);
             this.Controls.Add(this.btSell19);
             this.Controls.Add(this.btSell17);
             this.Controls.Add(this.btSell15);
@@ -1161,6 +1177,7 @@
         private System.Windows.Forms.Button btSell13;
         private System.Windows.Forms.Button btSell11;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
+        private System.Windows.Forms.CheckBox cbOneClose;
     }
 }
 

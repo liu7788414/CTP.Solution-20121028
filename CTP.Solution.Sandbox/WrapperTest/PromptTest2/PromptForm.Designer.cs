@@ -584,6 +584,11 @@
             this.nudWarningPoint.ForeColor = System.Drawing.Color.Red;
             this.nudWarningPoint.Location = new System.Drawing.Point(278, 239);
             this.nudWarningPoint.Margin = new System.Windows.Forms.Padding(2);
+            this.nudWarningPoint.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
             this.nudWarningPoint.Name = "nudWarningPoint";
             this.nudWarningPoint.Size = new System.Drawing.Size(51, 21);
             this.nudWarningPoint.TabIndex = 28;
