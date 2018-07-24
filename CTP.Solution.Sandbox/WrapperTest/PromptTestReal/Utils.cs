@@ -384,8 +384,10 @@ namespace WrapperTest
         public static double 多空差幅度 = 5000;
         public static double 开仓偏移量 = 1;
         public static double 涨跌幅提示 = 0.0045;
+        public static double 止损比例 = 0.025;
         public static int 分钟数 = 5;
         public static double 范围 = 0.00015;
+        public static double 杠杆比例 = 1;
 
         public static double availableMoney = 0;
         /// <summary>
@@ -668,29 +670,38 @@ namespace WrapperTest
                     marketData.时段结束 = string.Format("{0}.{1}", pDepthMarketData.UpdateTime, pDepthMarketData.UpdateMillisec);
                 }
 
+                var upRatio = 1 + 涨跌幅提示;
+                var downRatio = 1 - 涨跌幅提示;
+
                 //监控品种的涨跌幅提示
                 if (!AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                 {
-                    if ((pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 1.0110 && pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.0090) || (pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 0.9910 && pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 0.9890)) //大窗口提示
+                    if ((pDepthMarketData.LastPrice >= pDepthMarketData.PreClosePrice * upRatio || pDepthMarketData.LastPrice >= pDepthMarketData.LowestPrice * upRatio) || (pDepthMarketData.LastPrice <= pDepthMarketData.PreClosePrice * downRatio || pDepthMarketData.LastPrice <= pDepthMarketData.HighestPrice * downRatio)) //大窗口提示
                     {
-                        var up = pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 1.0110 && pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.0090;
+                        var up = pDepthMarketData.LastPrice >= pDepthMarketData.PreClosePrice * upRatio || pDepthMarketData.LastPrice >= pDepthMarketData.LowestPrice * upRatio;
 
 
                         if (!messages.ContainsKey(instrumentId + (up ? "兴" : "衰")))
                         {
-                            var ratio = (pDepthMarketData.LastPrice - pDepthMarketData.OpenPrice) / pDepthMarketData.OpenPrice;
-                            var prompt = string.Format("信号：{0}{1},开盘:{2},当前:{3},幅度:{4:P},时间{5}", instrumentId, up ? "兴" : "衰", pDepthMarketData.OpenPrice, pDepthMarketData.LastPrice, ratio, DateTime.Now);
-                            WriteLine(prompt, true);
+                            var ratio = (pDepthMarketData.LastPrice - pDepthMarketData.PreClosePrice) / pDepthMarketData.PreClosePrice;
+                            var prompt = string.Format("信号：{0}{1},昨收:{2},当前:{3},幅度:{4:P},时间{5}", instrumentId, up ? "兴" : "衰", pDepthMarketData.PreClosePrice, pDepthMarketData.LastPrice, ratio, DateTime.Now);
+                            WriteLine(prompt, true); 
+                            
+                            var totalMoney = availableMoney * 杠杆比例;
+                            var insPrice = pDepthMarketData.LastPrice * Utils.InstrumentToInstrumentInfo[instrumentId].VolumeMultiple;
+                            var vol = (int)Math.Round(totalMoney / insPrice);
+
                             var list = new List<string>();
                             list.Add(instrumentId);
                             list.Add(up ? "兴" : "衰");
 
-                            list.Add(pDepthMarketData.OpenPrice.ToString());
+                            list.Add(pDepthMarketData.PreClosePrice.ToString());
                             list.Add(pDepthMarketData.LastPrice.ToString());
                             list.Add(ratio.ToString("P"));
 
-                            list.Add(marketData.pDepthMarketData.LastPrice.ToString());
+                            list.Add(marketData.pDepthMarketData.LastPrice.ToString());                          
                             list.Add(DateTime.Now.ToString("mm:ss"));
+                            list.Add(vol.ToString());
 
                             var promptItem = new PromptForm.PromptItem();
                             promptItem.Time = DateTime.Now;
@@ -698,7 +709,7 @@ namespace WrapperTest
                             promptItem.InstrumentId = instrumentId;
                             promptItem.Direction = up ? "Buy" : "Sell";
                             promptItem.Price = marketData.pDepthMarketData.LastPrice;
-                            promptItem.Volume = 1;
+                            promptItem.Volume = vol;
                             promptItem.Offset = 5;
                             promptItem.Ratio = ratio;
 
@@ -706,7 +717,7 @@ namespace WrapperTest
                             {
                                 promptForm.Invoke(new Action(() =>
                                     {
-                                        promptForm.AddMessage(promptItem);
+                                        promptForm.SaveMessage(promptItem);
                                     }));
                             }
 
@@ -720,13 +731,13 @@ namespace WrapperTest
                     }
                 }
 
-                if (pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01 || pDepthMarketData.LastPrice < pDepthMarketData.OpenPrice * 0.99) //状态栏提示
+                if ((pDepthMarketData.LastPrice >= pDepthMarketData.PreClosePrice * upRatio || pDepthMarketData.LastPrice >= pDepthMarketData.LowestPrice * upRatio) || (pDepthMarketData.LastPrice <= pDepthMarketData.PreClosePrice * downRatio || pDepthMarketData.LastPrice <= pDepthMarketData.HighestPrice * downRatio)) //大窗口提示
                 {
                     if (!AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
                     {
-                        var b = pDepthMarketData.LastPrice > pDepthMarketData.OpenPrice * 1.01;
+                        var b = pDepthMarketData.LastPrice >= pDepthMarketData.PreClosePrice * upRatio || pDepthMarketData.LastPrice >= pDepthMarketData.LowestPrice * upRatio;
 
-                        var message = string.Format("{0}{1}{2:P}", instrumentId, b ? "上涨" : "下跌", (pDepthMarketData.LastPrice - pDepthMarketData.OpenPrice) / pDepthMarketData.OpenPrice);
+                        var message = string.Format("{0}{1}{2:P}", instrumentId, b ? "上涨" : "下跌", (pDepthMarketData.LastPrice - pDepthMarketData.PreClosePrice) / pDepthMarketData.PreClosePrice);
 
                         if (b && promptForm.IsHandleCreated)
                         {
@@ -798,82 +809,82 @@ namespace WrapperTest
                     }));
                 }
 
-                if ((max - min) / min > 涨跌幅提示 && AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
-                {
-                    var maxTime = Convert.ToDateTime(maxQuote.更新日期.ToString("yyyy/MM/dd") + " " + maxQuote.pDepthMarketData.UpdateTime);
-                    var minTime = Convert.ToDateTime(minQuote.更新日期.ToString("yyyy/MM/dd") + " " + minQuote.pDepthMarketData.UpdateTime);
+                //if ((max - min) / min > 涨跌幅提示 && AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
+                //{
+                //    var maxTime = Convert.ToDateTime(maxQuote.更新日期.ToString("yyyy/MM/dd") + " " + maxQuote.pDepthMarketData.UpdateTime);
+                //    var minTime = Convert.ToDateTime(minQuote.更新日期.ToString("yyyy/MM/dd") + " " + minQuote.pDepthMarketData.UpdateTime);
 
-                    WriteLine(string.Format("maxTime:{0},minTime:{1}", maxTime, minTime), true);
+                //    WriteLine(string.Format("maxTime:{0},minTime:{1}", maxTime, minTime), true);
 
-                    bool up = true;
-                    if (maxTime > minTime)
-                    {
-                        up = true;
-                    }
-                    else
-                    {
-                        up = false;
-                    }
+                //    bool up = true;
+                //    if (maxTime > minTime)
+                //    {
+                //        up = true;
+                //    }
+                //    else
+                //    {
+                //        up = false;
+                //    }
 
-                    if (!messages.ContainsKey(instrumentId + (up ? "涨" : "跌")))
-                    {
-                        double ratio;
-                        if (up)
-                        {
-                            ratio = (max - min) / min;
-                        }
-                        else
-                        {
-                            ratio = (max - min) / max;
-                        }
+                //    if (!messages.ContainsKey(instrumentId + (up ? "涨" : "跌")))
+                //    {
+                //        double ratio;
+                //        if (up)
+                //        {
+                //            ratio = (max - min) / min;
+                //        }
+                //        else
+                //        {
+                //            ratio = (max - min) / max;
+                //        }
 
-                        var prompt = string.Format("信号：{0}{1},最低:{2},最高:{3},当前:{4},幅度:{5},时间:{6}", instrumentId, up ? "上涨" : "下跌", min, max, marketData.pDepthMarketData.LastPrice, ratio, DateTime.Now);
-                        WriteLine(prompt, true);
-                        var list = new List<string>();
-                        list.Add(instrumentId);
-                        list.Add(up ? "涨" : "跌");
-                        if (up)
-                        {
-                            list.Add(min.ToString());
-                            list.Add(max.ToString());
-                            list.Add(((max - min) / min).ToString("P"));
-                        }
-                        else
-                        {
-                            list.Add(max.ToString());
-                            list.Add(min.ToString());
-                            list.Add(((max - min) / max).ToString("P"));
-                        }
+                //        var prompt = string.Format("信号：{0}{1},最低:{2},最高:{3},当前:{4},幅度:{5},时间:{6}", instrumentId, up ? "上涨" : "下跌", min, max, marketData.pDepthMarketData.LastPrice, ratio, DateTime.Now);
+                //        WriteLine(prompt, true);
+                //        var list = new List<string>();
+                //        list.Add(instrumentId);
+                //        list.Add(up ? "涨" : "跌");
+                //        if (up)
+                //        {
+                //            list.Add(min.ToString());
+                //            list.Add(max.ToString());
+                //            list.Add(((max - min) / min).ToString("P"));
+                //        }
+                //        else
+                //        {
+                //            list.Add(max.ToString());
+                //            list.Add(min.ToString());
+                //            list.Add(((max - min) / max).ToString("P"));
+                //        }
 
-                        list.Add(marketData.pDepthMarketData.LastPrice.ToString());
-                        list.Add(DateTime.Now.ToString("mm:ss"));
+                //        list.Add(marketData.pDepthMarketData.LastPrice.ToString());
+                //        list.Add(DateTime.Now.ToString("mm:ss"));
 
-                        var promptItem = new PromptForm.PromptItem();
-                        promptItem.Time = DateTime.Now;
-                        promptItem.MessageItems = list;
-                        promptItem.InstrumentId = instrumentId;
-                        promptItem.Direction = up ? "Buy" : "Sell";
-                        promptItem.Price = marketData.pDepthMarketData.LastPrice;
-                        promptItem.Volume = 1;
-                        promptItem.Offset = 5;
-                        promptItem.Ratio = ratio;
+                //        var promptItem = new PromptForm.PromptItem();
+                //        promptItem.Time = DateTime.Now;
+                //        promptItem.MessageItems = list;
+                //        promptItem.InstrumentId = instrumentId;
+                //        promptItem.Direction = up ? "Buy" : "Sell";
+                //        promptItem.Price = marketData.pDepthMarketData.LastPrice;
+                //        promptItem.Volume = 1;
+                //        promptItem.Offset = 5;
+                //        promptItem.Ratio = ratio;
 
-                        if (promptForm.IsHandleCreated)
-                        {
-                            promptForm.Invoke(new Action(() =>
-                                {
-                                    promptForm.SaveMessage(promptItem);
-                                }));
-                        }
+                //        if (promptForm.IsHandleCreated)
+                //        {
+                //            promptForm.Invoke(new Action(() =>
+                //                {
+                //                    promptForm.SaveMessage(promptItem);
+                //                }));
+                //        }
 
-                        var key = instrumentId + (up ? "涨" : "跌");
-                        if (!messages.ContainsKey(key))
-                        {
-                            messages[key] = prompt;
-                        }
+                //        var key = instrumentId + (up ? "涨" : "跌");
+                //        if (!messages.ContainsKey(key))
+                //        {
+                //            messages[key] = prompt;
+                //        }
                         
-                    }
-                }
+                //    }
+                //}
 
 
                 var s = FormatQuote(marketData);
@@ -1113,6 +1124,12 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 范围 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                杠杆比例 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                止损比例 = Convert.ToDouble(GetLineData(line));
                 sr.Close();
             }
         }

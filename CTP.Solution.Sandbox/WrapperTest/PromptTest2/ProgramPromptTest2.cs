@@ -438,8 +438,8 @@ namespace WrapperTest
                 var dateTime = DateTime.Now;
                 Utils.WriteLine(string.Format("检查是否退出{0}", dateTime));
 
-                if ((dateTime.Hour == 15 && dateTime.Minute == 5) ||
-                    (dateTime.Hour == 1 && dateTime.Minute == 35))
+                if ((dateTime.Hour == 13 && dateTime.Minute == 5) ||
+                    (dateTime.Hour == 23 && dateTime.Minute == 5))
                 {
                     Utils.WriteLine(string.Format("收盘，程序关闭{0}", dateTime));
                     Email.SendMail("收盘，程序关闭", DateTime.Now.ToString(CultureInfo.InvariantCulture),

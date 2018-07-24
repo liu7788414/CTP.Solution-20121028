@@ -139,36 +139,36 @@ namespace WrapperTest
         {
             try
             {
-                if(PositionFields.Count > 0)
-                {
-                    return;
-                }
+                //if(PositionFields.Count > 0)
+                //{
+                //    return;
+                //}
 
-                var ordersToCancel = new List<ThostFtdcOrderField>();
+                //var ordersToCancel = new List<ThostFtdcOrderField>();
 
-                foreach (var order in UnFinishedOrderFields.Values)
-                {
-                    //只撤开仓单
-                    if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
-                    {
-                        var updateTime = Convert.ToDateTime(order.InsertTime);
+                //foreach (var order in UnFinishedOrderFields.Values)
+                //{
+                //    //只撤开仓单
+                //    if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
+                //    {
+                //        var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 10))
-                        {
-                            ordersToCancel.Add(order);
-                        }
-                    }
-                }
+                //        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 10))
+                //        {
+                //            ordersToCancel.Add(order);
+                //        }
+                //    }
+                //}
 
-                foreach (var order in ordersToCancel)
-                {
-                    //if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
-                    //{
-                    ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
-                    //}
-                }
+                //foreach (var order in ordersToCancel)
+                //{
+                //    //if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
+                //    //{
+                //    ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
+                //    //}
+                //}
 
-                ordersToCancel.Clear();
+                //ordersToCancel.Clear();
 
                 ////撤平仓单
                 //foreach (var order in UnFinishedOrderFields.Values)
@@ -1234,8 +1234,9 @@ namespace WrapperTest
             }
         }
 
-        private void ReqQryInvestorPosition()
+        public void ReqQryInvestorPosition()
         {
+            PositionFields.Clear();
             var req = new ThostFtdcQryInvestorPositionField { BrokerID = BrokerId, InvestorID = InvestorId };
             int iResult = ReqQryInvestorPosition(req, RequestId++);
         }
