@@ -227,6 +227,9 @@ namespace PromptForm
                                     subDis.ForeColor = color;
                                 }
 
+                                var subVol = item.SubItems.Add(kv.Value.VolumeTotal.ToString());
+                                subVol.ForeColor = color;
+
                                 lvOrder.Items.Add(item);
                             }
                         }
@@ -1033,7 +1036,16 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    if (cbTargetMoney.Checked)
+                    {
+                        var targetMoney = Convert.ToDouble(tbTargetMoney.Text);
+                        var targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    }
+                    else
+                    {
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    }
                 }
             }
         }
@@ -1053,7 +1065,16 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    if (cbTargetMoney.Checked)
+                    {
+                        var targetMoney = Convert.ToDouble(tbTargetMoney.Text);
+                        var targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    }
+                    else
+                    {
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    }
                 }
             }
         }
@@ -1191,6 +1212,21 @@ namespace PromptForm
             lbHighTotal.Text = "-99999";
             lbLowTotal.Text = "99999";
             _trader.ReqQryInvestorPosition();
+        }
+
+        private void cbTargetMoney_CheckedChanged(object sender, EventArgs e)
+        {
+            labelTargetMoney.Enabled = tbTargetMoney.Enabled = ((CheckBox)sender).Checked;
+        }
+
+        private void btBuy9_Click_1(object sender, EventArgs e)
+        {
+            OpenByButtonBuy((Button)sender);
+        }
+
+        private void btSell9_Click_1(object sender, EventArgs e)
+        {
+            OpenByButtonSell((Button)sender);
         }
     }
 
