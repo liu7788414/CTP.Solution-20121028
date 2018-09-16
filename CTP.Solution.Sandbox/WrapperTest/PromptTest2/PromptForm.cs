@@ -747,6 +747,17 @@ namespace PromptForm
             closeRatio = Convert.ToDouble(nudCloseRatio.Value);
             overtimePoint = -Convert.ToDouble(nudOverTimePoint.Value);
             tbUpDownRatio.Text = Utils.涨跌幅提示.ToString();
+
+            var listIns = Utils.CategoryToMainInstrument.Values.ToList();
+            listIns.Sort();
+
+            foreach(var ins in listIns)
+            {
+                var item = new ListViewItem();
+                var sub = item.SubItems.Add(ins);
+                sub = item.SubItems.Add(ins);
+                lvMainIns.Items.Add(item);
+            }
         }
 
         private Point p;
@@ -1227,6 +1238,14 @@ namespace PromptForm
         private void btSell9_Click_1(object sender, EventArgs e)
         {
             OpenByButtonSell((Button)sender);
+        }
+
+        private void lvMainIns_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lvMainIns.SelectedItems != null && lvMainIns.SelectedItems.Count > 0)
+            {
+                tbIns.Text = lvMainIns.SelectedItems[0].SubItems[1].Text;
+            }
         }
     }
 

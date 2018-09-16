@@ -109,6 +109,9 @@
             this.cbTargetMoney = new System.Windows.Forms.CheckBox();
             this.btBuy9 = new System.Windows.Forms.Button();
             this.btSell9 = new System.Windows.Forms.Button();
+            this.lvMainIns = new System.Windows.Forms.ListView();
+            this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
@@ -343,7 +346,7 @@
             this.toolStripStatusLabel5});
             this.statusStrip1.Location = new System.Drawing.Point(0, 349);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(646, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(726, 22);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
@@ -900,8 +903,6 @@
             // cbTargetMoney
             // 
             this.cbTargetMoney.AutoSize = true;
-            this.cbTargetMoney.Checked = true;
-            this.cbTargetMoney.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbTargetMoney.Location = new System.Drawing.Point(440, 148);
             this.cbTargetMoney.Margin = new System.Windows.Forms.Padding(2);
             this.cbTargetMoney.Name = "cbTargetMoney";
@@ -934,11 +935,37 @@
             this.btSell9.UseVisualStyleBackColor = false;
             this.btSell9.Click += new System.EventHandler(this.btSell9_Click_1);
             // 
+            // lvMainIns
+            // 
+            this.lvMainIns.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader19,
+            this.columnHeader20});
+            this.lvMainIns.FullRowSelect = true;
+            this.lvMainIns.GridLines = true;
+            this.lvMainIns.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lvMainIns.Location = new System.Drawing.Point(648, -1);
+            this.lvMainIns.Name = "lvMainIns";
+            this.lvMainIns.Size = new System.Drawing.Size(74, 347);
+            this.lvMainIns.TabIndex = 67;
+            this.lvMainIns.UseCompatibleStateImageBehavior = false;
+            this.lvMainIns.View = System.Windows.Forms.View.Details;
+            this.lvMainIns.SelectedIndexChanged += new System.EventHandler(this.lvMainIns_SelectedIndexChanged);
+            // 
+            // columnHeader19
+            // 
+            this.columnHeader19.Text = "主力合约";
+            this.columnHeader19.Width = 0;
+            // 
+            // columnHeader20
+            // 
+            this.columnHeader20.Text = "主力合约";
+            // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(646, 371);
+            this.ClientSize = new System.Drawing.Size(726, 371);
+            this.Controls.Add(this.lvMainIns);
             this.Controls.Add(this.btSell9);
             this.Controls.Add(this.btBuy9);
             this.Controls.Add(this.cbTargetMoney);
@@ -1091,6 +1118,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader11;
         private System.Windows.Forms.Button btBuy9;
         private System.Windows.Forms.Button btSell9;
+        private System.Windows.Forms.ListView lvMainIns;
+        private System.Windows.Forms.ColumnHeader columnHeader19;
+        private System.Windows.Forms.ColumnHeader columnHeader20;
     }
 }
 
