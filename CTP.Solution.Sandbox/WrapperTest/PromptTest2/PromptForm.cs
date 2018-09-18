@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WrapperTest;
+using VerticalProgressBar;
 
 namespace PromptForm
 {
@@ -319,8 +320,8 @@ namespace PromptForm
                                     var lastTick = Utils.InstrumentToLastTick[ins];
                                     var rangepoint = (int)(lastTick.LastPrice * Utils.范围 * info.VolumeMultiple);
 
-                                    nudWarningPoint.Value = rangepoint;
-                                    nudLossPoint.Value = rangepoint * 2;
+                                    //nudWarningPoint.Value = rangepoint;
+                                    //nudLossPoint.Value = rangepoint * 2;
                                     var cost = kv.Value.OpenCost / info.VolumeMultiple / volume;
                                     item.SubItems.Add(cost.ToString("f1"));
 
@@ -597,6 +598,15 @@ namespace PromptForm
                             lbHighTotal.Text = "-99999";
                             lbLowTotal.Text = "99999";
                         }
+
+                        if(listView1.Items.Count > 0)
+                        {
+                            BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            BackColor = SystemColors.Control;
+                        }
                     }));
                 }
             }
@@ -640,7 +650,9 @@ namespace PromptForm
             item.SubItems.Add(promptItem.MessageItems[4]);
             item.SubItems.Add(promptItem.MessageItems[5]);
             item.SubItems.Add(promptItem.MessageItems[6]);
-            item.SubItems.Add(promptItem.MessageItems[7]);
+            if (promptItem.MessageItems.Count > 7)
+            { item.SubItems.Add(promptItem.MessageItems[7]); }
+
 
             var ins = promptItem.MessageItems[0];
 
@@ -758,7 +770,74 @@ namespace PromptForm
                 sub = item.SubItems.Add(ins);
                 lvMainIns.Items.Add(item);
             }
+
+            for (var i = 0; i < listIns.Count;i++ )
+            {
+                var vpb = new VerticalProgressBar.VerticalProgressBar();
+
+                vpb.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpb.Color = Color.Blue;
+                vpb.Location = new Point(12 + 30 * i, 334);
+                vpb.Maximum = ((int)Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])]) * 10000;
+                vpb.Minimum = 0;
+                vpb.Name = listIns[i];
+                vpb.Size = new Size(10, 110);
+                vpb.Step = 1;
+                vpb.Style = VerticalProgressBar.Styles.Solid;
+                vpb.Value = 0;
+                vpb.Click += vpb_Click;
+                var tp = new ToolTip();
+                tp.SetToolTip(vpb, listIns[i]);
+
+                Controls.Add(vpb);
+
+                var l = new Label();
+                l.AutoSize = true;
+                if (i % 2 == 0)
+                {
+                    l.Location = new Point(8 + 30 * i, 457);
+                }
+                else
+                {
+                    l.Location = new Point(8 + 30 * i, 447);
+                }
+
+                l.Name = string.Format("l{0}", i);
+                l.Size = new Size(15, 9);
+                l.Text = listIns[i];
+                l.Font = new Font("SimSun", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+                l.Click += label_Click;
+
+                Controls.Add(l);
+
+                InsToVpb[listIns[i]] = vpb;
+            }
         }
+
+        void vpb_Click(object sender, EventArgs e)
+        {
+            tbIns.Text = ((VerticalProgressBar.VerticalProgressBar)sender).Name;
+        }
+
+        public void PerformStep(string ins, int value)
+        {
+            if (InsToVpb.ContainsKey(ins))
+            {
+                var vpb = InsToVpb[ins];
+                vpb.Value = value;
+
+                if(value > vpb.Maximum * 0.8)
+                {
+                    vpb.Color = Color.Red; 
+                }
+                else
+                {
+                    vpb.Color = Color.Green;
+                }
+            }
+        }
+
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpb = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
 
         private Point p;
         private Point p2;
@@ -780,7 +859,11 @@ namespace PromptForm
             {
                 var ins = item.SubItems[1].Text;
                 var price = Convert.ToDouble(item.SubItems[6].Text);
-                var vol = Convert.ToInt32(item.SubItems[8].Text);
+                int vol = 1;
+                if (item.SubItems.Count > 8)
+                {
+                    vol = Convert.ToInt32(item.SubItems[8].Text);
+                }
 
                 if (_trader.PositionFields.Count >= 2)
                 {
@@ -1246,6 +1329,11 @@ namespace PromptForm
             {
                 tbIns.Text = lvMainIns.SelectedItems[0].SubItems[1].Text;
             }
+        }
+
+        private void label_Click(object sender, EventArgs e)
+        {
+            tbIns.Text = ((Label)sender).Text;
         }
     }
 
