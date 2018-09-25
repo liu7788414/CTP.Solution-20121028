@@ -103,7 +103,6 @@
             this.btSell5 = new System.Windows.Forms.Button();
             this.btSell7 = new System.Windows.Forms.Button();
             this.btPosition = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
             this.labelTargetMoney = new System.Windows.Forms.Label();
             this.tbTargetMoney = new System.Windows.Forms.TextBox();
             this.cbTargetMoney = new System.Windows.Forms.CheckBox();
@@ -344,7 +343,7 @@
             this.toolStripStatusLabel4,
             this.timeLabel,
             this.toolStripStatusLabel5});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 349);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 448);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(726, 22);
             this.statusStrip1.TabIndex = 11;
@@ -871,16 +870,6 @@
             this.btPosition.UseVisualStyleBackColor = true;
             this.btPosition.Click += new System.EventHandler(this.btPosition_Click);
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.ForeColor = System.Drawing.Color.Red;
-            this.label8.Location = new System.Drawing.Point(2, 331);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(389, 12);
-            this.label8.TabIndex = 61;
-            this.label8.Text = "止损、止盈、盈利才加仓、亏损不加仓、控制品种数量、不同时持反向仓";
-            // 
             // labelTargetMoney
             // 
             this.labelTargetMoney.AutoSize = true;
@@ -945,7 +934,7 @@
             this.lvMainIns.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvMainIns.Location = new System.Drawing.Point(648, -1);
             this.lvMainIns.Name = "lvMainIns";
-            this.lvMainIns.Size = new System.Drawing.Size(74, 347);
+            this.lvMainIns.Size = new System.Drawing.Size(74, 326);
             this.lvMainIns.TabIndex = 67;
             this.lvMainIns.UseCompatibleStateImageBehavior = false;
             this.lvMainIns.View = System.Windows.Forms.View.Details;
@@ -964,14 +953,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(726, 371);
+            this.ClientSize = new System.Drawing.Size(726, 470);
             this.Controls.Add(this.lvMainIns);
             this.Controls.Add(this.btSell9);
             this.Controls.Add(this.btBuy9);
             this.Controls.Add(this.cbTargetMoney);
             this.Controls.Add(this.tbTargetMoney);
             this.Controls.Add(this.labelTargetMoney);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.btPosition);
             this.Controls.Add(this.btSell7);
             this.Controls.Add(this.btSell5);
@@ -1111,7 +1099,6 @@
         private System.Windows.Forms.Button btSell7;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
         private System.Windows.Forms.Button btPosition;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label labelTargetMoney;
         private System.Windows.Forms.TextBox tbTargetMoney;
         private System.Windows.Forms.CheckBox cbTargetMoney;
