@@ -398,25 +398,25 @@ namespace PromptForm
 
                                     if (cbAutoClose.Checked)
                                     {
-                                        if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick > cost * (1 + Utils.止盈止损比例)))
+                                        if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick > cost * (1 + Utils.止盈比例)))
                                         {
                                             ClosePositionByItem(item, string.Format("{0}多仓止盈！", ins), "");
                                             Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止盈！", ins));
                                         }
 
-                                        if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick < cost * (1 - Utils.止盈止损比例)))
+                                        if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick < cost * (1 - Utils.止盈比例)))
                                         {
                                             ClosePositionByItem(item, "", string.Format("{0}空仓止盈！", ins));
                                             Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止盈！", ins));
                                         }
 
-                                        if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick < cost * (1 - Utils.止盈止损比例)))
+                                        if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick < cost * (1 - Utils.止损比例)))
                                         {
                                             ClosePositionByItem(item, string.Format("{0}多仓止损！", ins), "");
                                             Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止损！", ins));
                                         }
 
-                                        if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick > cost * (1 + Utils.止盈止损比例)))
+                                        if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick > cost * (1 + Utils.止损比例)))
                                         {
                                             ClosePositionByItem(item, "", string.Format("{0}空仓止损！", ins));
                                             Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止损！", ins));
