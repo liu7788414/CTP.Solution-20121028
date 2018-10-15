@@ -387,6 +387,7 @@ namespace WrapperTest
         public static double 涨跌幅提示 = 0.0045;
         public static double 止损比例 = 0.01;
         public static double 止盈比例 = 0.0025;
+        public static double 单手总金额 = 200000;
         public static int 分钟数 = 5;
         public static double 范围 = 0.00015;
         public static double 杠杆比例 = 1;
@@ -800,14 +801,6 @@ namespace WrapperTest
 
                 var totalVolume = dataQueueSub.Sum(d => d.现手);
 
-                if (promptForm.IsHandleCreated)
-                {
-                    promptForm.Invoke(new Action(() =>
-                    {
-                        promptForm.PerformStep(instrumentId, totalVolume);
-                    }));
-                }
-
                 //WriteLine(string.Format("{0}的{1}分钟的累计成交量为{2}万手", instrumentId, 分钟数, totalVolume / 10000.0), true);
 
                 var min = dataQueueSub.Min(d => d.pDepthMarketData.LastPrice);
@@ -821,6 +814,14 @@ namespace WrapperTest
                     promptForm.Invoke(new Action(() =>
                     {
                         promptForm.ShowWave(max, min, max - min);
+                    }));
+                }
+
+                if (promptForm.IsHandleCreated)
+                {
+                    promptForm.Invoke(new Action(() =>
+                    {
+                        promptForm.PerformStep(instrumentId, totalVolume, (max - min) / min, marketData);
                     }));
                 }
 
@@ -1170,6 +1171,9 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 止盈比例 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                单手总金额 = Convert.ToDouble(GetLineData(line));
 
                 sr.Close();
             }

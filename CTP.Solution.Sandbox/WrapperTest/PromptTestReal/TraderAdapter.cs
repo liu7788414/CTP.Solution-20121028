@@ -102,6 +102,15 @@ namespace WrapperTest
             set { _unfinishedOrderFields = value; }
         }
 
+        private ConcurrentDictionary<string, int> _insToOrderCount =
+    new ConcurrentDictionary<string, int>();
+
+        public ConcurrentDictionary<string, int> InsToOrderCount
+        {
+            get { return _insToOrderCount; }
+            set { _insToOrderCount = value; }
+        }
+
         private System.Timers.Timer _timerReportPosition = new System.Timers.Timer(1000 * 60 * 60); //每小时报告一次
         private System.Timers.Timer _timerCancelOrder = new System.Timers.Timer(1000 * 10);
 
@@ -144,29 +153,29 @@ namespace WrapperTest
                 //    return;
                 //}
 
-                //var ordersToCancel = new List<ThostFtdcOrderField>();
+                var ordersToCancel = new List<ThostFtdcOrderField>();
 
-                //foreach (var order in UnFinishedOrderFields.Values)
-                //{
-                //    //只撤开仓单
-                //    if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
-                //    {
-                //        var updateTime = Convert.ToDateTime(order.InsertTime);
+                foreach (var order in UnFinishedOrderFields.Values)
+                {
+                    //只撤开仓单
+                    if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
+                    {
+                        var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                //        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 10))
-                //        {
-                //            ordersToCancel.Add(order);
-                //        }
-                //    }
-                //}
+                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 1, 0))
+                        {
+                            ordersToCancel.Add(order);
+                        }
+                    }
+                }
 
-                //foreach (var order in ordersToCancel)
-                //{
-                //    //if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
-                //    //{
-                //    ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
-                //    //}
-                //}
+                foreach (var order in ordersToCancel)
+                {
+                    //if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
+                    {
+                        ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
+                    }
+                }
 
                 //ordersToCancel.Clear();
 
@@ -277,6 +286,26 @@ namespace WrapperTest
             return ret;
         }
 
+        public void AddOrderCount(string ins)
+        {
+            //记录当天合约已经报单的次数
+            if (InsToOrderCount.ContainsKey(ins))
+            {
+                InsToOrderCount[ins]++;
+            }
+            else
+            {
+                InsToOrderCount[ins] = 1;
+            }
+
+            Utils.WriteLine(string.Format("增加{0}的报单计数到{1}...", ins, InsToOrderCount[ins]), true);
+        }
+
+        public bool IsInsTradedToday(string ins)
+        {
+            return InsToOrderCount.ContainsKey(ins);
+        }
+
         void TraderAdapter_OnRspQryOrder(ThostFtdcOrderField pOrder, ThostFtdcRspInfoField pRspInfo, int nRequestID, bool bIsLast)
         {
             try
@@ -297,6 +326,8 @@ namespace WrapperTest
                     {
                         UnFinishedOrderFields[GetOrderKey(pOrder)] = pOrder;
                     }
+
+                    AddOrderCount(pOrder.InstrumentID);
                 }
 
                 if (bIsLast)
@@ -961,6 +992,11 @@ namespace WrapperTest
                     Utils.WriteLine(temp, true);
 
                     UnFinishedOrderFields[GetOrderKey(pOrder)] = pOrder;
+
+                    if(pOrder.OrderSubmitStatus == EnumOrderSubmitStatusType.Accepted)
+                    {
+                        AddOrderCount(pOrder.InstrumentID);
+                    }
 
                     if (pOrder.OrderStatus == EnumOrderStatusType.Canceled) //报单被撤单
                     {

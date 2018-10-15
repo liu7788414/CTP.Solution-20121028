@@ -552,6 +552,8 @@ namespace WrapperTest
 
                     Utils.WriteLine(temp, true);
 
+                    Task.Run(() => { Email.SendMessage(true, "liu7788414", "15800377605", temp); });                                 
+
                     //三种情况，买开找多仓；卖开找空仓；其它的都是找反向仓：卖平找多仓，买平找空仓
                     EnumPosiDirectionType longOrShort;
 

@@ -396,30 +396,51 @@ namespace PromptForm
                                         }
                                     }
 
-                                    if (cbAutoClose.Checked)
+                                    if (cbAutoCloseProfit.Checked)
                                     {
                                         if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick > cost * (1 + Utils.止盈比例)))
                                         {
                                             ClosePositionByItem(item, string.Format("{0}多仓止盈！", ins), "");
-                                            Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止盈！", ins));
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止盈！", ins));
                                         }
 
                                         if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick < cost * (1 - Utils.止盈比例)))
                                         {
                                             ClosePositionByItem(item, "", string.Format("{0}空仓止盈！", ins));
-                                            Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止盈！", ins));
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止盈！", ins));
                                         }
+                                    }
 
+                                    if (cbAutoCloseLoss.Checked)
+                                    {
                                         if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick < cost * (1 - Utils.止损比例)))
                                         {
                                             ClosePositionByItem(item, string.Format("{0}多仓止损！", ins), "");
-                                            Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止损！", ins));
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止损！", ins));
                                         }
 
                                         if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick > cost * (1 + Utils.止损比例)))
                                         {
                                             ClosePositionByItem(item, "", string.Format("{0}空仓止损！", ins));
-                                            Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止损！", ins));
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止损！", ins));
+                                        }
+
+                                        HighLowProfit highLowProfitTemp;
+                                        if (Utils.PositionKeyToHighLowProfit.ContainsKey(kv.Key))
+                                        {
+                                            highLowProfitTemp = Utils.PositionKeyToHighLowProfit[kv.Key];
+
+                                            if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick < (cost + highLowProfitTemp.HighTick * info.PriceTick) * (1 - Utils.止损比例)))
+                                            {
+                                                ClosePositionByItem(item, string.Format("{0}多仓移动止损！", ins), "");
+                                                //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓移动止损！", ins));
+                                            }
+
+                                            if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick > (cost + highLowProfitTemp.LowTick * info.PriceTick) * (1 + Utils.止损比例)))
+                                            {
+                                                ClosePositionByItem(item, "", string.Format("{0}空仓移动止损！", ins));
+                                                //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓移动止损！", ins));
+                                            }
                                         }
                                     }
 
@@ -775,6 +796,7 @@ namespace PromptForm
             closeRatio = Convert.ToDouble(nudCloseRatio.Value);
             overtimePoint = -Convert.ToDouble(nudOverTimePoint.Value);
             tbUpDownRatio.Text = Utils.涨跌幅提示.ToString();
+            tbTargetMoney.Text = Utils.单手总金额.ToString();
 
             var listIns = Utils.CategoryToMainInstrument.Values.ToList();
             listIns.Sort();
@@ -787,17 +809,18 @@ namespace PromptForm
                 lvMainIns.Items.Add(item);
             }
 
+            var distance = Width / listIns.Count;
+
             for (var i = 0; i < listIns.Count;i++ )
             {
                 var vpb = new VerticalProgressBar.VerticalProgressBar();
 
                 vpb.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
-                vpb.Color = Color.Blue;
-                vpb.Location = new Point(12 + 30 * i, 334);
+                vpb.Location = new Point(12 + distance * i, 334);
                 vpb.Maximum = ((int)Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])]) * 10000;
                 vpb.Minimum = 0;
                 vpb.Name = listIns[i];
-                vpb.Size = new Size(15, 80);
+                vpb.Size = new Size(15, 60);
                 vpb.Step = 1;
                 vpb.Style = VerticalProgressBar.Styles.Solid;
                 vpb.Value = 0;
@@ -811,17 +834,17 @@ namespace PromptForm
                 l.AutoSize = true;
                 if (i % 2 == 0)
                 {
-                    l.Location = new Point(0 + 30 * i, 430);
+                    l.Location = new Point(0 + distance * i, 410);
                 }
                 else
                 {
-                    l.Location = new Point(0 + 30 * i, 420);
+                    l.Location = new Point(0 + distance * i, 400);
                 }
 
                 l.Name = string.Format("l{0}", i);
                 l.Size = new Size(15, 9);
                 l.Text = listIns[i];
-                l.Font = new Font("SimSun", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+                l.Font = new Font("SimSun", 8F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
                 l.Click += label_Click;
 
                 Controls.Add(l);
@@ -845,9 +868,57 @@ namespace PromptForm
 
                 Controls.Add(limit);
 
+
+                var vpbWaveRatio = new VerticalProgressBar.VerticalProgressBar();
+
+                vpbWaveRatio.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpbWaveRatio.Location = new Point(12 + distance * i, 430);
+                vpbWaveRatio.Maximum = (int)(Utils.涨跌幅提示 * 10000);
+                vpbWaveRatio.Minimum = 0;
+                vpbWaveRatio.Size = new Size(15, 40);
+                vpbWaveRatio.Step = 1;
+                vpbWaveRatio.Style = VerticalProgressBar.Styles.Solid;
+                vpbWaveRatio.Value = 0;
+
+                Controls.Add(vpbWaveRatio);
+
+                var vpbLongCount = new VerticalProgressBar.VerticalProgressBar();
+
+                vpbLongCount.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpbLongCount.Location = new Point(12 + distance * i, 475);
+                vpbLongCount.Maximum = (int)Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])] * 10000 / Utils.分钟数;
+                vpbLongCount.Minimum = 0;
+                vpbLongCount.Size = new Size(7, 40);
+                vpbLongCount.Step = 1;
+                vpbLongCount.Style = VerticalProgressBar.Styles.Solid;
+                vpbLongCount.Color = Color.Red;
+                vpbLongCount.Value = 0;
+
+                Controls.Add(vpbLongCount);
+
+                var vpbShortCount = new VerticalProgressBar.VerticalProgressBar();
+
+                vpbShortCount.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpbShortCount.Location = new Point(20 + distance * i, 475);
+                vpbShortCount.Maximum = (int)Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])] * 10000 / Utils.分钟数;
+                vpbShortCount.Minimum = 0;
+                vpbShortCount.Size = new Size(7, 40);
+                vpbShortCount.Step = 1;
+                vpbShortCount.Style = VerticalProgressBar.Styles.Solid;
+                vpbShortCount.Color = Color.Green;
+                vpbShortCount.Value = 0;
+
+                Controls.Add(vpbShortCount);
+
                 InsToVpb[listIns[i]] = vpb;
 
                 InsToLimitLabel[listIns[i]] = limit;
+
+                InsToVpbWaveRatio[listIns[i]] = vpbWaveRatio;
+
+                InsToVpbLongCount[listIns[i]] = vpbLongCount;
+
+                InsToVpbShortCount[listIns[i]] = vpbShortCount;
             }
         }
 
@@ -856,13 +927,16 @@ namespace PromptForm
             tbIns.Text = ((VerticalProgressBar.VerticalProgressBar)sender).Name;
         }
 
-        public void PerformStep(string ins, int value)
+        public void PerformStep(string ins, int value, double waveRatio, MarketData marketData)
         {
             if (InsToVpb.ContainsKey(ins))
             {
                 var limit = (int)(Utils.成交量阈值[Utils.GetInstrumentCategory(ins)] * 10000);
                 var vpb = InsToVpb[ins];
                 var limitLabel = InsToLimitLabel[ins];
+                var vpbWaveRatio = InsToVpbWaveRatio[ins];
+                var vpbLongCount = InsToVpbLongCount[ins];
+                var vpbShortCount = InsToVpbShortCount[ins];
 
                 vpb.Value = value;
 
@@ -882,27 +956,53 @@ namespace PromptForm
                     }
                 }
 
-                if(value >= vpb.Maximum)
+                if (value >= vpb.Maximum)
                 {
                     vpb.Maximum *= 2;
                     limitLabel.Text = (vpb.Maximum / 10000.0).ToString("N1");
                 }
 
-                if(value < limit)
+                if (value < limit)
                 {
                     vpb.Maximum = limit;
                     limitLabel.Text = (limit / 10000.0).ToString("N1");
                 }
 
-                if(((TraderAdapter)Utils.Trader).InsToOrderCount.ContainsKey(ins))
+                if (((TraderAdapter)Utils.Trader).InsToOrderCount.ContainsKey(ins))
                 {
                     limitLabel.Enabled = vpb.Enabled = false;
                     vpb.Color = Color.Gray;
                 }
+
+                vpbWaveRatio.Value = (int)(waveRatio * 10000);
+
+                if (waveRatio >= Utils.涨跌幅提示)
+                {
+                    vpbWaveRatio.Color = Color.Red;
+                }
+                else
+                {
+                    if (waveRatio > 0.8)
+                    {
+                        vpbWaveRatio.Color = Color.Orange;
+                    }
+                    else
+                    {
+                        vpbWaveRatio.Color = Color.Green;
+                    }
+                }
+
+                vpbLongCount.Value = (int)marketData.近期多头势力;
+
+                vpbShortCount.Value = (int)marketData.近期空头势力;
             }
         }
 
         private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpb = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpbWaveRatio = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpbLongCount = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpbShortCount = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+
         private ConcurrentDictionary<string, Label> InsToLimitLabel = new ConcurrentDictionary<string, Label>();
 
         private Point p;
@@ -956,11 +1056,12 @@ namespace PromptForm
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
                     var adjustedOffset = ((int)(offset / info.PriceTick)) * info.PriceTick;
+                    var adjustedOffset2 = ((int)((offset / 2) / info.PriceTick)) * info.PriceTick;
                     var targetVolume = 1;
 
                     if (cbTargetMoney.Checked)
                     {
-                        var targetMoney = Convert.ToDouble(tbTargetMoney.Text);
+                        var targetMoney = Utils.单手总金额;
                         targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
                     }
 
@@ -969,11 +1070,12 @@ namespace PromptForm
                         if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Short))  //持有空仓不开多仓
                         {                      
                             _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - adjustedOffset, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开多仓");
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - adjustedOffset2, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开多仓");
 
                             InsTobBuyOpen[ins] = false;
                             InsTodtBuyOpen[ins] = DateTime.Now;
 
-                            Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}触发买单信号!", ins));
+                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}触发买单信号!", ins));
                         }
                         else
                         {
@@ -985,11 +1087,12 @@ namespace PromptForm
                         if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Long)) //持有多仓不开空仓
                         {
                             _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + adjustedOffset, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开空仓");
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + adjustedOffset2, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开空仓");
 
                             InsTobSellOpen[ins] = false;
                             InsTodtSellOpen[ins] = DateTime.Now;
 
-                            Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}触发卖单信号!", ins));
+                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}触发卖单信号!", ins));
                         }
                         else
                         {
@@ -1203,7 +1306,7 @@ namespace PromptForm
 
                     if (cbTargetMoney.Checked)
                     {
-                        var targetMoney = Convert.ToDouble(tbTargetMoney.Text);
+                        var targetMoney = Utils.单手总金额;
                         var targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
                         _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
                     }
@@ -1232,7 +1335,7 @@ namespace PromptForm
 
                     if (cbTargetMoney.Checked)
                     {
-                        var targetMoney = Convert.ToDouble(tbTargetMoney.Text);
+                        var targetMoney = Utils.单手总金额;
                         var targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
                         _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
                     }
@@ -1409,13 +1512,25 @@ namespace PromptForm
 
         private void cbAutoClose_CheckedChanged(object sender, EventArgs e)
         {
-            if(cbAutoClose.Checked)
+            if(cbAutoCloseProfit.Checked)
             {
-                cbAutoClose.BackColor = Color.Gray;
+                cbAutoCloseProfit.BackColor = Color.Gray;
             }
             else
             {
-                cbAutoClose.BackColor = Color.Red;
+                cbAutoCloseProfit.BackColor = Color.Red;
+            }
+        }
+
+        private void tbTargetMoney_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Utils.单手总金额 = Convert.ToDouble(tbTargetMoney.Text);
+            }
+            catch
+            {
+                Utils.单手总金额 = 200000;
             }
         }
     }

@@ -78,7 +78,7 @@ namespace WrapperTest
         }
 
         private Timer _timerOrder = new Timer(250); //报单回报有时候会有1-2秒的延迟
-        private Timer _timerClearMessage = new Timer(60 * 1000); //
+        private Timer _timerClearMessage = new Timer(10 * 1000); //
 
         //private Timer _timerSaveStopLossPrices = new Timer(1000); //每隔一段时间保存当前的止损参考价，供下次启动时读取
 

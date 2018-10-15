@@ -111,6 +111,8 @@
             this.lvMainIns = new System.Windows.Forms.ListView();
             this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cbAutoCloseProfit = new System.Windows.Forms.CheckBox();
+            this.cbAutoCloseLoss = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
@@ -343,7 +345,7 @@
             this.toolStripStatusLabel4,
             this.timeLabel,
             this.toolStripStatusLabel5});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 448);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 478);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(726, 22);
             this.statusStrip1.TabIndex = 11;
@@ -888,6 +890,7 @@
             this.tbTargetMoney.Size = new System.Drawing.Size(58, 21);
             this.tbTargetMoney.TabIndex = 63;
             this.tbTargetMoney.Text = "200000";
+            this.tbTargetMoney.TextChanged += new System.EventHandler(this.tbTargetMoney_TextChanged);
             // 
             // cbTargetMoney
             // 
@@ -949,11 +952,38 @@
             // 
             this.columnHeader20.Text = "主力合约";
             // 
+            // cbAutoCloseProfit
+            // 
+            this.cbAutoCloseProfit.AutoSize = true;
+            this.cbAutoCloseProfit.Checked = true;
+            this.cbAutoCloseProfit.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAutoCloseProfit.Location = new System.Drawing.Point(599, 306);
+            this.cbAutoCloseProfit.Margin = new System.Windows.Forms.Padding(2);
+            this.cbAutoCloseProfit.Name = "cbAutoCloseProfit";
+            this.cbAutoCloseProfit.Size = new System.Drawing.Size(48, 16);
+            this.cbAutoCloseProfit.TabIndex = 68;
+            this.cbAutoCloseProfit.Text = "自盈";
+            this.cbAutoCloseProfit.UseVisualStyleBackColor = true;
+            this.cbAutoCloseProfit.CheckedChanged += new System.EventHandler(this.cbAutoClose_CheckedChanged);
+            // 
+            // cbAutoCloseLoss
+            // 
+            this.cbAutoCloseLoss.AutoSize = true;
+            this.cbAutoCloseLoss.Location = new System.Drawing.Point(599, 283);
+            this.cbAutoCloseLoss.Margin = new System.Windows.Forms.Padding(2);
+            this.cbAutoCloseLoss.Name = "cbAutoCloseLoss";
+            this.cbAutoCloseLoss.Size = new System.Drawing.Size(48, 16);
+            this.cbAutoCloseLoss.TabIndex = 69;
+            this.cbAutoCloseLoss.Text = "自损";
+            this.cbAutoCloseLoss.UseVisualStyleBackColor = true;
+            // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(726, 470);
+            this.ClientSize = new System.Drawing.Size(726, 500);
+            this.Controls.Add(this.cbAutoCloseLoss);
+            this.Controls.Add(this.cbAutoCloseProfit);
             this.Controls.Add(this.lvMainIns);
             this.Controls.Add(this.btSell9);
             this.Controls.Add(this.btBuy9);
@@ -1108,6 +1138,8 @@
         private System.Windows.Forms.ListView lvMainIns;
         private System.Windows.Forms.ColumnHeader columnHeader19;
         private System.Windows.Forms.ColumnHeader columnHeader20;
+        private System.Windows.Forms.CheckBox cbAutoCloseProfit;
+        private System.Windows.Forms.CheckBox cbAutoCloseLoss;
     }
 }
 
