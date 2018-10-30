@@ -50,7 +50,6 @@
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btCloseAll = new System.Windows.Forms.Button();
@@ -91,33 +90,37 @@
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btBuy1 = new System.Windows.Forms.Button();
+            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btBuy0 = new System.Windows.Forms.Button();
             this.tbIns = new System.Windows.Forms.TextBox();
-            this.btSell1 = new System.Windows.Forms.Button();
+            this.btSell0 = new System.Windows.Forms.Button();
+            this.btBuy1 = new System.Windows.Forms.Button();
             this.btBuy3 = new System.Windows.Forms.Button();
             this.btBuy5 = new System.Windows.Forms.Button();
             this.btBuy7 = new System.Windows.Forms.Button();
-            this.btBuy9 = new System.Windows.Forms.Button();
+            this.btSell1 = new System.Windows.Forms.Button();
             this.btSell3 = new System.Windows.Forms.Button();
             this.btSell5 = new System.Windows.Forms.Button();
             this.btSell7 = new System.Windows.Forms.Button();
+            this.btPosition = new System.Windows.Forms.Button();
+            this.labelTargetMoney = new System.Windows.Forms.Label();
+            this.tbTargetMoney = new System.Windows.Forms.TextBox();
+            this.cbTargetMoney = new System.Windows.Forms.CheckBox();
+            this.btBuy9 = new System.Windows.Forms.Button();
             this.btSell9 = new System.Windows.Forms.Button();
-            this.btBuy19 = new System.Windows.Forms.Button();
-            this.btBuy17 = new System.Windows.Forms.Button();
-            this.btBuy15 = new System.Windows.Forms.Button();
-            this.btBuy13 = new System.Windows.Forms.Button();
-            this.btBuy11 = new System.Windows.Forms.Button();
-            this.btSell19 = new System.Windows.Forms.Button();
-            this.btSell17 = new System.Windows.Forms.Button();
-            this.btSell15 = new System.Windows.Forms.Button();
-            this.btSell13 = new System.Windows.Forms.Button();
-            this.btSell11 = new System.Windows.Forms.Button();
+            this.lvMainIns = new System.Windows.Forms.ListView();
+            this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cbAutoCloseProfit = new System.Windows.Forms.CheckBox();
+            this.cbAutoCloseLoss = new System.Windows.Forms.CheckBox();
+            this.nudOffsetTickCount = new System.Windows.Forms.NumericUpDown();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudProfitPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOffsetTickCount)).BeginInit();
             this.SuspendLayout();
             // 
             // listView1
@@ -138,7 +141,7 @@
             this.listView1.Location = new System.Drawing.Point(3, 2);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(428, 152);
+            this.listView1.Size = new System.Drawing.Size(428, 164);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -198,15 +201,14 @@
             this.columnHeader12,
             this.columnHeader9,
             this.columnHeader13,
-            this.columnHeader10,
-            this.columnHeader11});
+            this.columnHeader10});
             this.listView2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listView2.FullRowSelect = true;
             this.listView2.GridLines = true;
             this.listView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView2.Location = new System.Drawing.Point(3, 160);
+            this.listView2.Location = new System.Drawing.Point(3, 172);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(587, 74);
+            this.listView2.Size = new System.Drawing.Size(640, 92);
             this.listView2.TabIndex = 1;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -269,19 +271,14 @@
             // 
             // columnHeader10
             // 
-            this.columnHeader10.Text = "时间";
-            this.columnHeader10.Width = 48;
-            // 
-            // columnHeader11
-            // 
-            this.columnHeader11.Text = "涨幅";
-            this.columnHeader11.Width = 55;
+            this.columnHeader10.Text = "总值";
+            this.columnHeader10.Width = 100;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("SimSun", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(243, 264);
+            this.label1.Location = new System.Drawing.Point(245, 299);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(49, 20);
@@ -291,7 +288,7 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox1.Location = new System.Drawing.Point(278, 262);
+            this.textBox1.Location = new System.Drawing.Point(280, 297);
             this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 26);
@@ -300,7 +297,7 @@
             // btCloseAll
             // 
             this.btCloseAll.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btCloseAll.Location = new System.Drawing.Point(382, 262);
+            this.btCloseAll.Location = new System.Drawing.Point(384, 297);
             this.btCloseAll.Margin = new System.Windows.Forms.Padding(2);
             this.btCloseAll.Name = "btCloseAll";
             this.btCloseAll.Size = new System.Drawing.Size(27, 27);
@@ -312,7 +309,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(23, 244);
+            this.label2.Location = new System.Drawing.Point(25, 279);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
@@ -322,7 +319,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(107, 244);
+            this.label3.Location = new System.Drawing.Point(109, 279);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 12);
@@ -332,7 +329,7 @@
             // cbEnable
             // 
             this.cbEnable.AutoSize = true;
-            this.cbEnable.Location = new System.Drawing.Point(3, 244);
+            this.cbEnable.Location = new System.Drawing.Point(5, 279);
             this.cbEnable.Margin = new System.Windows.Forms.Padding(2);
             this.cbEnable.Name = "cbEnable";
             this.cbEnable.Size = new System.Drawing.Size(15, 14);
@@ -350,9 +347,9 @@
             this.toolStripStatusLabel4,
             this.timeLabel,
             this.toolStripStatusLabel5});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 295);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 538);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(596, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(749, 22);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
@@ -412,7 +409,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(25, 30);
             this.richTextBox1.Margin = new System.Windows.Forms.Padding(2);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(192, 107);
+            this.richTextBox1.Size = new System.Drawing.Size(192, 85);
             this.richTextBox1.TabIndex = 12;
             this.richTextBox1.Text = "";
             this.richTextBox1.Visible = false;
@@ -424,7 +421,7 @@
             this.richTextBox2.Location = new System.Drawing.Point(233, 30);
             this.richTextBox2.Margin = new System.Windows.Forms.Padding(2);
             this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(191, 107);
+            this.richTextBox2.Size = new System.Drawing.Size(191, 85);
             this.richTextBox2.TabIndex = 13;
             this.richTextBox2.Text = "";
             this.richTextBox2.Visible = false;
@@ -432,7 +429,7 @@
             // cbEnableTotal
             // 
             this.cbEnableTotal.AutoSize = true;
-            this.cbEnableTotal.Location = new System.Drawing.Point(3, 270);
+            this.cbEnableTotal.Location = new System.Drawing.Point(5, 305);
             this.cbEnableTotal.Margin = new System.Windows.Forms.Padding(2);
             this.cbEnableTotal.Name = "cbEnableTotal";
             this.cbEnableTotal.Size = new System.Drawing.Size(15, 14);
@@ -443,7 +440,7 @@
             // btOKTotal
             // 
             this.btOKTotal.Enabled = false;
-            this.btOKTotal.Location = new System.Drawing.Point(195, 264);
+            this.btOKTotal.Location = new System.Drawing.Point(197, 299);
             this.btOKTotal.Margin = new System.Windows.Forms.Padding(2);
             this.btOKTotal.Name = "btOKTotal";
             this.btOKTotal.Size = new System.Drawing.Size(40, 20);
@@ -457,7 +454,7 @@
             this.tbStopLossTotal.Enabled = false;
             this.tbStopLossTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tbStopLossTotal.ForeColor = System.Drawing.Color.Green;
-            this.tbStopLossTotal.Location = new System.Drawing.Point(139, 265);
+            this.tbStopLossTotal.Location = new System.Drawing.Point(141, 300);
             this.tbStopLossTotal.Margin = new System.Windows.Forms.Padding(2);
             this.tbStopLossTotal.Name = "tbStopLossTotal";
             this.tbStopLossTotal.Size = new System.Drawing.Size(46, 21);
@@ -467,7 +464,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(107, 270);
+            this.label4.Location = new System.Drawing.Point(109, 305);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 12);
@@ -479,7 +476,7 @@
             this.tbStopProfitTotal.Enabled = false;
             this.tbStopProfitTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tbStopProfitTotal.ForeColor = System.Drawing.Color.Red;
-            this.tbStopProfitTotal.Location = new System.Drawing.Point(57, 265);
+            this.tbStopProfitTotal.Location = new System.Drawing.Point(59, 300);
             this.tbStopProfitTotal.Margin = new System.Windows.Forms.Padding(2);
             this.tbStopProfitTotal.Name = "tbStopProfitTotal";
             this.tbStopProfitTotal.Size = new System.Drawing.Size(46, 21);
@@ -489,7 +486,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(23, 270);
+            this.label5.Location = new System.Drawing.Point(25, 305);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(41, 12);
@@ -501,11 +498,11 @@
             this.lbHighTotal.AutoSize = true;
             this.lbHighTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lbHighTotal.ForeColor = System.Drawing.Color.Red;
-            this.lbHighTotal.Location = new System.Drawing.Point(412, 262);
+            this.lbHighTotal.Location = new System.Drawing.Point(414, 297);
             this.lbHighTotal.Name = "lbHighTotal";
-            this.lbHighTotal.Size = new System.Drawing.Size(12, 12);
+            this.lbHighTotal.Size = new System.Drawing.Size(47, 12);
             this.lbHighTotal.TabIndex = 20;
-            this.lbHighTotal.Text = "0";
+            this.lbHighTotal.Text = "-99999";
             this.lbHighTotal.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lbHighTotal_MouseDoubleClick);
             // 
             // lbLowTotal
@@ -513,17 +510,17 @@
             this.lbLowTotal.AutoSize = true;
             this.lbLowTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lbLowTotal.ForeColor = System.Drawing.Color.Green;
-            this.lbLowTotal.Location = new System.Drawing.Point(412, 276);
+            this.lbLowTotal.Location = new System.Drawing.Point(414, 311);
             this.lbLowTotal.Name = "lbLowTotal";
-            this.lbLowTotal.Size = new System.Drawing.Size(12, 12);
+            this.lbLowTotal.Size = new System.Drawing.Size(40, 12);
             this.lbLowTotal.TabIndex = 21;
-            this.lbLowTotal.Text = "0";
+            this.lbLowTotal.Text = "99999";
             this.lbLowTotal.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lbLowTotal_MouseDoubleClick);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(245, 241);
+            this.label6.Location = new System.Drawing.Point(247, 276);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
@@ -540,7 +537,7 @@
             0,
             0,
             65536});
-            this.nudCloseRatio.Location = new System.Drawing.Point(330, 239);
+            this.nudCloseRatio.Location = new System.Drawing.Point(332, 274);
             this.nudCloseRatio.Margin = new System.Windows.Forms.Padding(2);
             this.nudCloseRatio.Name = "nudCloseRatio";
             this.nudCloseRatio.Size = new System.Drawing.Size(51, 21);
@@ -555,9 +552,7 @@
             // cbWarning
             // 
             this.cbWarning.AutoSize = true;
-            this.cbWarning.Checked = true;
-            this.cbWarning.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbWarning.Location = new System.Drawing.Point(382, 244);
+            this.cbWarning.Location = new System.Drawing.Point(384, 279);
             this.cbWarning.Margin = new System.Windows.Forms.Padding(2);
             this.cbWarning.Name = "cbWarning";
             this.cbWarning.Size = new System.Drawing.Size(15, 14);
@@ -570,7 +565,7 @@
             this.cbAutoOpen.AutoSize = true;
             this.cbAutoOpen.Checked = true;
             this.cbAutoOpen.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbAutoOpen.Location = new System.Drawing.Point(467, 270);
+            this.cbAutoOpen.Location = new System.Drawing.Point(469, 305);
             this.cbAutoOpen.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoOpen.Name = "cbAutoOpen";
             this.cbAutoOpen.Size = new System.Drawing.Size(72, 16);
@@ -582,10 +577,10 @@
             // 
             this.nudWarningPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudWarningPoint.ForeColor = System.Drawing.Color.Red;
-            this.nudWarningPoint.Location = new System.Drawing.Point(278, 239);
+            this.nudWarningPoint.Location = new System.Drawing.Point(280, 274);
             this.nudWarningPoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudWarningPoint.Maximum = new decimal(new int[] {
-            5000,
+            50000,
             0,
             0,
             0});
@@ -603,8 +598,13 @@
             // 
             this.nudProfitPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudProfitPoint.ForeColor = System.Drawing.Color.Red;
-            this.nudProfitPoint.Location = new System.Drawing.Point(57, 239);
+            this.nudProfitPoint.Location = new System.Drawing.Point(59, 274);
             this.nudProfitPoint.Margin = new System.Windows.Forms.Padding(2);
+            this.nudProfitPoint.Maximum = new decimal(new int[] {
+            50000,
+            0,
+            0,
+            0});
             this.nudProfitPoint.Name = "nudProfitPoint";
             this.nudProfitPoint.Size = new System.Drawing.Size(48, 21);
             this.nudProfitPoint.TabIndex = 29;
@@ -619,8 +619,13 @@
             // 
             this.nudLossPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudLossPoint.ForeColor = System.Drawing.Color.Green;
-            this.nudLossPoint.Location = new System.Drawing.Point(139, 239);
+            this.nudLossPoint.Location = new System.Drawing.Point(141, 274);
             this.nudLossPoint.Margin = new System.Windows.Forms.Padding(2);
+            this.nudLossPoint.Maximum = new decimal(new int[] {
+            50000,
+            0,
+            0,
+            0});
             this.nudLossPoint.Name = "nudLossPoint";
             this.nudLossPoint.Size = new System.Drawing.Size(48, 21);
             this.nudLossPoint.TabIndex = 30;
@@ -634,7 +639,7 @@
             // cbOverTime
             // 
             this.cbOverTime.AutoSize = true;
-            this.cbOverTime.Location = new System.Drawing.Point(467, 244);
+            this.cbOverTime.Location = new System.Drawing.Point(469, 279);
             this.cbOverTime.Margin = new System.Windows.Forms.Padding(2);
             this.cbOverTime.Name = "cbOverTime";
             this.cbOverTime.Size = new System.Drawing.Size(72, 16);
@@ -648,10 +653,10 @@
             this.nudOverTimePoint.Enabled = false;
             this.nudOverTimePoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudOverTimePoint.ForeColor = System.Drawing.Color.Green;
-            this.nudOverTimePoint.Location = new System.Drawing.Point(542, 243);
+            this.nudOverTimePoint.Location = new System.Drawing.Point(544, 278);
             this.nudOverTimePoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudOverTimePoint.Name = "nudOverTimePoint";
-            this.nudOverTimePoint.Size = new System.Drawing.Size(51, 21);
+            this.nudOverTimePoint.Size = new System.Drawing.Size(41, 21);
             this.nudOverTimePoint.TabIndex = 32;
             this.nudOverTimePoint.ValueChanged += new System.EventHandler(this.nudOverTimePoint_ValueChanged);
             // 
@@ -691,13 +696,14 @@
             this.columnHeader18,
             this.columnHeader15,
             this.columnHeader16,
-            this.columnHeader17});
+            this.columnHeader17,
+            this.columnHeader11});
             this.lvOrder.Font = new System.Drawing.Font("SimSun", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lvOrder.GridLines = true;
             this.lvOrder.Location = new System.Drawing.Point(434, 2);
             this.lvOrder.Margin = new System.Windows.Forms.Padding(2);
             this.lvOrder.Name = "lvOrder";
-            this.lvOrder.Size = new System.Drawing.Size(155, 70);
+            this.lvOrder.Size = new System.Drawing.Size(209, 70);
             this.lvOrder.TabIndex = 36;
             this.lvOrder.UseCompatibleStateImageBehavior = false;
             this.lvOrder.View = System.Windows.Forms.View.Details;
@@ -723,18 +729,22 @@
             this.columnHeader17.Text = "距离";
             this.columnHeader17.Width = 50;
             // 
-            // btBuy1
+            // columnHeader11
             // 
-            this.btBuy1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy1.Enabled = false;
-            this.btBuy1.Location = new System.Drawing.Point(501, 76);
-            this.btBuy1.Margin = new System.Windows.Forms.Padding(2);
-            this.btBuy1.Name = "btBuy1";
-            this.btBuy1.Size = new System.Drawing.Size(20, 20);
-            this.btBuy1.TabIndex = 39;
-            this.btBuy1.Text = "1";
-            this.btBuy1.UseVisualStyleBackColor = false;
-            this.btBuy1.Click += new System.EventHandler(this.btBuy1_Click);
+            this.columnHeader11.Text = "数量";
+            this.columnHeader11.Width = 40;
+            // 
+            // btBuy0
+            // 
+            this.btBuy0.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy0.Location = new System.Drawing.Point(501, 76);
+            this.btBuy0.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy0.Name = "btBuy0";
+            this.btBuy0.Size = new System.Drawing.Size(20, 20);
+            this.btBuy0.TabIndex = 39;
+            this.btBuy0.Text = "0";
+            this.btBuy0.UseVisualStyleBackColor = false;
+            this.btBuy0.Click += new System.EventHandler(this.btBuy1_Click);
             // 
             // tbIns
             // 
@@ -746,289 +756,274 @@
             this.tbIns.TabIndex = 40;
             this.tbIns.Text = "ru1805";
             // 
-            // btSell1
+            // btSell0
             // 
-            this.btSell1.BackColor = System.Drawing.Color.Lime;
-            this.btSell1.Enabled = false;
-            this.btSell1.Location = new System.Drawing.Point(501, 115);
-            this.btSell1.Margin = new System.Windows.Forms.Padding(2);
-            this.btSell1.Name = "btSell1";
-            this.btSell1.Size = new System.Drawing.Size(20, 20);
-            this.btSell1.TabIndex = 41;
-            this.btSell1.Text = "1";
-            this.btSell1.UseVisualStyleBackColor = false;
-            this.btSell1.Click += new System.EventHandler(this.btSell1_Click);
+            this.btSell0.BackColor = System.Drawing.Color.Lime;
+            this.btSell0.Location = new System.Drawing.Point(501, 115);
+            this.btSell0.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell0.Name = "btSell0";
+            this.btSell0.Size = new System.Drawing.Size(20, 20);
+            this.btSell0.TabIndex = 41;
+            this.btSell0.Text = "0";
+            this.btSell0.UseVisualStyleBackColor = false;
+            this.btSell0.Click += new System.EventHandler(this.btSell1_Click);
+            // 
+            // btBuy1
+            // 
+            this.btBuy1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy1.Location = new System.Drawing.Point(520, 76);
+            this.btBuy1.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy1.Name = "btBuy1";
+            this.btBuy1.Size = new System.Drawing.Size(20, 20);
+            this.btBuy1.TabIndex = 42;
+            this.btBuy1.Text = "1";
+            this.btBuy1.UseVisualStyleBackColor = false;
+            this.btBuy1.Click += new System.EventHandler(this.btBuy3_Click);
             // 
             // btBuy3
             // 
             this.btBuy3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy3.Enabled = false;
-            this.btBuy3.Location = new System.Drawing.Point(520, 76);
+            this.btBuy3.Location = new System.Drawing.Point(539, 76);
             this.btBuy3.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy3.Name = "btBuy3";
             this.btBuy3.Size = new System.Drawing.Size(20, 20);
-            this.btBuy3.TabIndex = 42;
+            this.btBuy3.TabIndex = 43;
             this.btBuy3.Text = "3";
             this.btBuy3.UseVisualStyleBackColor = false;
-            this.btBuy3.Click += new System.EventHandler(this.btBuy3_Click);
+            this.btBuy3.Click += new System.EventHandler(this.btBuy5_Click);
             // 
             // btBuy5
             // 
             this.btBuy5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy5.Enabled = false;
-            this.btBuy5.Location = new System.Drawing.Point(539, 76);
+            this.btBuy5.Location = new System.Drawing.Point(558, 76);
             this.btBuy5.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy5.Name = "btBuy5";
             this.btBuy5.Size = new System.Drawing.Size(20, 20);
-            this.btBuy5.TabIndex = 43;
+            this.btBuy5.TabIndex = 44;
             this.btBuy5.Text = "5";
             this.btBuy5.UseVisualStyleBackColor = false;
-            this.btBuy5.Click += new System.EventHandler(this.btBuy5_Click);
+            this.btBuy5.Click += new System.EventHandler(this.btBuy7_Click);
             // 
             // btBuy7
             // 
             this.btBuy7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy7.Enabled = false;
-            this.btBuy7.Location = new System.Drawing.Point(558, 76);
+            this.btBuy7.Location = new System.Drawing.Point(577, 76);
             this.btBuy7.Margin = new System.Windows.Forms.Padding(2);
             this.btBuy7.Name = "btBuy7";
             this.btBuy7.Size = new System.Drawing.Size(20, 20);
-            this.btBuy7.TabIndex = 44;
+            this.btBuy7.TabIndex = 45;
             this.btBuy7.Text = "7";
             this.btBuy7.UseVisualStyleBackColor = false;
-            this.btBuy7.Click += new System.EventHandler(this.btBuy7_Click);
+            this.btBuy7.Click += new System.EventHandler(this.btBuy9_Click);
             // 
-            // btBuy9
+            // btSell1
             // 
-            this.btBuy9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy9.Enabled = false;
-            this.btBuy9.Location = new System.Drawing.Point(577, 76);
-            this.btBuy9.Margin = new System.Windows.Forms.Padding(2);
-            this.btBuy9.Name = "btBuy9";
-            this.btBuy9.Size = new System.Drawing.Size(20, 20);
-            this.btBuy9.TabIndex = 45;
-            this.btBuy9.Text = "9";
-            this.btBuy9.UseVisualStyleBackColor = false;
-            this.btBuy9.Click += new System.EventHandler(this.btBuy9_Click);
+            this.btSell1.BackColor = System.Drawing.Color.Lime;
+            this.btSell1.Location = new System.Drawing.Point(520, 115);
+            this.btSell1.Margin = new System.Windows.Forms.Padding(2);
+            this.btSell1.Name = "btSell1";
+            this.btSell1.Size = new System.Drawing.Size(20, 20);
+            this.btSell1.TabIndex = 46;
+            this.btSell1.Text = "1";
+            this.btSell1.UseVisualStyleBackColor = false;
+            this.btSell1.Click += new System.EventHandler(this.btSell3_Click);
             // 
             // btSell3
             // 
             this.btSell3.BackColor = System.Drawing.Color.Lime;
-            this.btSell3.Enabled = false;
-            this.btSell3.Location = new System.Drawing.Point(520, 115);
+            this.btSell3.Location = new System.Drawing.Point(539, 115);
             this.btSell3.Margin = new System.Windows.Forms.Padding(2);
             this.btSell3.Name = "btSell3";
             this.btSell3.Size = new System.Drawing.Size(20, 20);
-            this.btSell3.TabIndex = 46;
+            this.btSell3.TabIndex = 47;
             this.btSell3.Text = "3";
             this.btSell3.UseVisualStyleBackColor = false;
-            this.btSell3.Click += new System.EventHandler(this.btSell3_Click);
+            this.btSell3.Click += new System.EventHandler(this.btSell5_Click);
             // 
             // btSell5
             // 
             this.btSell5.BackColor = System.Drawing.Color.Lime;
-            this.btSell5.Enabled = false;
-            this.btSell5.Location = new System.Drawing.Point(539, 115);
+            this.btSell5.Location = new System.Drawing.Point(558, 115);
             this.btSell5.Margin = new System.Windows.Forms.Padding(2);
             this.btSell5.Name = "btSell5";
             this.btSell5.Size = new System.Drawing.Size(20, 20);
-            this.btSell5.TabIndex = 47;
+            this.btSell5.TabIndex = 48;
             this.btSell5.Text = "5";
             this.btSell5.UseVisualStyleBackColor = false;
-            this.btSell5.Click += new System.EventHandler(this.btSell5_Click);
+            this.btSell5.Click += new System.EventHandler(this.btSell7_Click);
             // 
             // btSell7
             // 
             this.btSell7.BackColor = System.Drawing.Color.Lime;
-            this.btSell7.Enabled = false;
-            this.btSell7.Location = new System.Drawing.Point(558, 115);
+            this.btSell7.Location = new System.Drawing.Point(577, 115);
             this.btSell7.Margin = new System.Windows.Forms.Padding(2);
             this.btSell7.Name = "btSell7";
             this.btSell7.Size = new System.Drawing.Size(20, 20);
-            this.btSell7.TabIndex = 48;
+            this.btSell7.TabIndex = 49;
             this.btSell7.Text = "7";
             this.btSell7.UseVisualStyleBackColor = false;
-            this.btSell7.Click += new System.EventHandler(this.btSell7_Click);
+            this.btSell7.Click += new System.EventHandler(this.btSell9_Click);
+            // 
+            // btPosition
+            // 
+            this.btPosition.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btPosition.Location = new System.Drawing.Point(562, 302);
+            this.btPosition.Margin = new System.Windows.Forms.Padding(2);
+            this.btPosition.Name = "btPosition";
+            this.btPosition.Size = new System.Drawing.Size(23, 23);
+            this.btPosition.TabIndex = 60;
+            this.btPosition.Text = "仓";
+            this.btPosition.UseVisualStyleBackColor = true;
+            this.btPosition.Click += new System.EventHandler(this.btPosition_Click);
+            // 
+            // labelTargetMoney
+            // 
+            this.labelTargetMoney.AutoSize = true;
+            this.labelTargetMoney.Location = new System.Drawing.Point(460, 148);
+            this.labelTargetMoney.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelTargetMoney.Name = "labelTargetMoney";
+            this.labelTargetMoney.Size = new System.Drawing.Size(65, 12);
+            this.labelTargetMoney.TabIndex = 62;
+            this.labelTargetMoney.Text = "目标金额：";
+            // 
+            // tbTargetMoney
+            // 
+            this.tbTargetMoney.Location = new System.Drawing.Point(520, 145);
+            this.tbTargetMoney.Margin = new System.Windows.Forms.Padding(2);
+            this.tbTargetMoney.Name = "tbTargetMoney";
+            this.tbTargetMoney.Size = new System.Drawing.Size(58, 21);
+            this.tbTargetMoney.TabIndex = 63;
+            this.tbTargetMoney.Text = "200000";
+            this.tbTargetMoney.TextChanged += new System.EventHandler(this.tbTargetMoney_TextChanged);
+            // 
+            // cbTargetMoney
+            // 
+            this.cbTargetMoney.AutoSize = true;
+            this.cbTargetMoney.Checked = true;
+            this.cbTargetMoney.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbTargetMoney.Location = new System.Drawing.Point(440, 148);
+            this.cbTargetMoney.Margin = new System.Windows.Forms.Padding(2);
+            this.cbTargetMoney.Name = "cbTargetMoney";
+            this.cbTargetMoney.Size = new System.Drawing.Size(15, 14);
+            this.cbTargetMoney.TabIndex = 64;
+            this.cbTargetMoney.UseVisualStyleBackColor = true;
+            this.cbTargetMoney.CheckedChanged += new System.EventHandler(this.cbTargetMoney_CheckedChanged);
+            // 
+            // btBuy9
+            // 
+            this.btBuy9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btBuy9.Location = new System.Drawing.Point(596, 76);
+            this.btBuy9.Margin = new System.Windows.Forms.Padding(2);
+            this.btBuy9.Name = "btBuy9";
+            this.btBuy9.Size = new System.Drawing.Size(20, 20);
+            this.btBuy9.TabIndex = 65;
+            this.btBuy9.Text = "9";
+            this.btBuy9.UseVisualStyleBackColor = false;
+            this.btBuy9.Click += new System.EventHandler(this.btBuy9_Click_1);
             // 
             // btSell9
             // 
             this.btSell9.BackColor = System.Drawing.Color.Lime;
-            this.btSell9.Enabled = false;
-            this.btSell9.Location = new System.Drawing.Point(577, 115);
+            this.btSell9.Location = new System.Drawing.Point(596, 115);
             this.btSell9.Margin = new System.Windows.Forms.Padding(2);
             this.btSell9.Name = "btSell9";
             this.btSell9.Size = new System.Drawing.Size(20, 20);
-            this.btSell9.TabIndex = 49;
+            this.btSell9.TabIndex = 66;
             this.btSell9.Text = "9";
             this.btSell9.UseVisualStyleBackColor = false;
-            this.btSell9.Click += new System.EventHandler(this.btSell9_Click);
+            this.btSell9.Click += new System.EventHandler(this.btSell9_Click_1);
             // 
-            // btBuy19
+            // lvMainIns
             // 
-            this.btBuy19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy19.Enabled = false;
-            this.btBuy19.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btBuy19.Location = new System.Drawing.Point(577, 95);
-            this.btBuy19.Margin = new System.Windows.Forms.Padding(2);
-            this.btBuy19.Name = "btBuy19";
-            this.btBuy19.Size = new System.Drawing.Size(20, 20);
-            this.btBuy19.TabIndex = 54;
-            this.btBuy19.Text = "19";
-            this.btBuy19.UseVisualStyleBackColor = false;
-            this.btBuy19.Click += new System.EventHandler(this.btBuy19_Click);
+            this.lvMainIns.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader19,
+            this.columnHeader20});
+            this.lvMainIns.FullRowSelect = true;
+            this.lvMainIns.GridLines = true;
+            this.lvMainIns.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lvMainIns.Location = new System.Drawing.Point(670, 2);
+            this.lvMainIns.Name = "lvMainIns";
+            this.lvMainIns.Size = new System.Drawing.Size(74, 326);
+            this.lvMainIns.TabIndex = 67;
+            this.lvMainIns.UseCompatibleStateImageBehavior = false;
+            this.lvMainIns.View = System.Windows.Forms.View.Details;
+            this.lvMainIns.SelectedIndexChanged += new System.EventHandler(this.lvMainIns_SelectedIndexChanged);
             // 
-            // btBuy17
+            // columnHeader19
             // 
-            this.btBuy17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy17.Enabled = false;
-            this.btBuy17.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btBuy17.Location = new System.Drawing.Point(558, 95);
-            this.btBuy17.Margin = new System.Windows.Forms.Padding(2);
-            this.btBuy17.Name = "btBuy17";
-            this.btBuy17.Size = new System.Drawing.Size(20, 20);
-            this.btBuy17.TabIndex = 53;
-            this.btBuy17.Text = "17";
-            this.btBuy17.UseVisualStyleBackColor = false;
-            this.btBuy17.Click += new System.EventHandler(this.btBuy17_Click);
+            this.columnHeader19.Text = "主力合约";
+            this.columnHeader19.Width = 0;
             // 
-            // btBuy15
+            // columnHeader20
             // 
-            this.btBuy15.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy15.Enabled = false;
-            this.btBuy15.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btBuy15.Location = new System.Drawing.Point(539, 95);
-            this.btBuy15.Margin = new System.Windows.Forms.Padding(2);
-            this.btBuy15.Name = "btBuy15";
-            this.btBuy15.Size = new System.Drawing.Size(20, 20);
-            this.btBuy15.TabIndex = 52;
-            this.btBuy15.Text = "15";
-            this.btBuy15.UseVisualStyleBackColor = false;
-            this.btBuy15.Click += new System.EventHandler(this.btBuy15_Click);
+            this.columnHeader20.Text = "主力合约";
             // 
-            // btBuy13
+            // cbAutoCloseProfit
             // 
-            this.btBuy13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy13.Enabled = false;
-            this.btBuy13.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btBuy13.Location = new System.Drawing.Point(520, 95);
-            this.btBuy13.Margin = new System.Windows.Forms.Padding(2);
-            this.btBuy13.Name = "btBuy13";
-            this.btBuy13.Size = new System.Drawing.Size(20, 20);
-            this.btBuy13.TabIndex = 51;
-            this.btBuy13.Text = "13";
-            this.btBuy13.UseVisualStyleBackColor = false;
-            this.btBuy13.Click += new System.EventHandler(this.btBuy13_Click);
+            this.cbAutoCloseProfit.AutoSize = true;
+            this.cbAutoCloseProfit.Checked = true;
+            this.cbAutoCloseProfit.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAutoCloseProfit.Location = new System.Drawing.Point(589, 306);
+            this.cbAutoCloseProfit.Margin = new System.Windows.Forms.Padding(2);
+            this.cbAutoCloseProfit.Name = "cbAutoCloseProfit";
+            this.cbAutoCloseProfit.Size = new System.Drawing.Size(48, 16);
+            this.cbAutoCloseProfit.TabIndex = 68;
+            this.cbAutoCloseProfit.Text = "自盈";
+            this.cbAutoCloseProfit.UseVisualStyleBackColor = true;
+            this.cbAutoCloseProfit.CheckedChanged += new System.EventHandler(this.cbAutoClose_CheckedChanged);
             // 
-            // btBuy11
+            // cbAutoCloseLoss
             // 
-            this.btBuy11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btBuy11.Enabled = false;
-            this.btBuy11.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btBuy11.Location = new System.Drawing.Point(501, 95);
-            this.btBuy11.Margin = new System.Windows.Forms.Padding(2);
-            this.btBuy11.Name = "btBuy11";
-            this.btBuy11.Size = new System.Drawing.Size(20, 20);
-            this.btBuy11.TabIndex = 50;
-            this.btBuy11.Text = "11";
-            this.btBuy11.UseVisualStyleBackColor = false;
-            this.btBuy11.Click += new System.EventHandler(this.btBuy11_Click);
+            this.cbAutoCloseLoss.AutoSize = true;
+            this.cbAutoCloseLoss.Checked = true;
+            this.cbAutoCloseLoss.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAutoCloseLoss.Location = new System.Drawing.Point(589, 283);
+            this.cbAutoCloseLoss.Margin = new System.Windows.Forms.Padding(2);
+            this.cbAutoCloseLoss.Name = "cbAutoCloseLoss";
+            this.cbAutoCloseLoss.Size = new System.Drawing.Size(48, 16);
+            this.cbAutoCloseLoss.TabIndex = 69;
+            this.cbAutoCloseLoss.Text = "自损";
+            this.cbAutoCloseLoss.UseVisualStyleBackColor = true;
             // 
-            // btSell19
+            // nudOffsetTickCount
             // 
-            this.btSell19.BackColor = System.Drawing.Color.Lime;
-            this.btSell19.Enabled = false;
-            this.btSell19.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btSell19.Location = new System.Drawing.Point(577, 134);
-            this.btSell19.Margin = new System.Windows.Forms.Padding(2);
-            this.btSell19.Name = "btSell19";
-            this.btSell19.Size = new System.Drawing.Size(20, 20);
-            this.btSell19.TabIndex = 59;
-            this.btSell19.Text = "19";
-            this.btSell19.UseVisualStyleBackColor = false;
-            this.btSell19.Click += new System.EventHandler(this.btSell19_Click);
-            // 
-            // btSell17
-            // 
-            this.btSell17.BackColor = System.Drawing.Color.Lime;
-            this.btSell17.Enabled = false;
-            this.btSell17.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btSell17.Location = new System.Drawing.Point(558, 134);
-            this.btSell17.Margin = new System.Windows.Forms.Padding(2);
-            this.btSell17.Name = "btSell17";
-            this.btSell17.Size = new System.Drawing.Size(20, 20);
-            this.btSell17.TabIndex = 58;
-            this.btSell17.Text = "17";
-            this.btSell17.UseVisualStyleBackColor = false;
-            this.btSell17.Click += new System.EventHandler(this.btSell17_Click);
-            // 
-            // btSell15
-            // 
-            this.btSell15.BackColor = System.Drawing.Color.Lime;
-            this.btSell15.Enabled = false;
-            this.btSell15.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btSell15.Location = new System.Drawing.Point(539, 134);
-            this.btSell15.Margin = new System.Windows.Forms.Padding(2);
-            this.btSell15.Name = "btSell15";
-            this.btSell15.Size = new System.Drawing.Size(20, 20);
-            this.btSell15.TabIndex = 57;
-            this.btSell15.Text = "15";
-            this.btSell15.UseVisualStyleBackColor = false;
-            this.btSell15.Click += new System.EventHandler(this.btSell15_Click);
-            // 
-            // btSell13
-            // 
-            this.btSell13.BackColor = System.Drawing.Color.Lime;
-            this.btSell13.Enabled = false;
-            this.btSell13.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btSell13.Location = new System.Drawing.Point(520, 134);
-            this.btSell13.Margin = new System.Windows.Forms.Padding(2);
-            this.btSell13.Name = "btSell13";
-            this.btSell13.Size = new System.Drawing.Size(20, 20);
-            this.btSell13.TabIndex = 56;
-            this.btSell13.Text = "13";
-            this.btSell13.UseVisualStyleBackColor = false;
-            this.btSell13.Click += new System.EventHandler(this.btSell13_Click);
-            // 
-            // btSell11
-            // 
-            this.btSell11.BackColor = System.Drawing.Color.Lime;
-            this.btSell11.Enabled = false;
-            this.btSell11.Font = new System.Drawing.Font("SimSun", 5.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btSell11.Location = new System.Drawing.Point(501, 134);
-            this.btSell11.Margin = new System.Windows.Forms.Padding(2);
-            this.btSell11.Name = "btSell11";
-            this.btSell11.Size = new System.Drawing.Size(20, 20);
-            this.btSell11.TabIndex = 55;
-            this.btSell11.Text = "11";
-            this.btSell11.UseVisualStyleBackColor = false;
-            this.btSell11.Click += new System.EventHandler(this.btSell11_Click);
+            this.nudOffsetTickCount.Location = new System.Drawing.Point(638, 293);
+            this.nudOffsetTickCount.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudOffsetTickCount.Name = "nudOffsetTickCount";
+            this.nudOffsetTickCount.Size = new System.Drawing.Size(32, 21);
+            this.nudOffsetTickCount.TabIndex = 70;
+            this.nudOffsetTickCount.ValueChanged += new System.EventHandler(this.nudOffsetTickCount_ValueChanged);
             // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(596, 317);
-            this.Controls.Add(this.btSell19);
-            this.Controls.Add(this.btSell17);
-            this.Controls.Add(this.btSell15);
-            this.Controls.Add(this.btSell13);
-            this.Controls.Add(this.btSell11);
-            this.Controls.Add(this.btBuy19);
-            this.Controls.Add(this.btBuy17);
-            this.Controls.Add(this.btBuy15);
-            this.Controls.Add(this.btBuy13);
-            this.Controls.Add(this.btBuy11);
+            this.ClientSize = new System.Drawing.Size(749, 560);
+            this.Controls.Add(this.nudOffsetTickCount);
+            this.Controls.Add(this.cbAutoCloseLoss);
+            this.Controls.Add(this.cbAutoCloseProfit);
+            this.Controls.Add(this.lvMainIns);
             this.Controls.Add(this.btSell9);
+            this.Controls.Add(this.btBuy9);
+            this.Controls.Add(this.cbTargetMoney);
+            this.Controls.Add(this.tbTargetMoney);
+            this.Controls.Add(this.labelTargetMoney);
+            this.Controls.Add(this.btPosition);
             this.Controls.Add(this.btSell7);
             this.Controls.Add(this.btSell5);
             this.Controls.Add(this.btSell3);
-            this.Controls.Add(this.btBuy9);
+            this.Controls.Add(this.btSell1);
             this.Controls.Add(this.btBuy7);
             this.Controls.Add(this.btBuy5);
             this.Controls.Add(this.btBuy3);
-            this.Controls.Add(this.btSell1);
-            this.Controls.Add(this.tbIns);
             this.Controls.Add(this.btBuy1);
+            this.Controls.Add(this.btSell0);
+            this.Controls.Add(this.tbIns);
+            this.Controls.Add(this.btBuy0);
             this.Controls.Add(this.lvOrder);
             this.Controls.Add(this.btUpDownRatio);
             this.Controls.Add(this.tbUpDownRatio);
@@ -1075,6 +1070,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudProfitPoint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOffsetTickCount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1125,7 +1121,6 @@
         private System.Windows.Forms.NumericUpDown nudCloseRatio;
         private System.Windows.Forms.CheckBox cbWarning;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
-        private System.Windows.Forms.ColumnHeader columnHeader11;
         private System.Windows.Forms.ColumnHeader columnHeader12;
         private System.Windows.Forms.ColumnHeader columnHeader13;
         private System.Windows.Forms.ColumnHeader columnHeader14;
@@ -1144,28 +1139,31 @@
         private System.Windows.Forms.ColumnHeader columnHeader16;
         private System.Windows.Forms.ColumnHeader columnHeader17;
         private System.Windows.Forms.ColumnHeader columnHeader18;
-        private System.Windows.Forms.Button btBuy1;
+        private System.Windows.Forms.Button btBuy0;
         private System.Windows.Forms.TextBox tbIns;
-        private System.Windows.Forms.Button btSell1;
+        private System.Windows.Forms.Button btSell0;
+        private System.Windows.Forms.Button btBuy1;
         private System.Windows.Forms.Button btBuy3;
         private System.Windows.Forms.Button btBuy5;
         private System.Windows.Forms.Button btBuy7;
-        private System.Windows.Forms.Button btBuy9;
+        private System.Windows.Forms.Button btSell1;
         private System.Windows.Forms.Button btSell3;
         private System.Windows.Forms.Button btSell5;
         private System.Windows.Forms.Button btSell7;
-        private System.Windows.Forms.Button btSell9;
-        private System.Windows.Forms.Button btBuy19;
-        private System.Windows.Forms.Button btBuy17;
-        private System.Windows.Forms.Button btBuy15;
-        private System.Windows.Forms.Button btBuy13;
-        private System.Windows.Forms.Button btBuy11;
-        private System.Windows.Forms.Button btSell19;
-        private System.Windows.Forms.Button btSell17;
-        private System.Windows.Forms.Button btSell15;
-        private System.Windows.Forms.Button btSell13;
-        private System.Windows.Forms.Button btSell11;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
+        private System.Windows.Forms.Button btPosition;
+        private System.Windows.Forms.Label labelTargetMoney;
+        private System.Windows.Forms.TextBox tbTargetMoney;
+        private System.Windows.Forms.CheckBox cbTargetMoney;
+        private System.Windows.Forms.ColumnHeader columnHeader11;
+        private System.Windows.Forms.Button btBuy9;
+        private System.Windows.Forms.Button btSell9;
+        private System.Windows.Forms.ListView lvMainIns;
+        private System.Windows.Forms.ColumnHeader columnHeader19;
+        private System.Windows.Forms.ColumnHeader columnHeader20;
+        private System.Windows.Forms.CheckBox cbAutoCloseProfit;
+        private System.Windows.Forms.CheckBox cbAutoCloseLoss;
+        private System.Windows.Forms.NumericUpDown nudOffsetTickCount;
     }
 }
 

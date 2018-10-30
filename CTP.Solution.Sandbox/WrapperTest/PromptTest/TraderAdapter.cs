@@ -102,6 +102,33 @@ namespace WrapperTest
             set { _unfinishedOrderFields = value; }
         }
 
+        private ConcurrentDictionary<string, int> _insToLongOrderCount =
+    new ConcurrentDictionary<string, int>();
+
+        public ConcurrentDictionary<string, int> InsToLongOrderCount
+        {
+            get { return _insToLongOrderCount; }
+            set { _insToLongOrderCount = value; }
+        }
+
+        private ConcurrentDictionary<string, int> _insToShortOrderCount =
+new ConcurrentDictionary<string, int>();
+
+        public ConcurrentDictionary<string, int> InsToShortOrderCount
+        {
+            get { return _insToShortOrderCount; }
+            set { _insToShortOrderCount = value; }
+        }
+
+        private ConcurrentDictionary<string, DateTime> _insToOpenTime =
+new ConcurrentDictionary<string, DateTime>();
+
+        public ConcurrentDictionary<string, DateTime> InsToOpenTime
+        {
+            get { return _insToOpenTime; }
+            set { _insToOpenTime = value; }
+        }
+
         private System.Timers.Timer _timerReportPosition = new System.Timers.Timer(1000 * 60 * 60); //每小时报告一次
         private System.Timers.Timer _timerCancelOrder = new System.Timers.Timer(1000 * 10);
 
@@ -139,10 +166,10 @@ namespace WrapperTest
         {
             try
             {
-                if(PositionFields.Count > 0)
-                {
-                    return;
-                }
+                //if(PositionFields.Count > 0)
+                //{
+                //    return;
+                //}
 
                 var ordersToCancel = new List<ThostFtdcOrderField>();
 
@@ -153,7 +180,7 @@ namespace WrapperTest
                     {
                         var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 0, 10))
+                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 1, 0))
                         {
                             ordersToCancel.Add(order);
                         }
@@ -163,12 +190,12 @@ namespace WrapperTest
                 foreach (var order in ordersToCancel)
                 {
                     //if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
-                    //{
-                    ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
-                    //}
+                    {
+                        ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
+                    }
                 }
 
-                ordersToCancel.Clear();
+                //ordersToCancel.Clear();
 
                 ////撤平仓单
                 //foreach (var order in UnFinishedOrderFields.Values)
@@ -277,6 +304,59 @@ namespace WrapperTest
             return ret;
         }
 
+        public void AddInstrumentOrderCount(string ins, EnumPosiDirectionType longOrShort)
+        {
+            //记录当天合约已经报单的次数
+            switch (longOrShort)
+            {
+                case EnumPosiDirectionType.Long:
+                    {
+                        if (InsToLongOrderCount.ContainsKey(ins))
+                        {
+                            InsToLongOrderCount[ins]++;
+                        }
+                        else
+                        {
+                            InsToLongOrderCount[ins] = 1;
+                        }
+
+                        Utils.WriteLine(string.Format("增加{0}的{1}报单计数到{2}...", ins, longOrShort, InsToLongOrderCount[ins]), true);
+                        break;
+                    }
+                case EnumPosiDirectionType.Short:
+                    {
+                        if (InsToShortOrderCount.ContainsKey(ins))
+                        {
+                            InsToShortOrderCount[ins]++;
+                        }
+                        else
+                        {
+                            InsToShortOrderCount[ins] = 1;
+                        }
+
+                        Utils.WriteLine(string.Format("增加{0}的{1}报单计数到{2}...", ins, longOrShort, InsToShortOrderCount[ins]), true);
+                        break;
+                    }
+            }
+        }
+
+        public bool IsInsTradedToday(string ins, EnumPosiDirectionType longOrShort)
+        {
+            switch (longOrShort)
+            {
+                case EnumPosiDirectionType.Long:
+                    {
+                        return InsToLongOrderCount.ContainsKey(ins);
+                    }
+                case EnumPosiDirectionType.Short:
+                    {
+                        return InsToShortOrderCount.ContainsKey(ins);
+                    }
+            }
+
+            return false;
+        }
+
         void TraderAdapter_OnRspQryOrder(ThostFtdcOrderField pOrder, ThostFtdcRspInfoField pRspInfo, int nRequestID, bool bIsLast)
         {
             try
@@ -297,6 +377,8 @@ namespace WrapperTest
                     {
                         UnFinishedOrderFields[GetOrderKey(pOrder)] = pOrder;
                     }
+
+                    AddOrderCount(pOrder);                
                 }
 
                 if (bIsLast)
@@ -520,6 +602,14 @@ namespace WrapperTest
                             pTrade.OrderRef, pTrade.TradeTime, pTrade.TradeDate, pTrade.OrderSysID, pTrade.Price);
 
                     Utils.WriteLine(temp, true);
+
+                    Task.Run(() => { Email.SendMessage(true, "liu7788414", "15800377605", temp); });
+
+                    if (pTrade.OffsetFlag == EnumOffsetFlagType.Open)
+                    {
+                        _insToOpenTime[pTrade.InstrumentID] = DateTime.Now;
+                        Utils.WriteLine(string.Format("记录{0}的开仓时间为{1}", pTrade.InstrumentID, DateTime.Now), true);
+                    }
 
                     //三种情况，买开找多仓；卖开找空仓；其它的都是找反向仓：卖平找多仓，买平找空仓
                     EnumPosiDirectionType longOrShort;
@@ -943,6 +1033,21 @@ namespace WrapperTest
             return false;
         }
 
+        private void AddOrderCount(ThostFtdcOrderField pOrder)
+        {
+            if (pOrder.Direction == EnumDirectionType.Buy && pOrder.CombOffsetFlag_0 == EnumOffsetFlagType.Open)
+            {
+                AddInstrumentOrderCount(pOrder.InstrumentID, EnumPosiDirectionType.Long);
+            }
+            else
+            {
+                if (pOrder.Direction == EnumDirectionType.Sell && pOrder.CombOffsetFlag_0 == EnumOffsetFlagType.Open)
+                {
+                    AddInstrumentOrderCount(pOrder.InstrumentID, EnumPosiDirectionType.Short);
+                }
+            }
+        }
+
         private void TraderAdapter_OnRtnOrder(ThostFtdcOrderField pOrder)
         {
             try
@@ -961,6 +1066,11 @@ namespace WrapperTest
                     Utils.WriteLine(temp, true);
 
                     UnFinishedOrderFields[GetOrderKey(pOrder)] = pOrder;
+
+                    if (pOrder.OrderSubmitStatus == EnumOrderSubmitStatusType.Accepted)
+                    {
+                        AddOrderCount(pOrder);
+                    }
 
                     if (pOrder.OrderStatus == EnumOrderStatusType.Canceled) //报单被撤单
                     {
@@ -1234,8 +1344,9 @@ namespace WrapperTest
             }
         }
 
-        private void ReqQryInvestorPosition()
+        public void ReqQryInvestorPosition()
         {
+            PositionFields.Clear();
             var req = new ThostFtdcQryInvestorPositionField { BrokerID = BrokerId, InvestorID = InvestorId };
             int iResult = ReqQryInvestorPosition(req, RequestId++);
         }

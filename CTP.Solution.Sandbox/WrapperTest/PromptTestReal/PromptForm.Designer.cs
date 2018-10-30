@@ -113,12 +113,14 @@
             this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cbAutoCloseProfit = new System.Windows.Forms.CheckBox();
             this.cbAutoCloseLoss = new System.Windows.Forms.CheckBox();
+            this.nudOffsetTickCount = new System.Windows.Forms.NumericUpDown();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudProfitPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOffsetTickCount)).BeginInit();
             this.SuspendLayout();
             // 
             // listView1
@@ -345,9 +347,9 @@
             this.toolStripStatusLabel4,
             this.timeLabel,
             this.toolStripStatusLabel5});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 478);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 538);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(726, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(749, 22);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
@@ -652,7 +654,7 @@
             this.nudOverTimePoint.Location = new System.Drawing.Point(544, 278);
             this.nudOverTimePoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudOverTimePoint.Name = "nudOverTimePoint";
-            this.nudOverTimePoint.Size = new System.Drawing.Size(51, 21);
+            this.nudOverTimePoint.Size = new System.Drawing.Size(41, 21);
             this.nudOverTimePoint.TabIndex = 32;
             this.nudOverTimePoint.ValueChanged += new System.EventHandler(this.nudOverTimePoint_ValueChanged);
             // 
@@ -863,7 +865,7 @@
             // btPosition
             // 
             this.btPosition.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btPosition.Location = new System.Drawing.Point(572, 302);
+            this.btPosition.Location = new System.Drawing.Point(562, 302);
             this.btPosition.Margin = new System.Windows.Forms.Padding(2);
             this.btPosition.Name = "btPosition";
             this.btPosition.Size = new System.Drawing.Size(23, 23);
@@ -895,6 +897,8 @@
             // cbTargetMoney
             // 
             this.cbTargetMoney.AutoSize = true;
+            this.cbTargetMoney.Checked = true;
+            this.cbTargetMoney.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbTargetMoney.Location = new System.Drawing.Point(440, 148);
             this.cbTargetMoney.Margin = new System.Windows.Forms.Padding(2);
             this.cbTargetMoney.Name = "cbTargetMoney";
@@ -935,7 +939,7 @@
             this.lvMainIns.FullRowSelect = true;
             this.lvMainIns.GridLines = true;
             this.lvMainIns.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvMainIns.Location = new System.Drawing.Point(648, -1);
+            this.lvMainIns.Location = new System.Drawing.Point(670, 2);
             this.lvMainIns.Name = "lvMainIns";
             this.lvMainIns.Size = new System.Drawing.Size(74, 326);
             this.lvMainIns.TabIndex = 67;
@@ -955,9 +959,7 @@
             // cbAutoCloseProfit
             // 
             this.cbAutoCloseProfit.AutoSize = true;
-            this.cbAutoCloseProfit.Checked = true;
-            this.cbAutoCloseProfit.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbAutoCloseProfit.Location = new System.Drawing.Point(599, 306);
+            this.cbAutoCloseProfit.Location = new System.Drawing.Point(589, 306);
             this.cbAutoCloseProfit.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoCloseProfit.Name = "cbAutoCloseProfit";
             this.cbAutoCloseProfit.Size = new System.Drawing.Size(48, 16);
@@ -969,7 +971,7 @@
             // cbAutoCloseLoss
             // 
             this.cbAutoCloseLoss.AutoSize = true;
-            this.cbAutoCloseLoss.Location = new System.Drawing.Point(599, 283);
+            this.cbAutoCloseLoss.Location = new System.Drawing.Point(589, 283);
             this.cbAutoCloseLoss.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoCloseLoss.Name = "cbAutoCloseLoss";
             this.cbAutoCloseLoss.Size = new System.Drawing.Size(48, 16);
@@ -977,11 +979,25 @@
             this.cbAutoCloseLoss.Text = "自损";
             this.cbAutoCloseLoss.UseVisualStyleBackColor = true;
             // 
+            // nudOffsetTickCount
+            // 
+            this.nudOffsetTickCount.Location = new System.Drawing.Point(638, 293);
+            this.nudOffsetTickCount.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudOffsetTickCount.Name = "nudOffsetTickCount";
+            this.nudOffsetTickCount.Size = new System.Drawing.Size(32, 21);
+            this.nudOffsetTickCount.TabIndex = 70;
+            this.nudOffsetTickCount.ValueChanged += new System.EventHandler(this.nudOffsetTickCount_ValueChanged);
+            // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(726, 500);
+            this.ClientSize = new System.Drawing.Size(749, 560);
+            this.Controls.Add(this.nudOffsetTickCount);
             this.Controls.Add(this.cbAutoCloseLoss);
             this.Controls.Add(this.cbAutoCloseProfit);
             this.Controls.Add(this.lvMainIns);
@@ -1048,6 +1064,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudProfitPoint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOffsetTickCount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1140,6 +1157,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader20;
         private System.Windows.Forms.CheckBox cbAutoCloseProfit;
         private System.Windows.Forms.CheckBox cbAutoCloseLoss;
+        private System.Windows.Forms.NumericUpDown nudOffsetTickCount;
     }
 }
 

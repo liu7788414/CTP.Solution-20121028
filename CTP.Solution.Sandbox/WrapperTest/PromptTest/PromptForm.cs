@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WrapperTest;
+using VerticalProgressBar;
 
 namespace PromptForm
 {
@@ -32,6 +33,7 @@ namespace PromptForm
         public ConcurrentDictionary<string, bool> InsTobSellOpen = new ConcurrentDictionary<string, bool>();
         public ConcurrentDictionary<string, DateTime> InsTodtBuyOpen = new ConcurrentDictionary<string, DateTime>();
         public ConcurrentDictionary<string, DateTime> InsTodtSellOpen = new ConcurrentDictionary<string, DateTime>();
+        public static bool isPromptSent = false;
 
         public PromptForm()
         {
@@ -71,7 +73,7 @@ namespace PromptForm
                 }
             }
 
-            foreach(var ins in bBuyOpenToChange)
+            foreach (var ins in bBuyOpenToChange)
             {
                 InsTobBuyOpen[ins] = true;
             }
@@ -94,7 +96,7 @@ namespace PromptForm
                 InsTobSellOpen[ins] = true;
             }
         }
-        
+
         private void _timerMoney_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (_trader != null)
@@ -124,19 +126,19 @@ namespace PromptForm
         {
             timeLabel.Text = dt.ToString("HH:mm:ss");
 
-            if ((dt > dt9 && dt < dt10 && dt - dt9 < new TimeSpan(0, Utils.分钟数, 0)) || //9:00
-                (dt > dt2100 && dt < dt2200 && dt - dt2100 < new TimeSpan(0, Utils.分钟数, 0)) || //21:00
-                (dt1500 - dt > ts0 && dt1500 - dt < ts5) || //15:00
-                (dt0100 - dt > ts0 && dt0100 - dt < ts5))   //01:00
-            {
-                cbAutoOpen.Checked = false;
-                timeLabel.ForeColor = Color.Red;
-            }
-            else
-            {
-                cbAutoOpen.Checked = true;
-                timeLabel.ForeColor = Color.Black;
-            }
+            //if ((dt > dt9 && dt < dt10 && dt - dt9 < new TimeSpan(0, Utils.分钟数, 0)) || //9:00
+            //    (dt > dt2100 && dt < dt2200 && dt - dt2100 < new TimeSpan(0, Utils.分钟数, 0)) || //21:00
+            //    (dt1500 - dt > ts0 && dt1500 - dt < ts5) || //15:00
+            //    (dt0100 - dt > ts0 && dt0100 - dt < ts5))   //01:00
+            //{
+            //    cbAutoOpen.Checked = false;
+            //    timeLabel.ForeColor = Color.Red;
+            //}
+            //else
+            //{
+            //    cbAutoOpen.Checked = true;
+            //    timeLabel.ForeColor = Color.Black;
+            //}
         }
 
         private object _locker = new object();
@@ -198,7 +200,7 @@ namespace PromptForm
                             foreach (var kv in _trader.UnFinishedOrderFields)
                             {
                                 //cbAutoOpen.Checked = false;
-                                
+
                                 var item = new ListViewItem();
                                 item.UseItemStyleForSubItems = false;
 
@@ -225,6 +227,9 @@ namespace PromptForm
                                     var subDis = item.SubItems.Add(dis.ToString("f1"));
                                     subDis.ForeColor = color;
                                 }
+
+                                var subVol = item.SubItems.Add(kv.Value.VolumeTotal.ToString());
+                                subVol.ForeColor = color;
 
                                 lvOrder.Items.Add(item);
                             }
@@ -253,21 +258,33 @@ namespace PromptForm
 
                             if (_trader.PositionFields.Count <= 0)
                             {
-                                lbHighTotal.Text = lbLowTotal.Text = "0";
+                                lbHighTotal.Text = "-99999";
+                                lbLowTotal.Text = "99999";
                             }
 
-                            if (_trader.UnFinishedOrderFields.Count == 0)
-                            {
-                                cbEnable.Checked = true;
-                            }
-                            else
-                            {
-                                cbEnable.Checked = false;
-                            }
+                            //if (_trader.UnFinishedOrderFields.Count == 0)
+                            //{
+                            //    cbEnable.Checked = true;
+                            //}
+                            //else
+                            //{
+                            //    cbEnable.Checked = false;
+                            //}
 
+                            var insAlreadyProcessed = new List<string>();
+                            
                             foreach (var kv in _trader.PositionFields)
                             {
                                 //cbAutoOpen.Checked = false;
+                                if (!Utils.IsShfeInstrument(kv.Value.InstrumentID) && insAlreadyProcessed.Contains(kv.Value.InstrumentID))
+                                {
+                                    continue;
+                                }
+
+                                if(kv.Value.InstrumentID.Equals("fu1901"))
+                                {
+                                    continue;
+                                }
 
                                 var color = Color.Black;
                                 var dir = kv.Value.PosiDirection;
@@ -283,6 +300,7 @@ namespace PromptForm
                                 item.UseItemStyleForSubItems = false;
 
                                 var ins = kv.Value.InstrumentID;
+                                insAlreadyProcessed.Add(ins);
                                 var subIns = item.SubItems.Add(ins);
                                 subIns.ForeColor = color;
 
@@ -290,6 +308,7 @@ namespace PromptForm
                                 subLongShort.ForeColor = color;
 
                                 var volume = kv.Value.Position;
+
                                 var subVolume = item.SubItems.Add(volume.ToString());
                                 subVolume.ForeColor = color;
 
@@ -302,12 +321,12 @@ namespace PromptForm
 
                                 if (Utils.InstrumentToLastTick.ContainsKey(ins) && Utils.InstrumentToInstrumentInfo.ContainsKey(ins))
                                 {
-                                    var info = Utils.InstrumentToInstrumentInfo[ins];  
+                                    var info = Utils.InstrumentToInstrumentInfo[ins];
                                     var lastTick = Utils.InstrumentToLastTick[ins];
-                                    var rangepoint = (int)(lastTick.LastPrice * Utils.范围 * info.VolumeMultiple);                                     
+                                    var rangepoint = (int)(lastTick.LastPrice * Utils.范围 * info.VolumeMultiple);
 
-                                    nudWarningPoint.Value = rangepoint / 3;
-                                    nudLossPoint.Value = rangepoint * 2 / 3;
+                                    //nudWarningPoint.Value = rangepoint;
+                                    //nudLossPoint.Value = rangepoint * 2;
                                     var cost = kv.Value.OpenCost / info.VolumeMultiple / volume;
                                     item.SubItems.Add(cost.ToString("f1"));
 
@@ -315,25 +334,41 @@ namespace PromptForm
 
                                     if (dir == EnumPosiDirectionType.Long)
                                     {
-                                        profitPoint = (lastTick.BidPrice1 - cost) / info.PriceTick;
+                                        if (lastTick.BidPrice1.Equals(0) || Math.Abs(lastTick.BidPrice1) > 999999)
+                                        {
+                                            profitPoint = (lastTick.LastPrice - cost) / info.PriceTick;
+                                        }
+                                        else
+                                        {
+                                            profitPoint = (lastTick.BidPrice1 - cost) / info.PriceTick;
+                                        }
                                     }
                                     else
                                     {
-                                        profitPoint = (-1) * (lastTick.AskPrice1 - cost) / info.PriceTick;
-                                    }
-
-                                    Utils.WriteLine(string.Format("{0}:当前持仓倍数:{1},当前点数:{2}", ins, volume / Utils.OpenVolumePerTime, profitPoint), true);
-
-                                    if (kv.Value.Position > Utils.OpenVolumePerTime)  //已经触发多个委托，争取保本平仓
-                                    {
-                                        if (profitPoint >= 2)
+                                        if (lastTick.AskPrice1.Equals(0) || Math.Abs(lastTick.AskPrice1) > 999999)
                                         {
-                                            ClosePositionByItem(item, "保本离场", "保本离场");
+                                            profitPoint = (-1) * (lastTick.LastPrice - cost) / info.PriceTick;
+                                        }
+                                        else
+                                        {
+                                            profitPoint = (-1) * (lastTick.AskPrice1 - cost) / info.PriceTick;
                                         }
                                     }
 
+                                    //Utils.WriteLine(string.Format("{0}:当前持仓倍数:{1},当前点数:{2}", ins, volume / Utils.OpenVolumePerTime, profitPoint), true);
+
+                                    //if (kv.Value.Position > Utils.OpenVolumePerTime)  //已经触发多个委托，争取保本平仓
+                                    //{
+                                    //    if (profitPoint >= 1)
+                                    //    {
+                                    //        ClosePositionByItem(item, "保本离场", "保本离场");
+                                    //    }
+                                    //}
+
                                     var profit = profitPoint * info.PriceTick * info.VolumeMultiple * volume;
                                     var subProfit = item.SubItems.Add(profit.ToString("f0"));
+
+                                    Utils.InsToProfit[ins] = profit;
 
                                     var subProfitPoint = item.SubItems.Add(profitPoint.ToString("f1"));
 
@@ -367,6 +402,81 @@ namespace PromptForm
                                             nudLossPoint.BackColor = Color.White;
                                         }
                                     }
+
+                                    var 止盈比例 = Utils.止盈比例;
+                                    var 止损比例 = Utils.止损比例;
+
+                                    if (_trader.InsToOpenTime.ContainsKey(ins))
+                                    {
+                                        var openTime = _trader.InsToOpenTime[ins];
+
+                                        var dtNow = DateTime.Now;
+
+                                        if (dtNow - openTime > ts5)
+                                        {
+                                            var tsPassed = dtNow - openTime - ts5;
+                                            var passedRatio = 1.0 - ((double)tsPassed.TotalMilliseconds) / ts5.TotalMilliseconds;
+
+                                            止盈比例 *= passedRatio;
+                                            止损比例 *= passedRatio;
+
+                                            if (dtNow.Second % 10 == 0)
+                                            {
+                                                Utils.WriteLine(string.Format("{0}的止盈止损比例缩窄为{1}和{2}", ins, 止盈比例, 止损比例), true);
+                                            }
+
+                                            subIns.BackColor = Color.Yellow;
+                                        }
+                                    }
+
+                                    if (cbAutoCloseProfit.Checked)
+                                    {
+                                        if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick > (cost * (1 + 止盈比例) + Utils.偏移Tick数量 * info.PriceTick)))
+                                        {
+                                            ClosePositionByItem(item, string.Format("{0}多仓止盈！", ins), "");
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止盈！", ins));
+                                        }
+
+                                        if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick < (cost * (1 - 止盈比例) - Utils.偏移Tick数量 * info.PriceTick)))
+                                        {
+                                            ClosePositionByItem(item, "", string.Format("{0}空仓止盈！", ins));
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止盈！", ins));
+                                        }
+                                    }
+
+                                    if (cbAutoCloseLoss.Checked)
+                                    {
+                                        if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick < (cost * (1 - 止损比例) + Utils.偏移Tick数量 * info.PriceTick)))
+                                        {
+                                            ClosePositionByItem(item, string.Format("{0}多仓止损！", ins), "");
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓止损！", ins));
+                                        }
+
+                                        if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick > (cost * (1 + 止损比例) - Utils.偏移Tick数量 * info.PriceTick)))
+                                        {
+                                            ClosePositionByItem(item, "", string.Format("{0}空仓止损！", ins));
+                                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓止损！", ins));
+                                        }
+
+                                        HighLowProfit highLowProfitTemp;
+                                        if (Utils.PositionKeyToHighLowProfit.ContainsKey(kv.Key))
+                                        {
+                                            highLowProfitTemp = Utils.PositionKeyToHighLowProfit[kv.Key];
+
+                                            if ((dir == EnumPosiDirectionType.Long && cost + profitPoint * info.PriceTick < (cost + highLowProfitTemp.HighTick * info.PriceTick) * (1 - 止损比例)))
+                                            {
+                                                ClosePositionByItem(item, string.Format("{0}多仓移动止损！", ins), "");
+                                                //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}多仓移动止损！", ins));
+                                            }
+
+                                            if ((dir == EnumPosiDirectionType.Short && cost - profitPoint * info.PriceTick > (cost + highLowProfitTemp.LowTick * info.PriceTick) * (1 + 止损比例)))
+                                            {
+                                                ClosePositionByItem(item, "", string.Format("{0}空仓移动止损！", ins));
+                                                //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}空仓移动止损！", ins));
+                                            }
+                                        }
+                                    }
+
                                     if (profit > 0)
                                     {
                                         subProfit.ForeColor = Color.Red;
@@ -386,9 +496,16 @@ namespace PromptForm
                                         }
                                     }
 
-                                    if(profitPoint > (double)nudWarningPoint.Value)
+                                    if (profitPoint > (double)nudWarningPoint.Value)
                                     {
-                                        nudWarningPoint.Value = Convert.ToDecimal(profitPoint);
+                                        try
+                                        {
+                                            nudWarningPoint.Value = Convert.ToDecimal(profitPoint);
+                                        }
+                                        catch
+                                        {
+
+                                        }
                                     }
 
                                     HighLowProfit highLowProfit;
@@ -446,22 +563,23 @@ namespace PromptForm
                                     var subLowTick = item.SubItems.Add(Math.Round(highLowProfit.LowTick).ToString("f1"));
                                     subLowTick.ForeColor = Color.Green;
 
-                                    if (highLowProfit.Low <= -400)
+                                    if (highLowProfit.Low <= -4000)
                                     {
                                         subLow.BackColor = Color.Yellow;
                                     }
 
-                                    if (highLowProfit.HighTick >= 10 && profitPoint <= 2)
-                                    {
-                                        ClosePositionByItem(item, "大回撤保本离场", "大回撤保本离场");
-                                    }
+                                    //if (highLowProfit.HighTick >= 10 && profitPoint <= 2)
+                                    //{
+                                    //    ClosePositionByItem(item, "大回撤保本离场", "大回撤保本离场");
+                                    //}
 
                                     if (cbWarning.Checked && highLowProfit.HighTick >= warningTick)
                                     {
                                         subHigh.BackColor = Color.Yellow;
 
-                                        if (profitPoint <= highLowProfit.HighTick * closeRatio)
+                                        if (profitPoint >= Convert.ToDouble(nudWarningPoint.Value))
                                         {
+                                            Utils.WriteLine(string.Format("当前价格{0},当前点数{1},当前最高点数{2}", lastTick.LastPrice, profitPoint, highLowProfit.HighTick), true);
                                             ClosePositionByItem(item, "警戒线止盈", "警戒线止盈");
                                         }
                                     }
@@ -470,32 +588,14 @@ namespace PromptForm
                                     {
                                         try
                                         {
-                                            var time = Convert.ToDateTime(kv.Value.TradingDay);
-                                            var timeSpan = DateTime.Now - time;
-
-                                            var subTime = item.SubItems.Add(timeSpan.TotalMinutes.ToString("f2"));
-
-                                            if (timeSpan > new TimeSpan(0, 5, 0))
-                                            {
-                                                subTime.BackColor = Color.Red;
-                                            }
-
-                                            if (timeSpan > new TimeSpan(0, 8, 0))
-                                            {
-                                                subTime.BackColor = Color.Violet;
-                                            }
-
-                                            if (cbOverTime.Checked && timeSpan >= new TimeSpan(0, 10, 0) && profitPoint < overtimePoint)
-                                            {
-                                                ClosePositionByItem(item, "超时未盈利平仓", "超时未盈利平仓");
-                                            }
+                                            var subInsValue = item.SubItems.Add((lastTick.LastPrice * volume * info.VolumeMultiple).ToString());
                                         }
                                         catch
                                         { }
                                     }
                                     else
                                     {
-                                        var subTime = item.SubItems.Add("0");
+                                        var subInsValue = item.SubItems.Add("0");
                                     }
 
                                     var upRatio = (lastTick.LastPrice - lastTick.OpenPrice) / lastTick.OpenPrice;
@@ -523,26 +623,27 @@ namespace PromptForm
                             if (totalProfit > 0)
                             {
                                 textBox1.ForeColor = Color.Red;
-                                if (totalProfit > Convert.ToDouble(lbHighTotal.Text))
-                                {
-                                    lbHighTotal.Text = totalProfit.ToString("f2");
-                                }
                             }
                             else
                             {
                                 if (totalProfit < 0)
                                 {
                                     textBox1.ForeColor = Color.Green;
-
-                                    if (totalProfit < Convert.ToDouble(lbLowTotal.Text))
-                                    {
-                                        lbLowTotal.Text = totalProfit.ToString("f2");
-                                    }
                                 }
                                 else
                                 {
                                     textBox1.ForeColor = Color.Black;
                                 }
+                            }
+
+                            if (!totalProfit.Equals(0) && (totalProfit > Convert.ToDouble(lbHighTotal.Text)))
+                            {
+                                lbHighTotal.Text = totalProfit.ToString("f2");
+                            }
+
+                            if (!totalProfit.Equals(0) && (totalProfit < Convert.ToDouble(lbLowTotal.Text)))
+                            {
+                                lbLowTotal.Text = totalProfit.ToString("f2");
                             }
 
                             if (cbEnableTotal.Checked)
@@ -555,7 +656,17 @@ namespace PromptForm
                         }
                         else
                         {
-                            lbHighTotal.Text = lbLowTotal.Text = "0";
+                            lbHighTotal.Text = "-99999";
+                            lbLowTotal.Text = "99999";
+                        }
+
+                        if(listView1.Items.Count > 0)
+                        {
+                            BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            BackColor = SystemColors.Control;
                         }
                     }));
                 }
@@ -600,32 +711,47 @@ namespace PromptForm
             item.SubItems.Add(promptItem.MessageItems[4]);
             item.SubItems.Add(promptItem.MessageItems[5]);
             item.SubItems.Add(promptItem.MessageItems[6]);
+            if (promptItem.MessageItems.Count > 7)
+            { item.SubItems.Add(promptItem.MessageItems[7]); }
+
+            var ratio = Convert.ToDouble(promptItem.MessageItems[8]);
 
             var ins = promptItem.MessageItems[0];
 
-            double largeRatioOffset = 0;
-            
-            if(promptItem.Ratio > 0.004)
-            {
-                largeRatioOffset = 10;
-                Utils.WriteLine(string.Format("{0}遇见巨大涨跌幅度，增大偏移量", ins), true);
-            }
+
+            //double largeRatioOffset = 0;
+
+            //if (promptItem.Ratio > 0.004)
+            //{
+            //    largeRatioOffset = 10;
+            //    Utils.WriteLine(string.Format("{0}遇见巨大涨跌幅度，增大偏移量", ins), true);
+            //}
+
+
 
             if (promptItem.MessageItems[1].Equals("涨"))
             {
+                if (_trader.IsInsTradedToday(ins, EnumPosiDirectionType.Long))
+                {
+                    Utils.WriteLine(string.Format("今日已经交易过{0}的多单，不再报单...", ins), true);
+                    return;
+                }
+
+                _trader.AddInstrumentOrderCount(ins, EnumPosiDirectionType.Long);
+
                 item.ForeColor = Color.Red;
                 if (cbAutoOpen.Checked)
                 {
                     if (Utils.AllowedShortTradeCategories.Contains(Utils.GetInstrumentCategory(promptItem.MessageItems[0])))
                     {
-                        if(!InsTobBuyOpen.ContainsKey(ins))
+                        if (!InsTobBuyOpen.ContainsKey(ins))
                         {
                             InsTobBuyOpen[ins] = true;
                         }
 
                         if (InsTobBuyOpen[ins])
                         {
-                            OpenByItem(item, Utils.开仓偏移量 + largeRatioOffset);
+                            OpenByItem(item, (ratio - Utils.涨跌幅提示) * Utils.InstrumentToLastTick[ins].LastPrice);
                         }
                         else
                         {
@@ -638,19 +764,27 @@ namespace PromptForm
             {
                 if (promptItem.MessageItems[1].Equals("跌"))
                 {
+                    if (_trader.IsInsTradedToday(ins, EnumPosiDirectionType.Short))
+                    {
+                        Utils.WriteLine(string.Format("今日已经交易过{0}的空单，不再报单...", ins), true);
+                        return;
+                    }
+
+                    _trader.AddInstrumentOrderCount(ins, EnumPosiDirectionType.Short);
+
                     item.ForeColor = Color.Green;
                     if (cbAutoOpen.Checked)
                     {
                         if (Utils.AllowedShortTradeCategories.Contains(Utils.GetInstrumentCategory(promptItem.MessageItems[0])))
                         {
-                            if(!InsTobSellOpen.ContainsKey(ins))
+                            if (!InsTobSellOpen.ContainsKey(ins))
                             {
                                 InsTobSellOpen[ins] = true;
                             }
 
                             if (InsTobSellOpen[ins])
                             {
-                                OpenByItem(item, Utils.开仓偏移量 + largeRatioOffset);
+                                OpenByItem(item, (ratio - Utils.涨跌幅提示) * Utils.InstrumentToLastTick[ins].LastPrice);
                             }
                             else
                             {
@@ -661,19 +795,29 @@ namespace PromptForm
                 }
                 else
                 {
-                    if (promptItem.MessageItems[1].Equals("兴"))
-                    {
-                        item.ForeColor = Color.Brown;
-                    }
-                    else
-                    {
-                        if (promptItem.MessageItems[1].Equals("衰"))
-                        {
-                            item.ForeColor = Color.Blue;
-                        }
-                        else
-                        { }
-                    }
+                    //if (promptItem.MessageItems[1].Equals("兴"))
+                    //{
+                    //    item.ForeColor = Color.Brown;
+
+                    //    if (cbAutoOpen.Checked)
+                    //    {
+                    //        OpenByItem(item, Utils.开仓偏移量 + largeRatioOffset);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (promptItem.MessageItems[1].Equals("衰"))
+                    //    {
+                    //        item.ForeColor = Color.Blue;
+
+                    //        if (cbAutoOpen.Checked)
+                    //        {
+                    //            OpenByItem(item, Utils.开仓偏移量 + largeRatioOffset);
+                    //        }
+                    //    }
+                    //    else
+                    //    { }
+                    //}
                 }
             }
 
@@ -696,7 +840,253 @@ namespace PromptForm
             closeRatio = Convert.ToDouble(nudCloseRatio.Value);
             overtimePoint = -Convert.ToDouble(nudOverTimePoint.Value);
             tbUpDownRatio.Text = Utils.涨跌幅提示.ToString();
+            tbTargetMoney.Text = Utils.单手总金额.ToString();
+            nudOffsetTickCount.Value = Utils.偏移Tick数量;
+
+            var listIns = Utils.CategoryToMainInstrument.Values.ToList();
+            listIns.Sort();
+
+            foreach(var ins in listIns)
+            {
+                var item = new ListViewItem();
+                var sub = item.SubItems.Add(ins);
+                sub = item.SubItems.Add(ins);
+                lvMainIns.Items.Add(item);
+            }
+
+            var distance = Width / listIns.Count;
+
+            for (var i = 0; i < listIns.Count;i++ )
+            {
+                var vpb = new VerticalProgressBar.VerticalProgressBar();
+
+                vpb.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpb.Location = new Point(12 + distance * i, 334);
+                vpb.Maximum = ((int)Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])]) * 10000;
+                vpb.Minimum = 0;
+                vpb.Name = listIns[i];
+                vpb.Size = new Size(15, 60);
+                vpb.Step = 1;
+                vpb.Style = VerticalProgressBar.Styles.Solid;
+                vpb.Value = 0;
+                vpb.Click += vpb_Click;
+                var tp = new ToolTip();
+                tp.SetToolTip(vpb, listIns[i]);
+
+                Controls.Add(vpb);
+
+                var labelLong = new Label();
+                labelLong.AutoSize = true;
+                labelLong.Location = new Point(vpb.Location.X + 14, 350);
+                labelLong.Size = new Size(15, 9);
+                labelLong.Text = "多";
+                labelLong.ForeColor = Color.Red;
+                labelLong.Font = new Font("SimSun", 10F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(134)));
+
+                Controls.Add(labelLong);
+
+                var labelShort = new Label();
+                labelShort.AutoSize = true;
+                labelShort.Location = new Point(vpb.Location.X + 14, 380);
+                labelShort.Size = new Size(15, 9);
+                labelShort.Text = "空";
+                labelShort.ForeColor = Color.Green;
+                labelShort.Font = new Font("SimSun", 10F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(134)));
+
+                Controls.Add(labelShort);
+
+                var l = new Label();
+                l.AutoSize = true;
+                if (i % 2 == 0)
+                {
+                    l.Location = new Point(0 + distance * i, 410);
+                }
+                else
+                {
+                    l.Location = new Point(0 + distance * i, 400);
+                }
+
+                l.Name = string.Format("l{0}", i);
+                l.Size = new Size(15, 9);
+                l.Text = listIns[i];
+                l.Font = new Font("SimSun", 8F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
+                l.Click += label_Click;
+
+                Controls.Add(l);
+
+                var limit = new Label();
+                limit.AutoSize = true;
+
+                if (i % 2 == 0)
+                {
+                    limit.Location = new Point(l.Location.X + 7, l.Location.Y - 13);
+                }
+                else
+                {
+                    limit.Location = new Point(l.Location.X + 7, l.Location.Y + 13);
+                }
+
+                limit.Size = new Size(15, 9);
+                limit.Text = Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])].ToString();
+                limit.Font = new Font("SimSun", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+                limit.ForeColor = Color.Blue;
+
+                Controls.Add(limit);
+
+
+                var vpbWaveRatio = new VerticalProgressBar.VerticalProgressBar();
+
+                vpbWaveRatio.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpbWaveRatio.Location = new Point(12 + distance * i, 430);
+                vpbWaveRatio.Maximum = (int)(Utils.涨跌幅提示 * 10000);
+                vpbWaveRatio.Minimum = 0;
+                vpbWaveRatio.Size = new Size(15, 40);
+                vpbWaveRatio.Step = 1;
+                vpbWaveRatio.Style = VerticalProgressBar.Styles.Solid;
+                vpbWaveRatio.Value = 0;
+
+                Controls.Add(vpbWaveRatio);
+
+                var vpbLongCount = new VerticalProgressBar.VerticalProgressBar();
+
+                vpbLongCount.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpbLongCount.Location = new Point(12 + distance * i, 475);
+                vpbLongCount.Maximum = (int)Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])] * 10000 / Utils.分钟数;
+                vpbLongCount.Minimum = 0;
+                vpbLongCount.Size = new Size(7, 55);
+                vpbLongCount.Step = 1;
+                vpbLongCount.Style = VerticalProgressBar.Styles.Solid;
+                vpbLongCount.Color = Color.Red;
+                vpbLongCount.Value = 0;
+
+                Controls.Add(vpbLongCount);
+
+                var vpbShortCount = new VerticalProgressBar.VerticalProgressBar();
+
+                vpbShortCount.BorderStyle = VerticalProgressBar.BorderStyles.Classic;
+                vpbShortCount.Location = new Point(20 + distance * i, 475);
+                vpbShortCount.Maximum = (int)Utils.成交量阈值[Utils.GetInstrumentCategory(listIns[i])] * 10000 / Utils.分钟数;
+                vpbShortCount.Minimum = 0;
+                vpbShortCount.Size = new Size(7, 55);
+                vpbShortCount.Step = 1;
+                vpbShortCount.Style = VerticalProgressBar.Styles.Solid;
+                vpbShortCount.Color = Color.Green;
+                vpbShortCount.Value = 0;
+
+                Controls.Add(vpbShortCount);
+
+                InsToVpb[listIns[i]] = vpb;
+
+                InsToLongLabel[listIns[i]] = labelLong;
+
+                InsToShortLabel[listIns[i]] = labelShort;
+
+                InsToLimitLabel[listIns[i]] = limit;
+
+                InsToVpbWaveRatio[listIns[i]] = vpbWaveRatio;
+
+                InsToVpbLongCount[listIns[i]] = vpbLongCount;
+
+                InsToVpbShortCount[listIns[i]] = vpbShortCount;
+            }
         }
+
+        void vpb_Click(object sender, EventArgs e)
+        {
+            tbIns.Text = ((VerticalProgressBar.VerticalProgressBar)sender).Name;
+        }
+
+        public void PerformStep(string ins, int value, double waveRatio, MarketData marketData)
+        {
+            if (InsToVpb.ContainsKey(ins))
+            {
+                var limit = (int)(Utils.成交量阈值[Utils.GetInstrumentCategory(ins)] * 10000);
+                var vpb = InsToVpb[ins];
+                var longLabel = InsToLongLabel[ins];
+                var shortLabel = InsToShortLabel[ins];
+                var limitLabel = InsToLimitLabel[ins];
+                var vpbWaveRatio = InsToVpbWaveRatio[ins];
+                var vpbLongCount = InsToVpbLongCount[ins];
+                var vpbShortCount = InsToVpbShortCount[ins];
+
+                vpb.Value = value;
+
+                if (value >= limit)
+                {
+                    vpb.Color = Color.Red;
+                }
+                else
+                {
+                    if (value > limit * 0.8)
+                    {
+                        vpb.Color = Color.Orange;
+                    }
+                    else
+                    {
+                        vpb.Color = Color.Green;
+                    }
+                }
+
+                if (value >= vpb.Maximum)
+                {
+                    vpb.Maximum *= 2;
+                    limitLabel.Text = (vpb.Maximum / 10000.0).ToString("N1");
+                }
+
+                if (value < limit)
+                {
+                    vpb.Maximum = limit;
+                    limitLabel.Text = (limit / 10000.0).ToString("N1");
+                }
+
+                if (_trader.InsToLongOrderCount.ContainsKey(ins))
+                {
+                    longLabel.Enabled = false;
+                }
+
+                if (_trader.InsToShortOrderCount.ContainsKey(ins))
+                {
+                    shortLabel.Enabled = false;
+                }
+
+                if (_trader.InsToLongOrderCount.ContainsKey(ins) && _trader.InsToShortOrderCount.ContainsKey(ins))
+                {
+                    limitLabel.Enabled = vpb.Enabled = false;
+                    vpb.Color = Color.Gray;
+                }
+
+                vpbWaveRatio.Value = (int)(waveRatio * 10000);
+
+                if (waveRatio >= Utils.涨跌幅提示)
+                {
+                    vpbWaveRatio.Color = Color.Red;
+                }
+                else
+                {
+                    if (waveRatio > 0.8)
+                    {
+                        vpbWaveRatio.Color = Color.Orange;
+                    }
+                    else
+                    {
+                        vpbWaveRatio.Color = Color.Green;
+                    }
+                }
+
+                vpbLongCount.Value = (int)marketData.近期多头势力;
+
+                vpbShortCount.Value = (int)marketData.近期空头势力;
+            }
+        }
+
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpb = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpbWaveRatio = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpbLongCount = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+        private ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar> InsToVpbShortCount = new ConcurrentDictionary<string, VerticalProgressBar.VerticalProgressBar>();
+
+        private ConcurrentDictionary<string, Label> InsToLimitLabel = new ConcurrentDictionary<string, Label>();
+        private ConcurrentDictionary<string, Label> InsToLongLabel = new ConcurrentDictionary<string, Label>();
+        private ConcurrentDictionary<string, Label> InsToShortLabel = new ConcurrentDictionary<string, Label>();
 
         private Point p;
         private Point p2;
@@ -708,59 +1098,77 @@ namespace PromptForm
 
         private void OpenByItem(ListViewItem item, double offset)
         {
-            if (_trader.UnFinishedOrderFields.Count > 0)
-            {
-                Utils.WriteLine("有未成交单，不报新单...", true);
-                return;
-            }
+
 
             if (item != null)
             {
                 var ins = item.SubItems[1].Text;
-                var price = Convert.ToDouble(item.SubItems[6].Text);
 
-                if (_trader.PositionFields.Count >= 2)
+                if (_trader.UnFinishedOrderFields.Count > 0 && _trader.UnFinishedOrderFields.ContainsKey(ins))
                 {
-                    var pos = _trader.PositionFields.Values.Where(ppp => ppp.InstrumentID.Equals(ins));
-                    if (!(pos.Count() > 0))
-                    {
-                        Utils.WriteLine("不超品种数量持仓...", true);
-                        return;
-                    }
-                }
-
-                if (_trader.PositionFields.Count > 0)
-                {
-                    Utils.WriteLine("持仓不报单...", true);
+                    Utils.WriteLine(string.Format("{0}有未成交单，不报新单...", ins), true);
                     return;
                 }
+
+                var price = Convert.ToDouble(item.SubItems[6].Text);
+                int vol = 1;
+                if (item.SubItems.Count > 8)
+                {
+                    vol = Convert.ToInt32(item.SubItems[8].Text);
+                }
+
+                //if (_trader.PositionFields.Count >= 4)
+                //{
+                //    var pos = _trader.PositionFields.Values.Where(ppp => ppp.InstrumentID.Equals(ins));
+                //    if (!(pos.Count() > 0))
+                //    {
+                //        Utils.WriteLine("不超品种数量持仓...", true);
+                //        return;
+                //    }
+                //}
+
+                //if (_trader.PositionFields.Count > 0)
+                //{
+                //    Utils.WriteLine("持仓不报单...", true);
+                //    return;
+                //}
+
+                //if (_trader.PositionFields.Count > 0)
+                //{
+                //    var pos = _trader.PositionFields.Values.Where(ppp => ppp.InstrumentID.Equals(ins));
+                //    if (!(pos.Count() > 0))
+                //    {
+                //        Utils.WriteLine(string.Format("已经持有{0}的仓，不开新仓...", ins), true);
+                //        return;
+                //    }
+                //}
 
                 if (Utils.InstrumentToLastTick.ContainsKey(ins))
                 {
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
+                    var adjustedOffset = ((int)(offset / info.PriceTick)) * info.PriceTick;
+                    var adjustedOffset2 = ((int)((offset / 2) / info.PriceTick)) * info.PriceTick;
+                    var targetVolume = 1;
+
+                    if (cbTargetMoney.Checked)
+                    {
+                        var targetMoney = Utils.单手总金额;
+                        targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
+                    }
+
                     if (item.SubItems[2].Text.Equals("涨") || item.SubItems[2].Text.Equals("兴"))
                     {
                         if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Short))  //持有空仓不开多仓
-                        {
-                            //Thread.Sleep(3000);
-                            lastTick = Utils.InstrumentToLastTick[ins];
-                            var rangepoint = (int)(lastTick.LastPrice * Utils.范围 * info.VolumeMultiple);
+                        {                      
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - adjustedOffset, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开多仓");
+                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - adjustedOffset2, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开多仓");
 
-                            for (int i = 0; i < 20; i++)
-                            {
-                                _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - (i * 3 + offset + rangepoint * (i > 0 ? 1 : 0)) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
-                            }
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - 2 * rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - 3 * rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - offset * info.PriceTick - 4 * rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开多仓");
                             InsTobBuyOpen[ins] = false;
                             InsTodtBuyOpen[ins] = DateTime.Now;
 
-                            Email.SendMessage(false);
+                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}触发买单信号!", ins));
                         }
                         else
                         {
@@ -771,23 +1179,13 @@ namespace PromptForm
                     {
                         if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Long)) //持有多仓不开空仓
                         {
-                            //Thread.Sleep(3000);
-                            lastTick = Utils.InstrumentToLastTick[ins];
-                            var rangepoint = (int)(lastTick.LastPrice * Utils.范围 * info.VolumeMultiple);
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + adjustedOffset, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开空仓");
+                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + adjustedOffset2, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开空仓");
 
-                            for (int i = 0; i < 20; i++)
-                            {
-                                _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + (i * 3 + offset + rangepoint * (i > 0 ? 1 : 0)) * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
-                            }
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick, Utils.OpenVolumePerTime, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + 2 * rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + 3 * rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
-                            //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + offset * info.PriceTick + 4 * rangepoint * info.PriceTick, Utils.OpenVolumePerTime * 5, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "快捷开空仓");
                             InsTobSellOpen[ins] = false;
                             InsTodtSellOpen[ins] = DateTime.Now;
 
-                            Email.SendMessage(false);
+                            //Email.SendMessage(true, "liu7788414", "15800377605", string.Format("{0}触发卖单信号!", ins));
                         }
                         else
                         {
@@ -856,17 +1254,22 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     if (longOrShort.Equals("多"))
                     {
+
                         _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, vol, EnumOffsetFlagType.CloseYesterday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, longReason);
+
                         InsTobBuyOpen[ins] = false;
                         InsTodtBuyOpen[ins] = DateTime.Now;
-                        cbAutoOpen.Checked = true;
+                        //cbAutoOpen.Checked = true;
                     }
                     else
                     {
                         _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, vol, EnumOffsetFlagType.CloseToday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, shortReason);
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, vol, EnumOffsetFlagType.CloseYesterday, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, shortReason);
+
                         InsTobSellOpen[ins] = false;
                         InsTodtSellOpen[ins] = DateTime.Now;
-                        cbAutoOpen.Checked = true;
+                        //cbAutoOpen.Checked = true;
                     }
 
                     CancelAllOrders();
@@ -914,12 +1317,14 @@ namespace PromptForm
 
         private void lbHighTotal_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            lbHighTotal.Text = lbLowTotal.Text = "0";
+            lbHighTotal.Text = "-99999";
+            lbLowTotal.Text = "99999";
         }
 
         private void lbLowTotal_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            lbHighTotal.Text = lbLowTotal.Text = "0";
+            lbHighTotal.Text = "-99999";
+            lbLowTotal.Text = "99999";
         }
 
         private void nudCloseRatio_ValueChanged(object sender, EventArgs e)
@@ -958,7 +1363,7 @@ namespace PromptForm
         private void nudWarningPoint_ValueChanged(object sender, EventArgs e)
         {
             warningTick = Convert.ToDouble(nudWarningPoint.Value);
-            Utils.WriteLine(string.Format("警戒线设为{0}", warningTick), true);
+            //Utils.WriteLine(string.Format("警戒线设为{0}", warningTick), true);
         }
 
         private void cbOverTime_CheckedChanged(object sender, EventArgs e)
@@ -992,7 +1397,16 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    if (cbTargetMoney.Checked)
+                    {
+                        var targetMoney = Utils.单手总金额;
+                        var targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    }
+                    else
+                    {
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开空仓");
+                    }
                 }
             }
         }
@@ -1012,7 +1426,16 @@ namespace PromptForm
                     var lastTick = Utils.InstrumentToLastTick[ins];
                     var info = Utils.InstrumentToInstrumentInfo[ins];
 
-                    _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    if (cbTargetMoney.Checked)
+                    {
+                        var targetMoney = Utils.单手总金额;
+                        var targetVolume = (int)Math.Round(targetMoney / (info.VolumeMultiple * lastTick.LastPrice), MidpointRounding.AwayFromZero);
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    }
+                    else
+                    {
+                        _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - Convert.ToDouble(button.Text) * info.PriceTick, 1, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "手工开多仓");
+                    }
                 }
             }
         }
@@ -1064,7 +1487,7 @@ namespace PromptForm
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(listView1.SelectedItems != null && listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems != null && listView1.SelectedItems.Count > 0)
             {
                 tbIns.Text = listView1.SelectedItems[0].SubItems[1].Text;
             }
@@ -1143,6 +1566,70 @@ namespace PromptForm
         private void lvOrder_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             CancelAllOrders();
+        }
+
+        private void btPosition_Click(object sender, EventArgs e)
+        {
+            lbHighTotal.Text = "-99999";
+            lbLowTotal.Text = "99999";
+            _trader.ReqQryInvestorPosition();
+        }
+
+        private void cbTargetMoney_CheckedChanged(object sender, EventArgs e)
+        {
+            labelTargetMoney.Enabled = tbTargetMoney.Enabled = ((CheckBox)sender).Checked;
+        }
+
+        private void btBuy9_Click_1(object sender, EventArgs e)
+        {
+            OpenByButtonBuy((Button)sender);
+        }
+
+        private void btSell9_Click_1(object sender, EventArgs e)
+        {
+            OpenByButtonSell((Button)sender);
+        }
+
+        private void lvMainIns_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lvMainIns.SelectedItems != null && lvMainIns.SelectedItems.Count > 0)
+            {
+                tbIns.Text = lvMainIns.SelectedItems[0].SubItems[1].Text;
+            }
+        }
+
+        private void label_Click(object sender, EventArgs e)
+        {
+            tbIns.Text = ((Label)sender).Text;
+        }
+
+        private void cbAutoClose_CheckedChanged(object sender, EventArgs e)
+        {
+            if(cbAutoCloseProfit.Checked)
+            {
+                cbAutoCloseProfit.BackColor = Color.Gray;
+            }
+            else
+            {
+                cbAutoCloseProfit.BackColor = Color.Red;
+            }
+        }
+
+        private void tbTargetMoney_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Utils.单手总金额 = Convert.ToDouble(tbTargetMoney.Text);
+            }
+            catch
+            {
+                Utils.单手总金额 = 200000;
+            }
+        }
+
+        private void nudOffsetTickCount_ValueChanged(object sender, EventArgs e)
+        {
+            Utils.偏移Tick数量 = (int)nudOffsetTickCount.Value;
         }
     }
 

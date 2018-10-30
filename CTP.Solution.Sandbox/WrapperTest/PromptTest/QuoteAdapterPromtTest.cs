@@ -78,7 +78,7 @@ namespace WrapperTest
         }
 
         private Timer _timerOrder = new Timer(250); //报单回报有时候会有1-2秒的延迟
-        private Timer _timerClearMessage = new Timer(60 * 1000 * 2); //
+        private Timer _timerClearMessage = new Timer(10 * 1000); //
 
         //private Timer _timerSaveStopLossPrices = new Timer(1000); //每隔一段时间保存当前的止损参考价，供下次启动时读取
 
@@ -185,7 +185,7 @@ namespace WrapperTest
                     if (Utils.CurrentChannel != ChannelType.模拟24X7)
                     {
                         //排除登录时推送的过期行情
-                        if ((dtNow.Hour == 6 && dtNow.Minute >= 45 && dtNow.Minute <= 55) || (dtNow.Hour == 18 && dtNow.Minute >= 45 && dtNow.Minute <= 55))
+                        if ((dtNow.Hour == 6 && dtNow.Minute >= 45 && dtNow.Minute <= 58) || (dtNow.Hour == 18 && dtNow.Minute >= 45 && dtNow.Minute <= 58))
                         {
                             return;
                         }

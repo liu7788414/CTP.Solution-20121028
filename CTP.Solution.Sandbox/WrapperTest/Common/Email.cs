@@ -50,17 +50,28 @@ namespace SendMail
         private static string strKey = "&key=71504c7f46f1233b3776"; //这里*代表秘钥，由于从长有点麻烦，就不在窗口上输入了
         private static string strMob = "&smsMob=";
         private static string strContent = "&smsText=";
+        private static DateTime dtLastTime = DateTime.Now - new TimeSpan(0, 1, 0);
 
         public static string SendMessage(bool isMailingEnabled = true, string userName = "liu7788414", string txtAttnNum = "15800377605", string txtContent = "触发交易信号")
         {
             if (isMailingEnabled)
             {
+                //两条短信间隔要超过1分钟
+                var dtNow = DateTime.Now;
+                var tsTimeSpan = dtNow - dtLastTime;    
+                dtLastTime = dtNow;
+
+                if(tsTimeSpan <= new TimeSpan(0,1,0))
+                {
+                    Thread.Sleep(new TimeSpan(0,1,1) - tsTimeSpan);  //等待到达1分钟
+                }
+
                 if (userName.Trim() != "" && txtAttnNum.Trim() != "" && txtContent.Trim() != null)
                 {
-                    var fullUrl = url + strUid + userName + strKey + strMob + txtAttnNum + strContent + txtContent + DateTime.Now.ToString("HH:mm:ss.fff");
-                    string Result = GetHtmlFromUrl(fullUrl);
+                    var fullUrl = url + strUid + userName + strKey + strMob + txtAttnNum + strContent + txtContent + " " + DateTime.Now.ToString("HH:mm:ss.fff");
+                    //string Result = GetHtmlFromUrl(fullUrl);
 
-                    return Result;
+                    //return Result;
                 }
             }
 

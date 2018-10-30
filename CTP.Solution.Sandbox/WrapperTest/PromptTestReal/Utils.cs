@@ -388,7 +388,9 @@ namespace WrapperTest
         public static double 止损比例 = 0.01;
         public static double 止盈比例 = 0.0025;
         public static double 单手总金额 = 200000;
+        public static int 偏移Tick数量 = 1;
         public static int 分钟数 = 5;
+        public static int 涨幅分钟数 = 5;
         public static double 范围 = 0.00015;
         public static double 杠杆比例 = 1;
         public static ConcurrentDictionary<string, double> 成交量阈值 = new ConcurrentDictionary<string, double>();
@@ -821,7 +823,7 @@ namespace WrapperTest
                 {
                     promptForm.Invoke(new Action(() =>
                     {
-                        promptForm.PerformStep(instrumentId, totalVolume, (max - min) / min);
+                        promptForm.PerformStep(instrumentId, totalVolume, (max - min) / min, marketData);
                     }));
                 }
 
@@ -1174,6 +1176,12 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 单手总金额 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                偏移Tick数量 = Convert.ToInt32(GetLineData(line));
+
+                line = sr.ReadLine();
+                涨幅分钟数 = Convert.ToInt32(GetLineData(line));
 
                 sr.Close();
             }
