@@ -389,6 +389,7 @@ namespace WrapperTest
         public static double 多空差幅度 = 5000;
         public static double 开仓偏移量 = 1;
         public static ConcurrentDictionary<string, double> 开仓偏移比例 = new ConcurrentDictionary<string, double>();
+        public static ConcurrentDictionary<string, double> 合约开仓偏移量 = new ConcurrentDictionary<string, double>();
         public static double 涨跌幅提示 = 0.0045;
         public static double 止损比例 = 0.01;
         public static double 止盈比例 = 0.0025;
@@ -396,6 +397,7 @@ namespace WrapperTest
         public static int 偏移Tick数量 = 1;
         public static int 分钟数 = 5;
         public static int 涨幅分钟数 = 5;
+        public static double 止盈金额 = 2000;
         public static double 范围 = 0.00015;
         public static double 杠杆比例 = 1;
         public static ConcurrentDictionary<string, double> 成交量阈值 = new ConcurrentDictionary<string, double>();
@@ -552,7 +554,7 @@ namespace WrapperTest
                                     else
                                     {
                                         性质 = 多空性质.WD;
-                                        WriteLine(string.Format("未定:仓差{0},现价{1},前卖{2},前买{3}", 仓差, pDepthMarketData.LastPrice, preTick.AskPrice1, preTick.BidPrice1), true);
+                                        //WriteLine(string.Format("未定:仓差{0},现价{1},前卖{2},前买{3}", 仓差, pDepthMarketData.LastPrice, preTick.AskPrice1, preTick.BidPrice1), true);
                                     }
                                 }
                             }
@@ -575,7 +577,7 @@ namespace WrapperTest
                                         else
                                         {
                                             性质 = 多空性质.WD;
-                                            WriteLine(string.Format("未定:仓差{0},现价{1},前卖{2},前买{3}", 仓差, pDepthMarketData.LastPrice, preTick.AskPrice1, preTick.BidPrice1), true);
+                                            //WriteLine(string.Format("未定:仓差{0},现价{1},前卖{2},前买{3}", 仓差, pDepthMarketData.LastPrice, preTick.AskPrice1, preTick.BidPrice1), true);
                                         }
                                     }
                                 }
@@ -840,7 +842,7 @@ namespace WrapperTest
                     var maxTime = Convert.ToDateTime(maxQuote.更新日期.ToString("yyyy/MM/dd") + " " + maxQuote.pDepthMarketData.UpdateTime);
                     var minTime = Convert.ToDateTime(minQuote.更新日期.ToString("yyyy/MM/dd") + " " + minQuote.pDepthMarketData.UpdateTime);
 
-                    WriteLine(string.Format("maxTime:{0},minTime:{1}", maxTime, minTime), true);
+                    //WriteLine(string.Format("maxTime:{0},minTime:{1}", maxTime, minTime));
 
                     bool up = true;
                     if (maxTime > minTime)
@@ -1191,6 +1193,17 @@ namespace WrapperTest
 
                 line = sr.ReadLine();
                 涨幅分钟数 = Convert.ToInt32(GetLineData(line));
+
+                line = sr.ReadLine();
+                止盈金额 = Convert.ToDouble(GetLineData(line));
+
+                line = sr.ReadLine();
+                s = GetLineData(line).Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var v in s)
+                {
+                    var ss = v.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+                    合约开仓偏移量[ss[0]] = Convert.ToDouble(ss[1]);
+                }
 
                 sr.Close();
             }

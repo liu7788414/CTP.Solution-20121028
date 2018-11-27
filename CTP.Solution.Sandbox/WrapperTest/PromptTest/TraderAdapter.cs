@@ -1427,7 +1427,7 @@ new ConcurrentDictionary<string, DateTime>();
                     //    Email.SendMail(string.Format("错误:处理{0}出现异常", moneyFile), errorMsg, Utils.IsMailingEnabled);
                     //}
 
-                    Utils.OutputField(pTradingAccount);
+                    //Utils.OutputField(pTradingAccount);
                 }
 
                 if (bIsLast && !Utils.IsTraderReady)

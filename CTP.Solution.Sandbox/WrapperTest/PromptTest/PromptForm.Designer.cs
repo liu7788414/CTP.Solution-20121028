@@ -49,6 +49,9 @@
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader21 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader22 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -201,6 +204,9 @@
             this.columnHeader12,
             this.columnHeader9,
             this.columnHeader13,
+            this.columnHeader21,
+            this.columnHeader22,
+            this.columnHeader23,
             this.columnHeader10});
             this.listView2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listView2.FullRowSelect = true;
@@ -208,7 +214,7 @@
             this.listView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView2.Location = new System.Drawing.Point(3, 172);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(640, 92);
+            this.listView2.Size = new System.Drawing.Size(869, 92);
             this.listView2.TabIndex = 1;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -268,6 +274,21 @@
             // 
             this.columnHeader13.Text = "点数";
             this.columnHeader13.Width = 50;
+            // 
+            // columnHeader21
+            // 
+            this.columnHeader21.Text = "盈点";
+            this.columnHeader21.Width = 70;
+            // 
+            // columnHeader22
+            // 
+            this.columnHeader22.Text = "损点";
+            this.columnHeader22.Width = 70;
+            // 
+            // columnHeader23
+            // 
+            this.columnHeader23.Text = "当前";
+            this.columnHeader23.Width = 70;
             // 
             // columnHeader10
             // 
@@ -349,7 +370,7 @@
             this.toolStripStatusLabel5});
             this.statusStrip1.Location = new System.Drawing.Point(0, 538);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(749, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(952, 22);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
@@ -703,7 +724,7 @@
             this.lvOrder.Location = new System.Drawing.Point(434, 2);
             this.lvOrder.Margin = new System.Windows.Forms.Padding(2);
             this.lvOrder.Name = "lvOrder";
-            this.lvOrder.Size = new System.Drawing.Size(209, 70);
+            this.lvOrder.Size = new System.Drawing.Size(439, 70);
             this.lvOrder.TabIndex = 36;
             this.lvOrder.UseCompatibleStateImageBehavior = false;
             this.lvOrder.View = System.Windows.Forms.View.Details;
@@ -941,7 +962,7 @@
             this.lvMainIns.FullRowSelect = true;
             this.lvMainIns.GridLines = true;
             this.lvMainIns.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvMainIns.Location = new System.Drawing.Point(670, 2);
+            this.lvMainIns.Location = new System.Drawing.Point(878, 2);
             this.lvMainIns.Name = "lvMainIns";
             this.lvMainIns.Size = new System.Drawing.Size(74, 326);
             this.lvMainIns.TabIndex = 67;
@@ -961,8 +982,6 @@
             // cbAutoCloseProfit
             // 
             this.cbAutoCloseProfit.AutoSize = true;
-            this.cbAutoCloseProfit.Checked = true;
-            this.cbAutoCloseProfit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbAutoCloseProfit.Location = new System.Drawing.Point(589, 306);
             this.cbAutoCloseProfit.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoCloseProfit.Name = "cbAutoCloseProfit";
@@ -1002,7 +1021,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(749, 560);
+            this.ClientSize = new System.Drawing.Size(952, 560);
             this.Controls.Add(this.nudOffsetTickCount);
             this.Controls.Add(this.cbAutoCloseLoss);
             this.Controls.Add(this.cbAutoCloseProfit);
@@ -1164,6 +1183,9 @@
         private System.Windows.Forms.CheckBox cbAutoCloseProfit;
         private System.Windows.Forms.CheckBox cbAutoCloseLoss;
         private System.Windows.Forms.NumericUpDown nudOffsetTickCount;
+        private System.Windows.Forms.ColumnHeader columnHeader22;
+        private System.Windows.Forms.ColumnHeader columnHeader21;
+        private System.Windows.Forms.ColumnHeader columnHeader23;
     }
 }
 
