@@ -28,6 +28,22 @@ namespace WrapperTest
             set { _tradingDay = value; }
         }
 
+        private bool _changeHands = true;
+
+        public bool ChangeHands
+        {
+            get { return _changeHands; }
+            set { _changeHands = value; }
+        }
+
+        private decimal _daoShou = 10;
+
+        public decimal DaoShou
+        {
+            get { return _daoShou; }
+            set { _daoShou = value; }
+        }
+
         private int _frontId;
 
         public int FrontId
@@ -171,29 +187,29 @@ new ConcurrentDictionary<string, DateTime>();
                 //    return;
                 //}
 
-                var ordersToCancel = new List<ThostFtdcOrderField>();
+                //var ordersToCancel = new List<ThostFtdcOrderField>();
 
-                foreach (var order in UnFinishedOrderFields.Values)
-                {
-                    //只撤开仓单
-                    if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
-                    {
-                        var updateTime = Convert.ToDateTime(order.InsertTime);
+                //foreach (var order in UnFinishedOrderFields.Values)
+                //{
+                //    //只撤开仓单
+                //    if ((order.CombOffsetFlag_0 == EnumOffsetFlagType.Open) && (order.OrderStatus == EnumOrderStatusType.NoTradeQueueing || order.OrderStatus == EnumOrderStatusType.PartTradedQueueing))
+                //    {
+                //        var updateTime = Convert.ToDateTime(order.InsertTime);
 
-                        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 1, 0))
-                        {
-                            ordersToCancel.Add(order);
-                        }
-                    }
-                }
+                //        if (DateTime.Now + new TimeSpan(0, 0, Utils.ExchangeTimeOffset) - updateTime > new TimeSpan(0, 1, 0))
+                //        {
+                //            ordersToCancel.Add(order);
+                //        }
+                //    }
+                //}
 
-                foreach (var order in ordersToCancel)
-                {
-                    //if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
-                    {
-                        ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
-                    }
-                }
+                //foreach (var order in ordersToCancel)
+                //{
+                //    //if (Utils.IsInInstrumentTradingTime(order.InstrumentID))
+                //    {
+                //        ReqOrderAction(order.FrontID, order.SessionID, order.OrderRef, order.InstrumentID);
+                //    }
+                //}
 
                 //ordersToCancel.Clear();
 
@@ -729,11 +745,57 @@ new ConcurrentDictionary<string, DateTime>();
                         case EnumOffsetFlagType.CloseToday: //减今仓，减到0则移除
                             {
                                 ReducePosition(pTrade, longOrShort, EnumPositionDateType.Today);
+
+                                if(ChangeHands)
+                                {
+                                    var info = Utils.InstrumentToInstrumentInfo[pTrade.InstrumentID];
+
+                                    EnumDirectionType dir = EnumDirectionType.Buy;
+                                    double price = 0;
+
+                                    if(pTrade.Direction == EnumDirectionType.Buy)
+                                    {
+                                        dir = EnumDirectionType.Sell;
+                                        price = pTrade.Price + info.PriceTick * Convert.ToInt32(DaoShou);
+                                    }
+                                    else
+                                    {
+                                        dir = EnumDirectionType.Buy;
+                                        price = pTrade.Price - info.PriceTick * Convert.ToInt32(DaoShou);
+                                    }
+
+
+                                    ReqOrderInsert(pTrade.InstrumentID, dir, price, pTrade.Volume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "倒手开仓");
+                                }
+
                                 break;
                             }
                         case EnumOffsetFlagType.CloseYesterday: //减昨仓，减到0则移除
                             {
                                 ReducePosition(pTrade, longOrShort, EnumPositionDateType.History);
+
+                                if (ChangeHands)
+                                {
+                                    var info = Utils.InstrumentToInstrumentInfo[pTrade.InstrumentID];
+
+                                    EnumDirectionType dir = EnumDirectionType.Buy;
+                                    double price = 0;
+
+                                    if (pTrade.Direction == EnumDirectionType.Buy)
+                                    {
+                                        dir = EnumDirectionType.Sell;
+                                        price = pTrade.Price + info.PriceTick * Convert.ToInt32(DaoShou);
+                                    }
+                                    else
+                                    {
+                                        dir = EnumDirectionType.Buy;
+                                        price = pTrade.Price - info.PriceTick * Convert.ToInt32(DaoShou);
+                                    }
+
+
+                                    ReqOrderInsert(pTrade.InstrumentID, dir, price, pTrade.Volume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "倒手开仓");
+                                }
+
                                 break;
                             }
                         default:

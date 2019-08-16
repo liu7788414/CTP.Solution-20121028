@@ -837,7 +837,7 @@ namespace WrapperTest
                     }));
                 }
 
-                if ((max - min) / min > 涨跌幅提示 /*&& totalVolume >= 成交量阈值[GetInstrumentCategory(instrumentId)] * 10000.0*/ && AllowedShortTradeCategories.Contains(GetInstrumentCategory(instrumentId)))
+                if (pDepthMarketData.LastPrice > pDepthMarketData.UpperLimitPrice * (1 - 涨跌幅提示) || pDepthMarketData.LastPrice < pDepthMarketData.LowerLimitPrice * (1 + 涨跌幅提示))
                 {
                     var maxTime = Convert.ToDateTime(maxQuote.更新日期.ToString("yyyy/MM/dd") + " " + maxQuote.pDepthMarketData.UpdateTime);
                     var minTime = Convert.ToDateTime(minQuote.更新日期.ToString("yyyy/MM/dd") + " " + minQuote.pDepthMarketData.UpdateTime);
@@ -845,7 +845,7 @@ namespace WrapperTest
                     //WriteLine(string.Format("maxTime:{0},minTime:{1}", maxTime, minTime));
 
                     bool up = true;
-                    if (maxTime > minTime)
+                    if (pDepthMarketData.LastPrice > pDepthMarketData.UpperLimitPrice * 0.99)
                     {
                         up = true;
                     }
@@ -859,11 +859,11 @@ namespace WrapperTest
                         double ratio;
                         if (up)
                         {
-                            ratio = (max - min) / min;
+                            ratio = pDepthMarketData.LastPrice / pDepthMarketData.PreSettlementPrice - 1;
                         }
                         else
                         {
-                            ratio = (max - min) / max;
+                            ratio = pDepthMarketData.PreSettlementPrice / pDepthMarketData.LastPrice - 1;
                         }
 
                         var prompt = string.Format("信号：{0}{1},最低:{2},最高:{3},当前:{4},幅度:{5},时间:{6},成交量:{7}", instrumentId, up ? "上涨" : "下跌", min, max, marketData.pDepthMarketData.LastPrice, ratio, DateTime.Now, totalVolume);
@@ -880,19 +880,19 @@ namespace WrapperTest
                         {
                             list.Add(min.ToString());
                             list.Add(max.ToString());
-                            list.Add(((max - min) / min).ToString("P"));
+                            list.Add(ratio.ToString("P"));
                         }
                         else
                         {
                             list.Add(max.ToString());
                             list.Add(min.ToString());
-                            list.Add(((max - min) / max).ToString("P"));
+                            list.Add(ratio.ToString("P"));
                         }
 
                         list.Add(marketData.pDepthMarketData.LastPrice.ToString());
                         list.Add(DateTime.Now.ToString("mm:ss"));
                         list.Add(vol.ToString());
-                        list.Add(((max - min) / max).ToString());
+                        list.Add(ratio.ToString());
 
                         var promptItem = new PromptForm.PromptItem();
                         promptItem.Time = DateTime.Now;

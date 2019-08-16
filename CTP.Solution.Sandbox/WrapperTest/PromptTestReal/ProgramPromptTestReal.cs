@@ -110,8 +110,7 @@ namespace WrapperTest
                                 Front =
                                     new[]
                                 {
-                                    "tcp://180.168.146.187:10000", "tcp://180.168.146.187:10001",
-                                    "tcp://218.202.237.33:10002"
+                                    "tcp://180.168.146.187:10000"
                                 }
                                 //模拟交易所时间
                             };
@@ -119,15 +118,13 @@ namespace WrapperTest
                             ////宏源期货的行情
                             Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
                             {
-                                BrokerId = "1080",
-                                InvestorId = "901200953",
-                                Password = "091418",
+                                BrokerId = "9999",
+                                InvestorId = Utils.SimNowAccount,
+                                Password = Utils.SimNowPassword,
                                 Front =
                                     new[]
                                     {
-                                        "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
-                                        "tcp://180.169.112.54:41213",
-                                        "tcp://180.169.112.55:41213"
+                                        "tcp://180.168.146.187:10010"
                                     }
                             };
 

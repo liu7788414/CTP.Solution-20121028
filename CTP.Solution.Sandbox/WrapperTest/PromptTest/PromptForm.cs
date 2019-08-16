@@ -128,23 +128,23 @@ namespace PromptForm
 
         public void SetTime(DateTime dt)
         {
-            timeLabel.Text = dt.ToString("HH:mm:ss");
+            //timeLabel.Text = dt.ToString("HH:mm:ss");
 
-            if ((dt > dt9 && dt < dt903) || //9:00 - 9:03
-                (dt > dt2100 && dt < dt2103)) //21:00 - 21:03                
-            {
-                cbAutoOpen.Checked = false;
-                timeLabel.ForeColor = Color.Red;
-            }
-            else
-            {
-                if ((dt > dt903 && dt < dt904) || //9:03 - 9:04
-                    (dt > dt2103 && dt < dt2104)) //21:03 - 21:04   
-                {
-                    cbAutoOpen.Checked = true;
-                    timeLabel.ForeColor = Color.Black;
-                }
-            }
+            //if ((dt > dt9 && dt < dt903) || //9:00 - 9:03
+            //    (dt > dt2100 && dt < dt2103)) //21:00 - 21:03                
+            //{
+            //    cbAutoOpen.Checked = false;
+            //    timeLabel.ForeColor = Color.Red;
+            //}
+            //else
+            //{
+            //    if ((dt > dt903 && dt < dt904) || //9:03 - 9:04
+            //        (dt > dt2103 && dt < dt2104)) //21:03 - 21:04   
+            //    {
+            //        cbAutoOpen.Checked = true;
+            //        timeLabel.ForeColor = Color.Black;
+            //    }
+            //}
         }
 
         private object _locker = new object();
@@ -836,7 +836,7 @@ namespace PromptForm
 
                         if (InsTobBuyOpen[ins])
                         {
-                            OpenByItem(item, (ratio - Utils.涨跌幅提示) * Utils.InstrumentToLastTick[ins].LastPrice);
+                            OpenByItem(item, Utils.InstrumentToLastTick[ins].LastPrice);
                         }
                         else
                         {
@@ -869,7 +869,7 @@ namespace PromptForm
 
                             if (InsTobSellOpen[ins])
                             {
-                                OpenByItem(item, (ratio - Utils.涨跌幅提示) * Utils.InstrumentToLastTick[ins].LastPrice);
+                                OpenByItem(item, Utils.InstrumentToLastTick[ins].LastPrice);
                             }
                             else
                             {
@@ -1248,7 +1248,7 @@ namespace PromptForm
                     {
                         if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Short))  //持有空仓不开多仓
                         {                      
-                            _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - adjustedOffset, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开多仓");
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.UpperLimitPrice, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开多仓");
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Buy, lastTick.LastPrice - adjustedOffset2, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开多仓");
 
                             InsTobBuyOpen[ins] = false;
@@ -1265,7 +1265,7 @@ namespace PromptForm
                     {
                         if (!_trader.ContainsPositionByInstrument(ins, EnumPosiDirectionType.Long)) //持有多仓不开空仓
                         {
-                            _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + adjustedOffset, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开空仓");
+                            _trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LowerLimitPrice, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开空仓");
                             //_trader.ReqOrderInsert(ins, EnumDirectionType.Sell, lastTick.LastPrice + adjustedOffset2, targetVolume, EnumOffsetFlagType.Open, EnumTimeConditionType.GFD, EnumVolumeConditionType.AV, "自动开空仓");
 
                             InsTobSellOpen[ins] = false;

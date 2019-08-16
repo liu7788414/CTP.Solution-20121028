@@ -117,6 +117,8 @@
             this.cbAutoCloseProfit = new System.Windows.Forms.CheckBox();
             this.cbAutoCloseLoss = new System.Windows.Forms.CheckBox();
             this.nudOffsetTickCount = new System.Windows.Forms.NumericUpDown();
+            this.cbChangeHands = new System.Windows.Forms.CheckBox();
+            this.numericDaoShou = new System.Windows.Forms.NumericUpDown();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCloseRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarningPoint)).BeginInit();
@@ -124,6 +126,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOffsetTickCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDaoShou)).BeginInit();
             this.SuspendLayout();
             // 
             // listView1
@@ -628,7 +631,7 @@
             this.nudProfitPoint.Size = new System.Drawing.Size(48, 21);
             this.nudProfitPoint.TabIndex = 29;
             this.nudProfitPoint.Value = new decimal(new int[] {
-            30,
+            5,
             0,
             0,
             0});
@@ -649,7 +652,7 @@
             this.nudLossPoint.Size = new System.Drawing.Size(48, 21);
             this.nudLossPoint.TabIndex = 30;
             this.nudLossPoint.Value = new decimal(new int[] {
-            15,
+            100,
             0,
             0,
             0});
@@ -980,8 +983,6 @@
             // cbAutoCloseProfit
             // 
             this.cbAutoCloseProfit.AutoSize = true;
-            this.cbAutoCloseProfit.Checked = true;
-            this.cbAutoCloseProfit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbAutoCloseProfit.Location = new System.Drawing.Point(589, 306);
             this.cbAutoCloseProfit.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoCloseProfit.Name = "cbAutoCloseProfit";
@@ -994,8 +995,6 @@
             // cbAutoCloseLoss
             // 
             this.cbAutoCloseLoss.AutoSize = true;
-            this.cbAutoCloseLoss.Checked = true;
-            this.cbAutoCloseLoss.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbAutoCloseLoss.Location = new System.Drawing.Point(589, 283);
             this.cbAutoCloseLoss.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoCloseLoss.Name = "cbAutoCloseLoss";
@@ -1017,11 +1016,45 @@
             this.nudOffsetTickCount.TabIndex = 70;
             this.nudOffsetTickCount.ValueChanged += new System.EventHandler(this.nudOffsetTickCount_ValueChanged);
             // 
+            // cbChangeHands
+            // 
+            this.cbChangeHands.AutoSize = true;
+            this.cbChangeHands.Checked = true;
+            this.cbChangeHands.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbChangeHands.Location = new System.Drawing.Point(675, 297);
+            this.cbChangeHands.Margin = new System.Windows.Forms.Padding(2);
+            this.cbChangeHands.Name = "cbChangeHands";
+            this.cbChangeHands.Size = new System.Drawing.Size(48, 16);
+            this.cbChangeHands.TabIndex = 71;
+            this.cbChangeHands.Text = "倒手";
+            this.cbChangeHands.UseVisualStyleBackColor = true;
+            this.cbChangeHands.CheckedChanged += new System.EventHandler(this.cbChangeHands_CheckedChanged);
+            // 
+            // numericDaoShou
+            // 
+            this.numericDaoShou.Location = new System.Drawing.Point(728, 292);
+            this.numericDaoShou.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericDaoShou.Name = "numericDaoShou";
+            this.numericDaoShou.Size = new System.Drawing.Size(40, 21);
+            this.numericDaoShou.TabIndex = 72;
+            this.numericDaoShou.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericDaoShou.ValueChanged += new System.EventHandler(this.numericDaoShou_ValueChanged);
+            // 
             // PromptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(952, 560);
+            this.Controls.Add(this.numericDaoShou);
+            this.Controls.Add(this.cbChangeHands);
             this.Controls.Add(this.nudOffsetTickCount);
             this.Controls.Add(this.cbAutoCloseLoss);
             this.Controls.Add(this.cbAutoCloseProfit);
@@ -1090,6 +1123,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLossPoint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOverTimePoint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudOffsetTickCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDaoShou)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1186,6 +1220,8 @@
         private System.Windows.Forms.ColumnHeader columnHeader22;
         private System.Windows.Forms.ColumnHeader columnHeader21;
         private System.Windows.Forms.ColumnHeader columnHeader23;
+        private System.Windows.Forms.CheckBox cbChangeHands;
+        private System.Windows.Forms.NumericUpDown numericDaoShou;
     }
 }
 

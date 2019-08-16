@@ -1364,7 +1364,7 @@ namespace PromptForm
                         //cbAutoOpen.Checked = true;
                     }
 
-                    CancelAllOrders();
+                    //CancelAllOrders();
                 }
             }
         }
@@ -1722,6 +1722,16 @@ namespace PromptForm
         private void nudOffsetTickCount_ValueChanged(object sender, EventArgs e)
         {
             Utils.偏移Tick数量 = (int)nudOffsetTickCount.Value;
+        }
+
+        private void cbChangeHands_CheckedChanged(object sender, EventArgs e)
+        {
+            _trader.ChangeHands = ((CheckBox)sender).Checked;
+        }
+
+        private void numericDaoShou_ValueChanged(object sender, EventArgs e)
+        {
+            _trader.DaoShou = ((NumericUpDown)sender).Value;
         }
     }
 
