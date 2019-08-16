@@ -68,6 +68,22 @@ namespace WrapperTest
             set { _brokerId = value; }
         }
 
+        private string _authCode;
+
+        public string AuthCode
+        {
+            get { return _authCode; }
+            set { _authCode = value; }
+        }
+
+        private string _appid;
+
+        public string AppID
+        {
+            get { return _appid; }
+            set { _appid = value; }
+        }
+
         private string _investorId;
 
         public string InvestorId
@@ -157,6 +173,7 @@ new ConcurrentDictionary<string, DateTime>();
             _timerCancelOrder.Start();
 
             OnFrontConnected += TraderAdapter_OnFrontConnected;
+            OnRspAuthenticate += TraderAdapter_OnRspAuthenticate;
             OnRspUserLogin += TraderAdapter_OnRspUserLogin;
             OnRspSettlementInfoConfirm += TraderAdapter_OnRspSettlementInfoConfirm;
             OnRspQryInstrument += TraderAdapter_OnRspQryInstrument;
@@ -1608,7 +1625,7 @@ new ConcurrentDictionary<string, DateTime>();
                 BrokerID = _brokerId,
                 UserID = _investorId,
                 Password = _password,
-                UserProductInfo = "MyClient"
+                UserProductInfo = "test"
             };
 
 
@@ -1616,7 +1633,37 @@ new ConcurrentDictionary<string, DateTime>();
         }
         private void TraderAdapter_OnFrontConnected()
         {
-            Login();
+            ReqAuthenticate();
+        }
+
+        private void ReqAuthenticate()
+        {
+            ThostFtdcReqAuthenticateField a = new ThostFtdcReqAuthenticateField
+            {
+                BrokerID = BrokerId,
+                UserID = BrokerId,
+                AuthCode = AuthCode,
+                AppID = AppID
+            };
+            var req = ReqAuthenticate(a, RequestId++);
+        }
+
+        private void TraderAdapter_OnRspAuthenticate(ThostFtdcRspAuthenticateField pRspAuthenticateField, ThostFtdcRspInfoField pRspInfo, int nRequestID, bool bIsLast)
+        {
+            try
+            {
+                if (bIsLast)
+                {
+                    var temp = string.Format("授权回报:[BrokerID]:{0},[UserID]:{1},[UserProductInfo]:{2},[AppID]:{3},[AppType]:{4}", pRspAuthenticateField.BrokerID, pRspAuthenticateField.UserID, pRspAuthenticateField.UserProductInfo, pRspAuthenticateField.AppID, pRspAuthenticateField.AppType);
+
+                    Utils.WriteLine(temp, true);
+                    Login();
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteException(ex);
+            }
         }
 
         public void CreateNewTrader()

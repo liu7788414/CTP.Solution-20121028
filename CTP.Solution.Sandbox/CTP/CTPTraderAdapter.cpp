@@ -21,7 +21,7 @@ namespace CTP
 	CTPTraderAdapter::CTPTraderAdapter(String^ pszFlowPath, bool bIsUsingUdp)
 	{
 		CAutoStrPtr asp(pszFlowPath);
-		m_pApi = CThostFtdcTraderApi::CreateFtdcTraderApi(asp.m_pChar, bIsUsingUdp);
+		m_pApi = CThostFtdcTraderApi::CreateFtdcTraderApi(asp.m_pChar);
 		m_pSpi = new CTraderSpi(this);
 #ifdef __CTP_MA__
 		RegisterCallbacks();

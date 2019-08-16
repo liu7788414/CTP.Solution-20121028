@@ -102,7 +102,8 @@ namespace WrapperTest
         模拟24X7,
         模拟交易所,
         华泰期货,
-        宏源期货
+        宏源期货,
+        穿透测试
     }
 
     public enum 多空性质
@@ -414,6 +415,8 @@ namespace WrapperTest
         public static int ExchangeTimeOffset = 0;
         public static bool IsOpenLocked = false;
 
+        public static string AuthCode = "";
+        public static string AppID = "";
         public static void GetQuoteLoggers()
         {
             LogQuotes = new ConcurrentDictionary<string, ILog>();
@@ -1204,6 +1207,12 @@ namespace WrapperTest
                     var ss = v.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
                     合约开仓偏移量[ss[0]] = Convert.ToDouble(ss[1]);
                 }
+
+                line = sr.ReadLine();
+                AuthCode = GetLineData(line);
+
+                line = sr.ReadLine();
+                AppID = GetLineData(line);
 
                 sr.Close();
             }

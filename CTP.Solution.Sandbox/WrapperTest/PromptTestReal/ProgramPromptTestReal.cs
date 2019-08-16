@@ -70,7 +70,7 @@ namespace WrapperTest
                 }
                 else //手动方式
                 {
-                    Console.WriteLine("选择登录类型，1-模拟24*7，2-模拟交易所，3-华泰，4-宏源，5-华安");
+                    Console.WriteLine("选择登录类型，1-模拟24*7，2-模拟交易所，3-华泰，4-宏源，5-华安，6-穿透测试");
                     line = Console.ReadLine();
                 }
 
@@ -83,6 +83,8 @@ namespace WrapperTest
                             {
                                 BrokerId = "9999",
                                 InvestorId = Utils.SimNowAccount,
+                                AuthCode = Utils.AuthCode,
+                                AppID = Utils.AppID,
                                 Password = Utils.SimNowPassword,
                                 Front = new[] { "tcp://180.168.146.187:10030" } //模拟24*7
                             };
@@ -106,6 +108,8 @@ namespace WrapperTest
                             {
                                 BrokerId = "9999",
                                 InvestorId = Utils.SimNowAccount,
+                                AuthCode = Utils.AuthCode,
+                                AppID = Utils.AppID,
                                 Password = Utils.SimNowPassword,
                                 Front =
                                     new[]
@@ -138,6 +142,8 @@ namespace WrapperTest
                             {
                                 BrokerId = "8080",
                                 InvestorId = "20051875",
+                                AuthCode = Utils.AuthCode,
+                                AppID = Utils.AppID,
                                 Password = "414887",
                                 Front =
                                     new[]
@@ -177,6 +183,8 @@ namespace WrapperTest
                             {
                                 BrokerId = "1080",
                                 InvestorId = "901200953",
+                                AuthCode = Utils.AuthCode,
+                                AppID = Utils.AppID,
                                 Password = "414887",
                                 Front =
                                     new[]
@@ -234,27 +242,28 @@ namespace WrapperTest
                             {
                                 BrokerId = "6020",
                                 InvestorId = "100866770",
+                                AuthCode = Utils.AuthCode,
+                                AppID = Utils.AppID,
                                 Password = "091418",
                                 Front =
                                     new[]
                                     {
-						                "tcp://180.166.37.178:41205",
-						                "tcp://180.166.37.179:41205"
+                                        "tcp://180.166.37.178:41207",
+                                        "tcp://180.166.37.180:41207"
                                     }
                             };
 
                             ////宏源期货的行情
                             Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
                             {
-                                BrokerId = "1080",
-                                InvestorId = "901200953",
+                                BrokerId = "6020",
+                                InvestorId = "100866770",
                                 Password = "091418",
                                 Front =
                                     new[]
                                     {
-                                        "tcp://180.169.112.52:41213", "tcp://180.169.112.53:41213",
-                                        "tcp://180.169.112.54:41213",
-                                        "tcp://180.169.112.55:41213"
+                                        "tcp://180.166.37.178:41215",
+                                        "tcp://180.166.37.180:41215"
                                     }
                             };
 
@@ -277,6 +286,39 @@ namespace WrapperTest
                             Utils.CurrentChannel = ChannelType.宏源期货;
                             break;
                         }
+                    case 6:
+                        {
+                            //穿透测试
+                            Utils.Trader = new TraderAdapter
+                            {
+                                BrokerId = "6020",
+                                InvestorId = "100866770",
+                                AuthCode = Utils.AuthCode,
+                                AppID = Utils.AppID,
+                                Password = "091418",
+                                Front =
+                                    new[]
+                                    {
+                                        "tcp://180.166.37.189:41307"
+                                    }
+                            };
+
+                            ////穿透测试的行情
+                            Utils.QuoteMain = new QuoteAdapter((TraderAdapter)Utils.Trader)
+                            {
+                                BrokerId = "6020",
+                                InvestorId = "100866770",
+                                Password = "091418",
+                                Front =
+                                    new[]
+                                    {
+                                        "tcp://180.166.37.189:41314"
+                                    }
+                            };
+
+                            Utils.CurrentChannel = ChannelType.穿透测试;
+                            break;
+                        }
                     default:
                         {
                             //模拟
@@ -284,6 +326,8 @@ namespace WrapperTest
                             {
                                 BrokerId = "9999",
                                 InvestorId = Utils.SimNowAccount,
+                                AuthCode = Utils.AuthCode,
+                                AppID = Utils.AppID,
                                 Password = Utils.SimNowPassword,
                                 Front = new[] { "tcp://180.168.146.187:10030" } //模拟24*7
                             };
