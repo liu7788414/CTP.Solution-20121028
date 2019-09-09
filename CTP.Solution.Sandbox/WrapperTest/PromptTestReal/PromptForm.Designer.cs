@@ -53,6 +53,7 @@
             this.columnHeader22 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btCloseAll = new System.Windows.Forms.Button();
@@ -140,7 +141,7 @@
             this.Ratio,
             this.Last,
             this.Time});
-            this.listView1.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.listView1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -210,14 +211,15 @@
             this.columnHeader21,
             this.columnHeader22,
             this.columnHeader23,
-            this.columnHeader10});
-            this.listView2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.columnHeader10,
+            this.columnHeader24});
+            this.listView2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listView2.FullRowSelect = true;
             this.listView2.GridLines = true;
             this.listView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView2.Location = new System.Drawing.Point(3, 172);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(869, 92);
+            this.listView2.Size = new System.Drawing.Size(869, 135);
             this.listView2.TabIndex = 1;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -298,11 +300,15 @@
             this.columnHeader10.Text = "总值";
             this.columnHeader10.Width = 100;
             // 
+            // columnHeader24
+            // 
+            this.columnHeader24.Text = "比例";
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("SimSun", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(245, 299);
+            this.label1.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.Location = new System.Drawing.Point(244, 337);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(49, 20);
@@ -311,8 +317,8 @@
             // 
             // textBox1
             // 
-            this.textBox1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox1.Location = new System.Drawing.Point(280, 297);
+            this.textBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox1.Location = new System.Drawing.Point(279, 335);
             this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 26);
@@ -320,8 +326,8 @@
             // 
             // btCloseAll
             // 
-            this.btCloseAll.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btCloseAll.Location = new System.Drawing.Point(384, 297);
+            this.btCloseAll.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btCloseAll.Location = new System.Drawing.Point(383, 335);
             this.btCloseAll.Margin = new System.Windows.Forms.Padding(2);
             this.btCloseAll.Name = "btCloseAll";
             this.btCloseAll.Size = new System.Drawing.Size(27, 27);
@@ -333,7 +339,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 279);
+            this.label2.Location = new System.Drawing.Point(24, 317);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
@@ -343,7 +349,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(109, 279);
+            this.label3.Location = new System.Drawing.Point(108, 317);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 12);
@@ -353,7 +359,7 @@
             // cbEnable
             // 
             this.cbEnable.AutoSize = true;
-            this.cbEnable.Location = new System.Drawing.Point(5, 279);
+            this.cbEnable.Location = new System.Drawing.Point(4, 317);
             this.cbEnable.Margin = new System.Windows.Forms.Padding(2);
             this.cbEnable.Name = "cbEnable";
             this.cbEnable.Size = new System.Drawing.Size(15, 14);
@@ -371,7 +377,7 @@
             this.toolStripStatusLabel4,
             this.timeLabel,
             this.toolStripStatusLabel5});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 538);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 594);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(952, 22);
             this.statusStrip1.TabIndex = 11;
@@ -380,7 +386,7 @@
             // 
             // toolStripStatusLabel1
             // 
-            this.toolStripStatusLabel1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel1.ForeColor = System.Drawing.Color.Red;
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(62, 17);
@@ -390,7 +396,7 @@
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripStatusLabel2.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel2.ForeColor = System.Drawing.Color.Green;
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(62, 17);
@@ -399,14 +405,14 @@
             // 
             // toolStripStatusLabel3
             // 
-            this.toolStripStatusLabel3.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(62, 17);
             this.toolStripStatusLabel3.Text = "Label3";
             // 
             // toolStripStatusLabel4
             // 
-            this.toolStripStatusLabel4.Font = new System.Drawing.Font("SimHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel4.Font = new System.Drawing.Font("黑体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
             this.toolStripStatusLabel4.Size = new System.Drawing.Size(62, 17);
             this.toolStripStatusLabel4.Text = "Label4";
@@ -420,7 +426,7 @@
             // 
             // toolStripStatusLabel5
             // 
-            this.toolStripStatusLabel5.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripStatusLabel5.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.toolStripStatusLabel5.ForeColor = System.Drawing.Color.Blue;
             this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
             this.toolStripStatusLabel5.Size = new System.Drawing.Size(165, 17);
@@ -428,7 +434,7 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.richTextBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.richTextBox1.ForeColor = System.Drawing.Color.Red;
             this.richTextBox1.Location = new System.Drawing.Point(25, 30);
             this.richTextBox1.Margin = new System.Windows.Forms.Padding(2);
@@ -440,7 +446,7 @@
             // 
             // richTextBox2
             // 
-            this.richTextBox2.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.richTextBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.richTextBox2.ForeColor = System.Drawing.Color.Green;
             this.richTextBox2.Location = new System.Drawing.Point(233, 30);
             this.richTextBox2.Margin = new System.Windows.Forms.Padding(2);
@@ -453,7 +459,7 @@
             // cbEnableTotal
             // 
             this.cbEnableTotal.AutoSize = true;
-            this.cbEnableTotal.Location = new System.Drawing.Point(5, 305);
+            this.cbEnableTotal.Location = new System.Drawing.Point(4, 343);
             this.cbEnableTotal.Margin = new System.Windows.Forms.Padding(2);
             this.cbEnableTotal.Name = "cbEnableTotal";
             this.cbEnableTotal.Size = new System.Drawing.Size(15, 14);
@@ -464,7 +470,7 @@
             // btOKTotal
             // 
             this.btOKTotal.Enabled = false;
-            this.btOKTotal.Location = new System.Drawing.Point(197, 299);
+            this.btOKTotal.Location = new System.Drawing.Point(196, 337);
             this.btOKTotal.Margin = new System.Windows.Forms.Padding(2);
             this.btOKTotal.Name = "btOKTotal";
             this.btOKTotal.Size = new System.Drawing.Size(40, 20);
@@ -476,9 +482,9 @@
             // tbStopLossTotal
             // 
             this.tbStopLossTotal.Enabled = false;
-            this.tbStopLossTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.tbStopLossTotal.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tbStopLossTotal.ForeColor = System.Drawing.Color.Green;
-            this.tbStopLossTotal.Location = new System.Drawing.Point(141, 300);
+            this.tbStopLossTotal.Location = new System.Drawing.Point(140, 338);
             this.tbStopLossTotal.Margin = new System.Windows.Forms.Padding(2);
             this.tbStopLossTotal.Name = "tbStopLossTotal";
             this.tbStopLossTotal.Size = new System.Drawing.Size(46, 21);
@@ -488,7 +494,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(109, 305);
+            this.label4.Location = new System.Drawing.Point(108, 343);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 12);
@@ -498,9 +504,9 @@
             // tbStopProfitTotal
             // 
             this.tbStopProfitTotal.Enabled = false;
-            this.tbStopProfitTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.tbStopProfitTotal.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tbStopProfitTotal.ForeColor = System.Drawing.Color.Red;
-            this.tbStopProfitTotal.Location = new System.Drawing.Point(59, 300);
+            this.tbStopProfitTotal.Location = new System.Drawing.Point(58, 338);
             this.tbStopProfitTotal.Margin = new System.Windows.Forms.Padding(2);
             this.tbStopProfitTotal.Name = "tbStopProfitTotal";
             this.tbStopProfitTotal.Size = new System.Drawing.Size(46, 21);
@@ -510,7 +516,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(25, 305);
+            this.label5.Location = new System.Drawing.Point(24, 343);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(41, 12);
@@ -520,9 +526,9 @@
             // lbHighTotal
             // 
             this.lbHighTotal.AutoSize = true;
-            this.lbHighTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbHighTotal.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lbHighTotal.ForeColor = System.Drawing.Color.Red;
-            this.lbHighTotal.Location = new System.Drawing.Point(414, 297);
+            this.lbHighTotal.Location = new System.Drawing.Point(413, 335);
             this.lbHighTotal.Name = "lbHighTotal";
             this.lbHighTotal.Size = new System.Drawing.Size(47, 12);
             this.lbHighTotal.TabIndex = 20;
@@ -532,9 +538,9 @@
             // lbLowTotal
             // 
             this.lbLowTotal.AutoSize = true;
-            this.lbLowTotal.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbLowTotal.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lbLowTotal.ForeColor = System.Drawing.Color.Green;
-            this.lbLowTotal.Location = new System.Drawing.Point(414, 311);
+            this.lbLowTotal.Location = new System.Drawing.Point(413, 349);
             this.lbLowTotal.Name = "lbLowTotal";
             this.lbLowTotal.Size = new System.Drawing.Size(40, 12);
             this.lbLowTotal.TabIndex = 21;
@@ -544,7 +550,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(247, 276);
+            this.label6.Location = new System.Drawing.Point(246, 314);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
@@ -554,14 +560,14 @@
             // nudCloseRatio
             // 
             this.nudCloseRatio.DecimalPlaces = 1;
-            this.nudCloseRatio.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudCloseRatio.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudCloseRatio.ForeColor = System.Drawing.Color.Red;
             this.nudCloseRatio.Increment = new decimal(new int[] {
             1,
             0,
             0,
             65536});
-            this.nudCloseRatio.Location = new System.Drawing.Point(332, 274);
+            this.nudCloseRatio.Location = new System.Drawing.Point(331, 312);
             this.nudCloseRatio.Margin = new System.Windows.Forms.Padding(2);
             this.nudCloseRatio.Name = "nudCloseRatio";
             this.nudCloseRatio.Size = new System.Drawing.Size(51, 21);
@@ -576,7 +582,7 @@
             // cbWarning
             // 
             this.cbWarning.AutoSize = true;
-            this.cbWarning.Location = new System.Drawing.Point(384, 279);
+            this.cbWarning.Location = new System.Drawing.Point(383, 317);
             this.cbWarning.Margin = new System.Windows.Forms.Padding(2);
             this.cbWarning.Name = "cbWarning";
             this.cbWarning.Size = new System.Drawing.Size(15, 14);
@@ -587,7 +593,7 @@
             // cbAutoOpen
             // 
             this.cbAutoOpen.AutoSize = true;
-            this.cbAutoOpen.Location = new System.Drawing.Point(469, 305);
+            this.cbAutoOpen.Location = new System.Drawing.Point(468, 343);
             this.cbAutoOpen.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoOpen.Name = "cbAutoOpen";
             this.cbAutoOpen.Size = new System.Drawing.Size(72, 16);
@@ -597,9 +603,9 @@
             // 
             // nudWarningPoint
             // 
-            this.nudWarningPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudWarningPoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudWarningPoint.ForeColor = System.Drawing.Color.Red;
-            this.nudWarningPoint.Location = new System.Drawing.Point(280, 274);
+            this.nudWarningPoint.Location = new System.Drawing.Point(279, 312);
             this.nudWarningPoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudWarningPoint.Maximum = new decimal(new int[] {
             50000,
@@ -618,9 +624,9 @@
             // 
             // nudProfitPoint
             // 
-            this.nudProfitPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudProfitPoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudProfitPoint.ForeColor = System.Drawing.Color.Red;
-            this.nudProfitPoint.Location = new System.Drawing.Point(59, 274);
+            this.nudProfitPoint.Location = new System.Drawing.Point(58, 312);
             this.nudProfitPoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudProfitPoint.Maximum = new decimal(new int[] {
             50000,
@@ -639,9 +645,9 @@
             // 
             // nudLossPoint
             // 
-            this.nudLossPoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudLossPoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudLossPoint.ForeColor = System.Drawing.Color.Green;
-            this.nudLossPoint.Location = new System.Drawing.Point(141, 274);
+            this.nudLossPoint.Location = new System.Drawing.Point(140, 312);
             this.nudLossPoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudLossPoint.Maximum = new decimal(new int[] {
             50000,
@@ -661,7 +667,7 @@
             // cbOverTime
             // 
             this.cbOverTime.AutoSize = true;
-            this.cbOverTime.Location = new System.Drawing.Point(469, 279);
+            this.cbOverTime.Location = new System.Drawing.Point(468, 317);
             this.cbOverTime.Margin = new System.Windows.Forms.Padding(2);
             this.cbOverTime.Name = "cbOverTime";
             this.cbOverTime.Size = new System.Drawing.Size(72, 16);
@@ -673,9 +679,9 @@
             // nudOverTimePoint
             // 
             this.nudOverTimePoint.Enabled = false;
-            this.nudOverTimePoint.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudOverTimePoint.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.nudOverTimePoint.ForeColor = System.Drawing.Color.Green;
-            this.nudOverTimePoint.Location = new System.Drawing.Point(544, 278);
+            this.nudOverTimePoint.Location = new System.Drawing.Point(543, 316);
             this.nudOverTimePoint.Margin = new System.Windows.Forms.Padding(2);
             this.nudOverTimePoint.Name = "nudOverTimePoint";
             this.nudOverTimePoint.Size = new System.Drawing.Size(41, 21);
@@ -720,7 +726,7 @@
             this.columnHeader16,
             this.columnHeader17,
             this.columnHeader11});
-            this.lvOrder.Font = new System.Drawing.Font("SimSun", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lvOrder.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lvOrder.GridLines = true;
             this.lvOrder.Location = new System.Drawing.Point(434, 2);
             this.lvOrder.Margin = new System.Windows.Forms.Padding(2);
@@ -770,7 +776,7 @@
             // 
             // tbIns
             // 
-            this.tbIns.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.tbIns.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tbIns.Location = new System.Drawing.Point(433, 76);
             this.tbIns.Margin = new System.Windows.Forms.Padding(2);
             this.tbIns.Name = "tbIns";
@@ -888,8 +894,8 @@
             // 
             // btPosition
             // 
-            this.btPosition.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btPosition.Location = new System.Drawing.Point(562, 302);
+            this.btPosition.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btPosition.Location = new System.Drawing.Point(561, 340);
             this.btPosition.Margin = new System.Windows.Forms.Padding(2);
             this.btPosition.Name = "btPosition";
             this.btPosition.Size = new System.Drawing.Size(23, 23);
@@ -915,7 +921,7 @@
             this.tbTargetMoney.Name = "tbTargetMoney";
             this.tbTargetMoney.Size = new System.Drawing.Size(58, 21);
             this.tbTargetMoney.TabIndex = 63;
-            this.tbTargetMoney.Text = "200000";
+            this.tbTargetMoney.Text = "100000";
             this.tbTargetMoney.TextChanged += new System.EventHandler(this.tbTargetMoney_TextChanged);
             // 
             // cbTargetMoney
@@ -965,7 +971,7 @@
             this.lvMainIns.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvMainIns.Location = new System.Drawing.Point(878, 2);
             this.lvMainIns.Name = "lvMainIns";
-            this.lvMainIns.Size = new System.Drawing.Size(74, 326);
+            this.lvMainIns.Size = new System.Drawing.Size(74, 361);
             this.lvMainIns.TabIndex = 67;
             this.lvMainIns.UseCompatibleStateImageBehavior = false;
             this.lvMainIns.View = System.Windows.Forms.View.Details;
@@ -983,7 +989,7 @@
             // cbAutoCloseProfit
             // 
             this.cbAutoCloseProfit.AutoSize = true;
-            this.cbAutoCloseProfit.Location = new System.Drawing.Point(589, 306);
+            this.cbAutoCloseProfit.Location = new System.Drawing.Point(588, 344);
             this.cbAutoCloseProfit.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoCloseProfit.Name = "cbAutoCloseProfit";
             this.cbAutoCloseProfit.Size = new System.Drawing.Size(48, 16);
@@ -995,7 +1001,7 @@
             // cbAutoCloseLoss
             // 
             this.cbAutoCloseLoss.AutoSize = true;
-            this.cbAutoCloseLoss.Location = new System.Drawing.Point(589, 283);
+            this.cbAutoCloseLoss.Location = new System.Drawing.Point(588, 321);
             this.cbAutoCloseLoss.Margin = new System.Windows.Forms.Padding(2);
             this.cbAutoCloseLoss.Name = "cbAutoCloseLoss";
             this.cbAutoCloseLoss.Size = new System.Drawing.Size(48, 16);
@@ -1005,7 +1011,7 @@
             // 
             // nudOffsetTickCount
             // 
-            this.nudOffsetTickCount.Location = new System.Drawing.Point(638, 293);
+            this.nudOffsetTickCount.Location = new System.Drawing.Point(637, 331);
             this.nudOffsetTickCount.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1019,9 +1025,7 @@
             // cbChangeHands
             // 
             this.cbChangeHands.AutoSize = true;
-            this.cbChangeHands.Checked = true;
-            this.cbChangeHands.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbChangeHands.Location = new System.Drawing.Point(675, 297);
+            this.cbChangeHands.Location = new System.Drawing.Point(674, 335);
             this.cbChangeHands.Margin = new System.Windows.Forms.Padding(2);
             this.cbChangeHands.Name = "cbChangeHands";
             this.cbChangeHands.Size = new System.Drawing.Size(48, 16);
@@ -1032,7 +1036,7 @@
             // 
             // numericDaoShou
             // 
-            this.numericDaoShou.Location = new System.Drawing.Point(728, 292);
+            this.numericDaoShou.Location = new System.Drawing.Point(727, 330);
             this.numericDaoShou.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1052,7 +1056,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(952, 560);
+            this.ClientSize = new System.Drawing.Size(952, 616);
             this.Controls.Add(this.numericDaoShou);
             this.Controls.Add(this.cbChangeHands);
             this.Controls.Add(this.nudOffsetTickCount);
@@ -1222,6 +1226,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader23;
         private System.Windows.Forms.CheckBox cbChangeHands;
         private System.Windows.Forms.NumericUpDown numericDaoShou;
+        private System.Windows.Forms.ColumnHeader columnHeader24;
     }
 }
 

@@ -28,7 +28,7 @@ namespace WrapperTest
             set { _tradingDay = value; }
         }
 
-        private bool _changeHands = true;
+        private bool _changeHands = false;
 
         public bool ChangeHands
         {
@@ -1654,7 +1654,7 @@ new ConcurrentDictionary<string, DateTime>();
             {
                 if (bIsLast)
                 {
-                    var temp = string.Format("授权回报:[BrokerID]:{0},[UserID]:{1},[UserProductInfo]:{2},[AppID]:{3},[AppType]:{4}", pRspAuthenticateField.BrokerID, pRspAuthenticateField.UserID, pRspAuthenticateField.UserProductInfo, pRspAuthenticateField.AppID, pRspAuthenticateField.AppType);
+                    var temp = $"授权回报:[BrokerID]:{pRspAuthenticateField.BrokerID},[UserID]:{pRspAuthenticateField.UserID},[UserProductInfo]:{pRspAuthenticateField.UserProductInfo},[AppID]:{pRspAuthenticateField.AppID},[AppType]:{pRspAuthenticateField.AppType}";
 
                     Utils.WriteLine(temp, true);
                     Login();
