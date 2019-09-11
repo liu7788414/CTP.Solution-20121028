@@ -304,6 +304,8 @@ new ConcurrentDictionary<string, DateTime>();
         {
             Utils.WriteLine(string.Format("撤单:前置编号:{0},会话编号:{1},报单引用:{2},合约:{3}", frontId, sessionId, orderRef, instrumentId), true);
 
+            var exchangeId = Utils.GetExchangeId(instrumentId);
+
             var req = new ThostFtdcInputOrderActionField
             {
                 ActionFlag = actionFlag,
@@ -312,7 +314,8 @@ new ConcurrentDictionary<string, DateTime>();
                 FrontID = frontId,
                 SessionID = sessionId,
                 OrderRef = orderRef,
-                InstrumentID = instrumentId
+                InstrumentID = instrumentId,
+                ExchangeID = exchangeId
             };
 
             int ret = ReqOrderAction(req, ++RequestId);
@@ -1945,11 +1948,14 @@ new ConcurrentDictionary<string, DateTime>();
             {
                 Utils.WriteLine("ReqOrderInsert", true);
 
+                var exchangeId = Utils.GetExchangeId(instrumentId);                
+
                 var req = new ThostFtdcInputOrderField
                 {
                     BrokerID = _brokerId,
                     InvestorID = _investorId,
                     InstrumentID = instrumentId,
+                    ExchangeID = exchangeId,
                     OrderRef = (++CurrentOrderRef).ToString(),
                     OrderPriceType = EnumOrderPriceTypeType.LimitPrice,
                     Direction = direction,

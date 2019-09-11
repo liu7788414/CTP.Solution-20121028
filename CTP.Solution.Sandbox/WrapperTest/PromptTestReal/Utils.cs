@@ -1032,6 +1032,18 @@ namespace WrapperTest
 
         }
 
+        public static string GetExchangeId(string instrumentId)
+        {
+            var exchangeId = "SHFE";
+            if (InstrumentToInstrumentInfo.ContainsKey(instrumentId))
+            {
+                var info = InstrumentToInstrumentInfo[instrumentId];
+                exchangeId = info.ExchangeID;
+            }
+
+            return exchangeId;
+        }
+
         public static double GetAveragePrice(ThostFtdcDepthMarketDataField data)
         {
             return data.AveragePrice / data.PreClosePrice < 2
